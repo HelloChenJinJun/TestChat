@@ -1,0 +1,7 @@
+<scheme name="Darcula copy" version="142" parent_scheme="Darcula">
+  <option name="LINE_SPACING" value="1.2" />
+  <option name="EDITOR_FONT_SIZE" value="15" />
+  <option name="CONSOLE_FONT_NAME" value="Monospaced" />
+  <option name="CONSOLE_LINE_SPACING" value="1.0" />
+  <option name="EDITOR_FONT_NAME" value="微软雅黑" />
+</scheme>
