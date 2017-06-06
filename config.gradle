@@ -1,0 +1,83 @@
+ext {
+    isBuildApp = false;//false:作为Lib组件存在， true:作为application存在
+
+    android = [
+            compileSdkVersion: 24,
+            buildToolsVersion: "25.0.2",
+            minSdkVersion    : 16,
+            targetSdkVersion : 22,
+            versionCode      : 1,
+            versionName      : '1.0.0',
+    ]
+
+
+    libsVersion = [
+            // App dependencies version
+            supportLibraryVersion = "25.3.0",
+
+            retrofitVersion = "2.1.0",
+            glideVersion = "3.7.0",
+            loggerVersion = "1.15",
+//            eventbusVersion = "3.0.0",
+            gsonVersion = "2.8.0",
+//            butterknife = "8.5.1",
+            retrofit="2.1.0",
+            rxjava="1.1.9",
+                    rxjava_android="1.2.1",
+            rxlifecycle="1.0",
+            rxlifecycle_components="1.0",
+            dagger_compiler="2.6",
+            dagger="2.6",
+            greenDao="3.1.0",
+            arouter_api="1.2.1",
+            arouter_compiler="1.1.2",
+            transformations="2.0.2",
+            rxjava_adapter="2.1.0",
+            gson_converter="2.1.0"
+
+//            //不成熟开源库，需经常检查升级版本
+//            aptCompilerVersion = "1.1.7",
+//            routerVersion = "1.2.2",
+//            easyRecyclerVersion = "4.4.0,",
+//            cookieVersion = "v1.0.1"
+
+
+    ]
+
+
+    dependencies = [
+            appcompatV7         : "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion",
+            design              : "com.android.support:design:$rootProject.supportLibraryVersion",
+            recycleview         : "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion",
+            support_v4: "com.android.support:support-v4:$rootProject.supportLibraryVersion",
+
+            glide               : "com.github.bumptech.glide:glide:$rootProject.glideVersion",
+            gson                : "com.google.code.gson:gson:$rootProject.gsonVersion",
+            logger              : "com.orhanobut:logger:$rootProject.loggerVersion",
+//            butterknife         : "com.jakewharton:butterknife:$rootProject.butterknife",
+//            butterknife_compiler: "com.jakewharton:butterknife-compiler:$rootProject.butterknife",
+            retrofit: "com.squareup.retrofit2:retrofit:$rootProject.retrofit",
+
+
+            rxjava_adapter: "com.squareup.retrofit2:adapter-rxjava:$rootProject.rxjava_adapter",
+            gson_converter: "com.squareup.retrofit2:converter-gson:$rootProject.gson_converter",
+
+            rxjava: "io.reactivex:rxjava:$rootProject.rxjava",
+            rxjava_android: "io.reactivex:rxandroid:$rootProject.rxjava_android",
+            rxlifecycle: "com.trello:rxlifecycle:$rootProject.rxlifecycle",
+            rxlifecycle_components: "com.trello:rxlifecycle-components:$rootProject.rxlifecycle_components",
+            dagger_compiler: "com.google.dagger:dagger-compiler:$rootProject.dagger_compiler",
+            dagger: "com.google.dagger:dagger:$rootProject.dagger",
+            greenDao:"org.greenrobot:greendao:$rootProject.greenDao",
+            transformations: "jp.wasabeef:glide-transformations:$rootProject.transformations",
+
+
+
+//路由通讯
+            arouter_api: "com.alibaba:arouter-api:$rootProject.arouter_api",
+            arouter_compiler: "com.alibaba:arouter-compiler:$rootProject.arouter_compiler"
+
+
+
+    ]
+}
