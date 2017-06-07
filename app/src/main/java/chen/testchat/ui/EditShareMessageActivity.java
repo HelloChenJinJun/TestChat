@@ -51,6 +51,7 @@ import chen.testchat.base.Constant;
 import chen.testchat.bean.HappyBean;
 import chen.testchat.bean.HappyContentBean;
 import chen.testchat.bean.ImageItem;
+import chen.testchat.bean.PictureBean;
 import chen.testchat.bean.SharedMessage;
 import chen.testchat.bean.WinXinBean;
 import chen.testchat.listener.OnBaseItemChildClickListener;
@@ -84,7 +85,6 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
 
         //        点击选择可以看该说说的用户
         private TextView visibility;
-        private RelativeLayout visibilityContainer;
         /**
          * 默认选择所有人可见
          */
@@ -103,13 +103,12 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
          */
         private String mPath;
         private String videoScreenshot;
-        private List<ImageItem> list;
         private boolean isVideo;
-        private RelativeLayout locationLayout;
         private List<String> addressList;
         private WinXinBean mWinXinBean;
         private HappyContentBean mHappyContentBean;
         private HappyBean mHappyBean;
+        private PictureBean mPictureBean;
         private ImageView urlAvatar;
         private TextView urlTitle;
         private CardView mCardView;
@@ -125,9 +124,9 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
                 location = (TextView) findViewById(R.id.tv_edit_share_message_location);
                 visibility = (TextView) findViewById(R.id.tv_edit_share_message_visibility);
                 display = (RecyclerView) findViewById(R.id.rcv_edit_share_message_display);
-                visibilityContainer = (RelativeLayout) findViewById(R.id.rl_edit_share_message_visibility_container);
+                RelativeLayout visibilityContainer = (RelativeLayout) findViewById(R.id.rl_edit_share_message_visibility_container);
                 video = (ImageView) findViewById(R.id.iv_edit_share_message_video);
-                locationLayout = (RelativeLayout) findViewById(R.id.rl_edit_share_message_location);
+                RelativeLayout locationLayout = (RelativeLayout) findViewById(R.id.rl_edit_share_message_location);
                 urlAvatar = (ImageView) findViewById(R.id.iv_edit_share_message_url_avatar);
                 urlTitle = (TextView) findViewById(R.id.tv_edit_share_message_url_title);
                 mCardView = (CardView) findViewById(R.id.cv_edit_share_message_url_container);
@@ -163,6 +162,10 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
                                         mHappyContentBean = (HappyContentBean) getIntent().getSerializableExtra("share_info");
                                         initHappyContentInfo();
                                         break;
+                                case "picture":
+                                        mPictureBean= (PictureBean) getIntent().getSerializableExtra("share_info");
+                                        initPictureContentInfo();
+                                        break;
                         }
                         return;
                 }
@@ -186,6 +189,8 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
                         }
                 }
         }
+
+
 
 
         @Override
@@ -282,6 +287,9 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
                                                 mHappyContentBean = (HappyContentBean) getIntent().getSerializableExtra("share_info");
                                                 initHappyContentInfo();
                                                 break;
+                                        case "picture":
+                                                mPictureBean= (PictureBean) getIntent().getSerializableExtra("share_info");
+                                                initPictureContentInfo();
                                 }
                         } else if (from.equals("image")) {
                                 display.setVisibility(View.VISIBLE);
@@ -378,6 +386,11 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
                 }
         }
 
+        private void initPictureContentInfo() {
+                Glide.with(this).load(mPictureBean.getUrl()).into(urlAvatar);
+                urlTitle.setText("一张美女图片");
+        }
+
         private void initHappyInfo() {
                 if (mHappyBean != null) {
                         urlTitle.setText(mHappyBean.getContent());
@@ -412,27 +425,18 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
                                         visibleType = Constant.SHARE_MESSAGE_VISIBLE_TYPE_PRIVATE;
                                 } else {
                                         visibleType = Constant.SHARE_MESSAGE_VISIBLE_TYPE_PUBLIC;
-                                        if (selectedVisibilityPosition == 1) {
-                                                if (selectedVisibleUsers == null) {
-                                                        selectedImageList=new ArrayList<>();
-                                                }else {
-                                                        selectedVisibleUsers.clear();
-                                                }
-                                                selectedVisibleUsers.addAll(UserCacheManager.getInstance().getContacts().keySet());
-                                        }
+//                                        if (selectedVisibilityPosition == 1) {
+//                                                if (selectedVisibleUsers == null) {
+//                                                        selectedVisibleUsers = new ArrayList<>();
+//                                                } else {
+//                                                        selectedVisibleUsers.clear();
+//                                                }
+//                                                selectedVisibleUsers.addAll(UserCacheManager.getInstance().getContacts().keySet());
+//                                        }
                                 }
-                                list = null;
-                                if (selectedImageList.size() > 1 && selectedImageList.size() < 8) {
-                                        list = new ArrayList<>(selectedImageList);
-                                        list.remove(list.size() - 1);
-                                } else if (selectedImageList.size() == 8) {
-                                        list = new ArrayList<>(selectedImageList);
-                                }
-//                                if (selectedImageList.size() > 0) {
-//                                        showLoadDialog("正在上传图片..........");
-//                                }
+
                                 showLoadDialog("正在发表说说..........");
-                                MsgManager.getInstance().createSharedMessage(mHappyBean, mHappyContentBean, mWinXinBean, location.getText().toString().trim(), mPath, videoScreenshot, edit.getText().toString().trim(), list, selectedVisibleUsers, visibleType, new OnCreateSharedMessageListener() {
+                                MsgManager.getInstance().createSharedMessage(mHappyBean, mHappyContentBean, mWinXinBean,mPictureBean,location.getText().toString().trim(), mPath, videoScreenshot, edit.getText().toString().trim(), selectedImageList, invisibleUsers, visibleType, new OnCreateSharedMessageListener() {
                                         @Override
                                         public void onSuccess(final SharedMessage message) {
                                                 mShareMessagePresenter.addShareMessage(message);
@@ -487,32 +491,24 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
                                                 }
                                                 if (selectedVisibilityPosition == 2) {
                                                         selectedVisibleUsers = data.getStringArrayListExtra(Constant.RESULT_CODE_SELECT_VISIBILITY);
-                                                } else if (selectedVisibilityPosition == 3) {
                                                         List<String> users = new ArrayList<>(UserCacheManager.getInstance().getContacts().keySet());
-                                                        List<String> copy = new ArrayList<>();
-                                                        copy.addAll(users);
-                                                        invisibleUsers = data.getStringArrayListExtra(Constant.RESULT_CODE_SELECT_VISIBILITY);
+                                                        if (invisibleUsers == null) {
+                                                                invisibleUsers = new ArrayList<>();
+                                                        }
                                                         for (String uid :
-                                                                invisibleUsers) {
-                                                                if (copy.contains(uid)) {
-                                                                        copy.remove(uid);
+                                                                selectedVisibleUsers) {
+                                                                if (!users.contains(uid)) {
+                                                                        invisibleUsers.add(uid);
                                                                 }
                                                         }
-                                                        LogUtil.e("原来的user" + users.size());
-                                                        LogUtil.e("不可见的用户" + invisibleUsers.size());
-                                                        LogUtil.e("经处理的用户user" + copy.size());
-                                                        if (users.size() == (invisibleUsers.size() + copy.size())) {
-                                                                LogUtil.e("处理成功");
-                                                                selectedVisibleUsers = copy;
-                                                        } else {
-                                                                LogUtil.e("处理失败");
-                                                        }
+                                                } else if (selectedVisibilityPosition == 3) {
+                                                        invisibleUsers = data.getStringArrayListExtra(Constant.RESULT_CODE_SELECT_VISIBILITY);
                                                 }
                                         }
                                         if (selectedVisibleUsers != null) {
                                                 for (String uid :
-                                                        selectedVisibleUsers) {
-                                                        LogUtil.e("选择的用户ID" + uid + "\n");
+                                                        invisibleUsers) {
+                                                        LogUtil.e("不可见用户ID" + uid + "\n");
                                                 }
                                         }
                                         updateBottomData();
@@ -546,21 +542,19 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
                                 }).setRightButton("确定", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
+                                                selectedVisibleUsers = null;
+                                                invisibleUsers = null;
                                                 dismissBaseDialog();
                                                 RadioGroup radioGroup = (RadioGroup) mBaseDialog.getMiddleLayout().findViewById(R.id.rg_select_visibility_container);
                                                 switch (radioGroup.getCheckedRadioButtonId()) {
                                                         case R.id.rb_visibility_private:
                                                                 selectedVisibilityPosition = 0;
                                                                 visibility.setText("仅对自己可见");
-                                                                selectedVisibleUsers = null;
-                                                                invisibleUsers = null;
                                                                 updateBottomData();
                                                                 break;
                                                         case R.id.rb_visibility_public:
                                                                 selectedVisibilityPosition = 1;
                                                                 visibility.setText("对所有人都可见");
-                                                                selectedVisibleUsers = null;
-                                                                invisibleUsers = null;
                                                                 updateBottomData();
                                                                 break;
                                                         case R.id.rb_visibility_part:
@@ -603,12 +597,11 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
                         case R.id.cv_edit_share_message_url_container:
                                 Intent happyContentIntent = new Intent(this, HappyContentDisplayActivity.class);
                                 if (getIntent().getStringExtra("type").equals("happy")) {
-                                        happyContentIntent.putExtra("destination", "happy");
-                                        happyContentIntent.putExtra("share_info", mHappyBean);
+                                        happyContentIntent.putExtra("content",mHappyBean.getContent());
+                                        happyContentIntent.putExtra("url",mHappyBean.getUrl());
                                         startActivity(happyContentIntent);
                                 } else if (getIntent().getStringExtra("type").equals("happy_content")) {
-                                        happyContentIntent.putExtra("destination", "happy_content");
-                                        happyContentIntent.putExtra("share_info", mHappyContentBean);
+                                        happyContentIntent.putExtra("content",mHappyContentBean.getContent());
                                         startActivity(happyContentIntent);
                                 } else {
                                         WeiXinNewsActivity.start(this, mWinXinBean.getTitle(), mWinXinBean.getUrl());
@@ -642,7 +635,7 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
                 if (shareMessage.getMsgType().equals(Constant.MSG_TYPE_SHARE_MESSAGE_IMAGE)) {
                         List<String> urlList = new ArrayList<>();
                         for (ImageItem imageItem :
-                                list) {
+                                selectedImageList) {
                                 urlList.add(imageItem.getPath());
                         }
                         MessageCacheManager.getInstance().saveShareMessageCache(shareMessage.getObjectId(), urlList);

@@ -8,9 +8,11 @@ import com.bumptech.glide.Glide;
 
 import org.pointstone.cugappplat.base.cusotomview.ToolBarOption;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import chen.testchat.R;
-import chen.testchat.bean.HappyBean;
-import chen.testchat.bean.HappyContentBean;
+import chen.testchat.bean.ImageItem;
 import chen.testchat.manager.UserCacheManager;
 
 /**
@@ -23,7 +25,8 @@ import chen.testchat.manager.UserCacheManager;
 public class HappyContentDisplayActivity extends SlideBaseActivity {
         private TextView content;
         private ImageView display;
-        private HappyBean mHappyBean;
+        private String textContent;
+        private String url;
 
 
         @Override
@@ -43,26 +46,32 @@ public class HappyContentDisplayActivity extends SlideBaseActivity {
 
         @Override
         public void initView() {
+                textContent=getIntent().getStringExtra("content");
+                url=getIntent().getStringExtra("url");
                 content = (TextView) findViewById(R.id.tv_happy_content_text_display);
-                display = (ImageView) findViewById(R.id.iv_happy_content_image_display);
-                display.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                                ImageDisplayActivity.start(HappyContentDisplayActivity.this, display, mHappyBean.getUrl());
-                        }
+                if (url != null) {
+                        display = (ImageView) findViewById(R.id.iv_happy_content_image_display);
+                        display.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                        List<ImageItem>  list=new ArrayList<>();
+                                        ImageItem imageItem =new ImageItem();
+                                        imageItem.setPath(url);
+                                        list.add(imageItem);
+                                        BasePreViewActivity.startBasePreview(HappyContentDisplayActivity.this,list,0);
+                                }
                 });
+        }
         }
 
 
         @Override
         public void initData() {
-                if (getIntent().getStringExtra("destination").equals("happy_content")) {
-                        HappyContentBean happyContentBean = (HappyContentBean) getIntent().getSerializableExtra("share_info");
-                        content.setText(happyContentBean.getContent());
-                } else if (getIntent().getStringExtra("destination").equals("happy")) {
-                        mHappyBean = (HappyBean) getIntent().getSerializableExtra("share_info");
-                        content.setText(mHappyBean.getContent());
-                        Glide.with(this).load(mHappyBean.getUrl())
+                if (textContent != null) {
+                        content.setText(textContent);
+                }
+                if (url != null) {
+                        Glide.with(this).load(url)
                                 .into(display);
                 }
                 initActionBar();

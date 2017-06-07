@@ -16,12 +16,14 @@ import java.util.List;
 import chen.testchat.R;
 import chen.testchat.adapter.HappyAdapter;
 import chen.testchat.bean.HappyBean;
+import chen.testchat.bean.ImageItem;
 import chen.testchat.db.ChatDB;
 import chen.testchat.listener.OnBaseItemChildClickListener;
 import chen.testchat.mvp.HappyInfoTask.HappyContacts;
 import chen.testchat.mvp.HappyInfoTask.HappyInfoModel;
 import chen.testchat.mvp.HappyInfoTask.HappyPresenter;
-import chen.testchat.ui.ImageDisplayActivity;
+import chen.testchat.ui.BasePreViewActivity;
+import chen.testchat.ui.EditShareMessageActivity;
 import chen.testchat.view.ListViewDecoration;
 
 /**
@@ -82,17 +84,27 @@ public class HappyFragment extends org.pointstone.cugappplat.base.basemvp.BaseFr
                         @Override
                         protected void onItemChildClick(BaseWrappedViewHolder baseWrappedViewHolder, int id, View view, int position) {
                                 HappyBean happyBean = mHappyAdapter.getData(position);
+
                                 if (id == R.id.iv_fragment_happy_item_picture) {
+                                        List<ImageItem> list=new ArrayList<>();
+                                        for (HappyBean bean :
+                                                mHappyAdapter.getAllData()) {
+                                                ImageItem imageItem = new ImageItem();
+                                                imageItem.setPath(bean.getUrl());
+                                                list.add(imageItem);
+                                        }
                                         ChatDB.create().updateHappyInfoReaded(happyBean.getUrl(), 1);
-                                        ImageDisplayActivity.start(getActivity(), view, happyBean.getUrl());
+                                        BasePreViewActivity.startBasePreview(getActivity(),list,position);
+//                                        ImageDisplayActivity.start(getActivity(), view, happyBean.getUrl());
                                 } else if (id == R.id.iv_fragment_happy_item_share) {
-                                        Intent intent = new Intent(Intent.ACTION_SEND);
+                                        Intent intent = new Intent(getActivity(), EditShareMessageActivity.class);
+                                        intent.setAction(Intent.ACTION_SEND);
                                         intent.putExtra(Intent.EXTRA_TEXT, happyBean.getContent() + " " + happyBean.getUrl());
                                         intent.putExtra("share_info", happyBean);
                                         intent.putExtra("type", "happy");
                                         intent.putExtra("destination", "url");
                                         intent.setType("text/plain");
-                                        startActivity(Intent.createChooser(intent, "分享到"));
+                                        startActivity(intent);
                                 }
                         }
                 });

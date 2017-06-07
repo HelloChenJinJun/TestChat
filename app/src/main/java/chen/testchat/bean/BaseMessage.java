@@ -169,4 +169,14 @@ public class BaseMessage extends BmobObject implements MultipleItem {
                         }
                 }
         }
+
+
+        @Override
+        public boolean equals(Object obj) {
+                if (obj instanceof BaseMessage) {
+                        BaseMessage baseMessage = (BaseMessage) obj;
+                        return baseMessage.getCreateTime().equals(getCreateTime()) && baseMessage.getBelongId().equals(getBelongId());
+                }
+                return false;
+        }
 }

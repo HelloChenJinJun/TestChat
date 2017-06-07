@@ -81,8 +81,43 @@ public class CommentListView extends LinearLayout {
                 }
                 params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 for (int i = 0; i < list.size(); i++) {
-                        addView(getView(list.get(i), i), params);
+                        if (isFriendComment(list.get(i))) {
+                                addView(getView(list.get(i), i), params);
+                        }
                 }
+        }
+
+        private boolean isFriendComment(String commentMsg) {
+                final List<String> list = CommonUtils.content2List(commentMsg);
+                LogUtil.e("内容" + commentMsg);
+                User user = null;
+                if (list != null) {
+//                        User replyUser = null;
+                        if (list.size() == 3) {
+                                LogUtil.e("是回复评论");
+                                String uid = list.get(0);
+                                if (uid.equals(UserManager.getInstance().getCurrentUserObjectId())) {
+                                        user = UserManager.getInstance().getCurrentUser();
+                                } else {
+                                        user = UserCacheManager.getInstance().getUser(uid);
+                                }
+//                                String replyUid = list.get(1);
+//                                if (replyUid.equals(UserManager.getInstance().getCurrentUserObjectId())) {
+//                                        replyUser = UserManager.getInstance().getCurrentUser();
+//                                } else {
+//                                        replyUser = UserCacheManager.getInstance().getUser(replyUid);
+//                                }
+                        } else if (list.size() == 2) {
+                                LogUtil.e("单一评论");
+                                String uid = list.get(0);
+                                if (uid.equals(UserManager.getInstance().getCurrentUserObjectId())) {
+                                        user = UserManager.getInstance().getCurrentUser();
+                                } else {
+                                        user = UserCacheManager.getInstance().getUser(uid);
+                                }
+                        }
+                }
+                return user!=null;
         }
 
 
@@ -121,41 +156,44 @@ public class CommentListView extends LinearLayout {
                                         user = UserCacheManager.getInstance().getUser(uid);
                                 }
                         }
-                        String name = user.getNick() != null && !user.getNick().equals("") ? user.getNick() : user.getUsername();
-                        spannableStringBuilder.append(getClickableSpan(name, user.getObjectId()));
-                        if (replyUser != null) {
-                                LogUtil.e("该评论是回复评论");
-                                spannableStringBuilder.append(" 回复 ");
-                                String replyName = replyUser.getNick() != null && !replyUser.getNick().equals("") ? replyUser.getNick() : replyUser.getUsername();
-                                spannableStringBuilder.append(getClickableSpan(replyName, replyUser.getObjectId()));
+//                        这里得到的用户有可能为空，因为好友的好友我有可能没加,所有不添加，只有好友的评论才可见，非好友评论不可见
+                        if (user != null) {
+                                String name = user.getNick() != null && !user.getNick().equals("") ? user.getNick() : user.getUsername();
+                                spannableStringBuilder.append(getClickableSpan(name, user.getObjectId()));
+                                if (replyUser != null) {
+                                        LogUtil.e("该评论是回复评论");
+                                        spannableStringBuilder.append(" 回复 ");
+                                        String replyName = replyUser.getNick() != null && !replyUser.getNick().equals("") ? replyUser.getNick() : replyUser.getUsername();
+                                        spannableStringBuilder.append(getClickableSpan(replyName, replyUser.getObjectId()));
+                                }
+                                spannableStringBuilder.append("：");
+                                spannableStringBuilder.append(FaceTextUtil.toSpannableString(getContext(), list.get(list.size() - 1)));
+                                textView.setMovementMethod(customMoveMethod = new CustomMoveMethod(selectedColor, defaultColor));
+                                textView.setOnClickListener(new OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                                if (customMoveMethod.isClickTextView()) {
+                                                        if (mCommentItemClickListener != null) {
+                                                                mCommentItemClickListener.onCommentItemClick(v, position, CommonUtils.content2List(commentMessage).get(0));
+                                                        }
+                                                }
+                                        }
+                                });
+                                textView.setOnLongClickListener(new OnLongClickListener() {
+                                        @Override
+                                        public boolean onLongClick(View v) {
+                                                if (customMoveMethod.isClickTextView()) {
+                                                        v.setBackgroundColor(Color.parseColor("#00000000"));
+                                                        if (mCommentItemClickListener != null) {
+                                                                mCommentItemClickListener.onCommentItemLongClick(position);
+                                                        }
+                                                        return true;
+                                                }
+                                                return false;
+                                        }
+                                });
+                                textView.setText(spannableStringBuilder);
                         }
-                        spannableStringBuilder.append("：");
-                        spannableStringBuilder.append(FaceTextUtil.toSpannableString(getContext(), list.get(list.size() - 1)));
-                        textView.setMovementMethod(customMoveMethod = new CustomMoveMethod(selectedColor, defaultColor));
-                        textView.setOnClickListener(new OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                        if (customMoveMethod.isClickTextView()) {
-                                                if (mCommentItemClickListener != null) {
-                                                        mCommentItemClickListener.onCommentItemClick(v, position, CommonUtils.content2List(commentMessage).get(0));
-                                                }
-                                        }
-                                }
-                        });
-                        textView.setOnLongClickListener(new OnLongClickListener() {
-                                @Override
-                                public boolean onLongClick(View v) {
-                                        if (customMoveMethod.isClickTextView()) {
-                                                v.setBackgroundColor(Color.parseColor("#00000000"));
-                                                if (mCommentItemClickListener != null) {
-                                                        mCommentItemClickListener.onCommentItemLongClick(position);
-                                                }
-                                                return true;
-                                        }
-                                        return false;
-                                }
-                        });
-                        textView.setText(spannableStringBuilder);
                 }
                 return textView;
         }

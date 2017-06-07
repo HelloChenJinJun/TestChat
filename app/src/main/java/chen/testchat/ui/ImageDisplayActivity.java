@@ -7,26 +7,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-
-import org.pointstone.cugappplat.util.ToastUtils;
-
-import java.io.File;
 
 import chen.testchat.R;
 import chen.testchat.listener.OnDownLoadFileListener;
 import chen.testchat.manager.DownLoadManager;
 import chen.testchat.util.LogUtil;
 import chen.testchat.view.CircleLoadView;
-import chen.testchat.view.ZoomImageView;
 import cn.bmob.v3.exception.BmobException;
 import mabeijianxi.camera.MediaRecorderBase;
 import mabeijianxi.camera.util.DeviceUtils;
@@ -46,11 +33,11 @@ import static mabeijianxi.camera.util.DeviceUtils.getScreenWidth;
  * 图片展示类
  */
 public class ImageDisplayActivity extends SlideBaseActivity implements MediaPlayer.OnPreparedListener, SurfaceVideoView.OnPlayStateListener, MediaPlayer.OnErrorListener, View.OnClickListener, MediaPlayer.OnInfoListener, MediaPlayer.OnCompletionListener {
-        private ZoomImageView display;
+//        private ZoomImageView display;
         private CircleLoadView mCircleLoadView;
         private SurfaceVideoView mSurfaceVideoView;
         private boolean mNeedResume;
-        private ProgressBar load;
+//        private ProgressBar load;
         //        private ImageDisplayRecyclerView imageDisplay;
 //        private LinearLayoutManager mLinearLayoutManager;
 
@@ -62,17 +49,17 @@ public class ImageDisplayActivity extends SlideBaseActivity implements MediaPlay
 //                display = (ZoomImageView) findViewById(R.id.iv_image_display);
                 mCircleLoadView = (CircleLoadView) findViewById(R.id.clv_image_display_loading);
                 mSurfaceVideoView = (SurfaceVideoView) findViewById(R.id.svv_image_display_video);
-                load = (ProgressBar) findViewById(R.id.pb_image_display_load);
+//                load = (ProgressBar) findViewById(R.id.pb_image_display_load);
 //                imageDisplay = (ImageDisplayRecyclerView) findViewById(R.id.image_display_show);
                 int screenWidth = getScreenWidth(this);
                 mSurfaceVideoView.getLayoutParams().height = (int) (screenWidth / (MediaRecorderBase.SMALL_VIDEO_WIDTH / (MediaRecorderBase.SMALL_VIDEO_HEIGHT * 1.0f)));
-                display.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-                                LogUtil.e("长按暂时无操作");
-                                return true;
-                        }
-                });
+//                display.setOnLongClickListener(new View.OnLongClickListener() {
+//                        @Override
+//                        public boolean onLongClick(View v) {
+//                                LogUtil.e("长按暂时无操作");
+//                                return true;
+//                        }
+//                });
                 mSurfaceVideoView.setOnPreparedListener(this);
                 mSurfaceVideoView.setOnPlayStateListener(this);
                 mSurfaceVideoView.setOnErrorListener(this);
@@ -104,28 +91,29 @@ public class ImageDisplayActivity extends SlideBaseActivity implements MediaPlay
         @Override
         public void initData() {
 //                ViewCompat.setTransitionName(display, getIntent().getStringExtra("name"));
-                String url = getIntent().getStringExtra("url");
+//                String url = getIntent().getStringExtra("url");
                 initVideo();
-                if (url.endsWith(".gif")) {
-                        LogUtil.e("是gif图片");
-                        load.setVisibility(View.VISIBLE);
-                        Glide.with(this).load(url).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).thumbnail(0.1f).listener(new ImageRequestListener()).into(display);
-                } else if (getIntent().getStringExtra("videoUrl") == null) {
-                        LogUtil.e("1展示图片" + url);
-                        File file = new File(url);
-                        if (file.exists()) {
-//                                Picasso.with(this).load(file).into(display);
-                                Glide.with(this).load(file).asBitmap().placeholder(R.drawable.wallpaper1)
-                                        .error(R.drawable.wallpaper1).format(DecodeFormat.PREFER_ARGB_8888)
-                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                        .into(display);
-                        } else {
-                                Glide.with(this).load(url).asBitmap().placeholder(R.drawable.wallpaper1)
-                                        .error(R.drawable.wallpaper1).format(DecodeFormat.PREFER_ARGB_8888)
-                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                        .into(display);
-                        }
-                }
+//                if (url.endsWith(".gif")) {
+//                        LogUtil.e("是gif图片");
+//                        load.setVisibility(View.VISIBLE);
+//                        Glide.with(this).load(url).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).thumbnail(0.1f).listener(new ImageRequestListener()).into(display);
+//                }
+//                else if (getIntent().getStringExtra("videoUrl") == null) {
+//                        LogUtil.e("1展示图片" + url);
+//                        File file = new File(url);
+//                        if (file.exists()) {
+////                                Picasso.with(this).load(file).into(display);
+//                                Glide.with(this).load(file).asBitmap().placeholder(R.drawable.wallpaper1)
+//                                        .error(R.drawable.wallpaper1).format(DecodeFormat.PREFER_ARGB_8888)
+//                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                                        .into(display);
+//                        } else {
+//                                Glide.with(this).load(url).asBitmap().placeholder(R.drawable.wallpaper1)
+//                                        .error(R.drawable.wallpaper1).format(DecodeFormat.PREFER_ARGB_8888)
+//                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                                        .into(display);
+//                        }
+//                }
         }
 
         private void initVideo() {
@@ -175,21 +163,21 @@ public class ImageDisplayActivity extends SlideBaseActivity implements MediaPlay
 
 
 
-        private class ImageRequestListener implements RequestListener<String, GifDrawable> {
-
-                @Override
-                public boolean onException(Exception e, String model, Target<GifDrawable> target, boolean isFirstResource) {
-                        load.setVisibility(View.GONE);
-                        ToastUtils.showShortToast("加载图片失败");
-                        return false;
-                }
-
-                @Override
-                public boolean onResourceReady(GifDrawable resource, String model, Target<GifDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        load.setVisibility(View.GONE);
-                        return false;
-                }
-        }
+//        private class ImageRequestListener implements RequestListener<String, GifDrawable> {
+//
+//                @Override
+//                public boolean onException(Exception e, String model, Target<GifDrawable> target, boolean isFirstResource) {
+//                        load.setVisibility(View.GONE);
+//                        ToastUtils.showShortToast("加载图片失败");
+//                        return false;
+//                }
+//
+//                @Override
+//                public boolean onResourceReady(GifDrawable resource, String model, Target<GifDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+//                        load.setVisibility(View.GONE);
+//                        return false;
+//                }
+//        }
 
 
         @Override

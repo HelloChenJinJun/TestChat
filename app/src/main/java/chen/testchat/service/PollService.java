@@ -126,7 +126,7 @@ public class PollService extends Service {
                 if (lastGroupMessageTime.equals("0000-00-00 01:00:00")) {
                         LogUtil.e("第一次检测群结构消息，不设条件");
                 } else {
-                        LogUtil.e("不是第一次检测消息");
+                        LogUtil.e("1不是第一次检测消息");
                         groupTableQuery.addWhereEqualTo("readStatus", Constant.READ_STATUS_UNREAD);
                         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         try {
@@ -230,12 +230,9 @@ public class PollService extends Service {
                                                 if (message.getVisibleType().equals(Constant.SHARE_MESSAGE_VISIBLE_TYPE_PRIVATE)) {
                                                         result.remove(message);
                                                 }else {
-                                                        if (!message.getVisibleUserList().contains(UserManager.getInstance().getCurrentUserObjectId())) {
+                                                        if (message.getInVisibleUserList().contains(UserManager.getInstance().getCurrentUserObjectId())) {
                                                                 result.remove(message);
                                                         }
-                                                }
-                                                if (message.getVisibleUserList() == null || !message.getVisibleUserList().contains(UserManager.getInstance().getCurrentUserObjectId())) {
-                                                        result.remove(message);
                                                 }
                                         }
                                         LogUtil.e("筛选可见后的说说列表");

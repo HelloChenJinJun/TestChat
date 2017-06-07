@@ -96,6 +96,7 @@ public class LoginActivity extends org.pointstone.cugappplat.base.basemvp.BaseAc
         public void initData() {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
+
                         public void run() {
                                 Animation animation = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.translate_anim);
                                 bg.startAnimation(animation);
@@ -254,6 +255,7 @@ public class LoginActivity extends org.pointstone.cugappplat.base.basemvp.BaseAc
                                                                                                                   if (i!=101) {
                                                                                                                           ToastUtils.showShortToast("登录失败，请重新登录");
                                                                                                                   }else {
+//                                                                                                                          这是群结构消息未创建的错误
                                                                                                                           runOnUiThread(new Runnable() {
                                                                                                                                   @Override
                                                                                                                                   public void run() {

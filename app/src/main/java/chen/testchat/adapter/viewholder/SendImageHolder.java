@@ -2,8 +2,6 @@ package chen.testchat.adapter.viewholder;
 
 import android.view.View;
 
-import java.io.File;
-
 import chen.testchat.R;
 import chen.testchat.adapter.ChatMessageAdapter;
 import chen.testchat.base.Constant;
@@ -42,7 +40,7 @@ public class SendImageHolder extends BaseChatHolder {
                 }
                 LogUtil.e("imageUrl:" + imageUrl);
                 LogUtil.e("这里不设置图片");
-                setImageUrl(R.id.iv_chat_send_image_item_picture, new File(imageUrl));
+                setImageUrl(R.id.iv_chat_send_image_item_picture, imageUrl);
                 LogUtil.e("这里图片内容");
                 int sendStatus = baseMessage.getSendStatus();
                 int readStatus = baseMessage.getReadStatus();

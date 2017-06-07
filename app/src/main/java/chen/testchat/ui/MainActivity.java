@@ -58,9 +58,9 @@ import chen.testchat.listener.OnBaseItemClickListener;
 import chen.testchat.listener.OnDragDeltaChangeListener;
 import chen.testchat.listener.OnMessageReceiveListener;
 import chen.testchat.listener.OnNetWorkChangedListener;
-import chen.testchat.listener.OnReceiveGroupTableListener;
 import chen.testchat.manager.ChatNotificationManager;
 import chen.testchat.manager.LocationManager;
+import chen.testchat.manager.MessageCacheManager;
 import chen.testchat.manager.MsgManager;
 import chen.testchat.manager.UserCacheManager;
 import chen.testchat.manager.UserManager;
@@ -237,14 +237,16 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
 
         private void initUserInfo() {
                 user = UserCacheManager.getInstance().getUser();
-                Glide.with(this).load(user.getAvatar()).centerCrop()
-                        .into(avatar);
-                nick.setText(user.getNick());
-                updateMenuBg();
-                if (user.getSignature() == null) {
-                        signature.setText("^_^设置属于你的个性签名吧^_^");
-                } else {
-                        signature.setText(user.getSignature());
+                if (user!=null) {
+                        Glide.with(this).load(user.getAvatar()).centerCrop()
+                                .into(avatar);
+                        nick.setText(user.getNick());
+                        updateMenuBg();
+                        if (user.getSignature() == null) {
+                                signature.setText("^_^1设置属于你的个性签名吧^_^");
+                        } else {
+                                signature.setText(user.getSignature());
+                        }
                 }
         }
 
@@ -297,7 +299,9 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
                 ToolBarOption toolBarOption = new ToolBarOption();
                 toolBarOption.setTitle(title);
                 toolBarOption.setNeedNavigation(false);
-                toolBarOption.setAvatar(user.getAvatar());
+                if (user != null) {
+                        toolBarOption.setAvatar(user.getAvatar());
+                }
                 setToolBar(toolBarOption);
         }
 
@@ -392,8 +396,6 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
         @Override
         public void OnNetWorkChanged(boolean isConnected, int type) {
                 if (isConnected) {
-
-
 //                        这里判断网络的连接类型
                         if (type == ConnectivityManager.TYPE_WIFI) {
                                 LogUtil.e("wife类型的1");
@@ -412,13 +414,6 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
                         net.setVisibility(View.VISIBLE);
                 }
         }
-
-//        public void notifyAddMessageCome() {
-//                if (currentFragment instanceof RecentFragment) {
-//                        ((RecentFragment) currentFragment).onRefresh();
-//                }
-//                notifyMenuUpdate();
-//        }
 
 
         private void startSearchLiveWeather() {
@@ -478,8 +473,9 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
         }
 
         public void notifyContactAndRecent(ChatMessage chatMessage) {
-                LogUtil.e("notifyContactAndRecent");
-                onNewChatMessageCome(chatMessage);
+                LogUtil.e("11222notifyContactAndRecent");
+                ((RecentFragment) mFragments[0]).updateRecentData(chatMessage.getToId());
+                notifyMenuUpdate();
                 updateContactsData(chatMessage.getToId());
         }
 
@@ -514,41 +510,30 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
                                         for (GroupTableMessage message :
                                                 list) {
                                                 LogUtil.e(message);
-//                                                这里要判断下，获取得到的群结构消息之前是否已经获取得到了群主的群结构消息
+                                                message.setReadStatus(Constant.READ_STATUS_READED);
+                                                message.setSendStatus(Constant.SEND_STATUS_SUCCESS);
+                                                MessageCacheManager.getInstance().addGroupTableMessage(message);
+                                                MsgManager.getInstance().updateGroupTableMessageReaded(message,null);
+                                                ChatDB.create().saveGroupTableMessage(message);
                                                 onGroupTableMessageCome(message);
-                                                MsgManager.getInstance().updateGroupTableMessageReaded(message.getGroupId(), UserCacheManager.getInstance().getUser().getObjectId(), new OnReceiveGroupTableListener() {
+                                                MsgManager.getInstance().queryGroupChatMessage(message.getGroupId(), new FindListener<GroupChatMessage>() {
                                                         @Override
-                                                        public void onSuccess(GroupTableMessage message) {
-                                                                LogUtil.e("处理检测过来的群结构消息成功");
-//                                                                这里拉取最近的群消息
-                                                                MsgManager.getInstance().queryGroupChatMessage(message.getGroupId(), new FindListener<GroupChatMessage>() {
-                                                                        @Override
-                                                                        public void onSuccess(List<GroupChatMessage> list) {
-                                                                                LogUtil.e("拉去得到的最近的群聊消息如下");
-                                                                                for (GroupChatMessage groupChatMessage
-                                                                                        : list
-                                                                                        ) {
-                                                                                        LogUtil.e(groupChatMessage);
-                                                                                        groupChatMessage.setReadStatus(Constant.RECEIVE_UNREAD);
-                                                                                        if (MsgManager.getInstance().saveRecentAndChatGroupMessage(groupChatMessage)) {
-                                                                                                onNewGroupChatMessageCome(groupChatMessage);
-                                                                                        }
-                                                                                }
+                                                        public void onSuccess(List<GroupChatMessage> list) {
+                                                                LogUtil.e("拉去得到的最近的群聊消息如下");
+                                                                for (GroupChatMessage groupChatMessage
+                                                                        : list
+                                                                        ) {
+                                                                        LogUtil.e(groupChatMessage);
+                                                                        groupChatMessage.setReadStatus(Constant.RECEIVE_UNREAD);
+                                                                        if (MsgManager.getInstance().saveRecentAndChatGroupMessage(groupChatMessage)) {
+                                                                                onNewGroupChatMessageCome(groupChatMessage);
                                                                         }
-
-                                                                        @Override
-                                                                        public void onError(int i, String s) {
-                                                                                LogUtil.e("拉取最近的群消息失败" + s + i);
-                                                                        }
-                                                                });
-//                                                                ChatDB.create().saveGroupTableMessage(message);
-//                                                                MessageCacheManager.getInstance().addGroupTableMessage(message);
-//                                                                onGroupTableMessageCome(message);
+                                                                }
                                                         }
 
                                                         @Override
-                                                        public void onFailed(int i, String errorMsg) {
-                                                                LogUtil.e("处理检测过来的群结构消息失败");
+                                                        public void onError(int i, String s) {
+                                                                LogUtil.e("拉取最近的群消息失败" + s + i);
                                                         }
                                                 });
                                         }
@@ -702,15 +687,14 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
                 if (container.getCurrentState() == DragLayout.DRAG_STATE_OPEN) {
                         container.closeMenu();
                 }
-
         }
 
         @Override
         public void onNewChatMessageCome(ChatMessage message) {
-                LogUtil.e("11新消息啦啦啦");
+                LogUtil.e("211新消息啦啦啦");
                 LogUtil.e(message);
-
                 if (mFragments[0].isAdded()) {
+
                         ((RecentFragment) mFragments[0]).updateRecentData(message.getBelongId());
                         if (currentFragment instanceof RecentFragment) {
                         } else {
@@ -771,15 +755,6 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
         @Override
         public void onAgreeMessageCome(ChatMessage chatMessage) {
                 LogUtil.e("onAgreeMessageCome");
-//                同意消息要在最近会话界面显示
-//                if (currentFragment instanceof RecentFragment) {
-//                        ((RecentFragment) currentFragment).updateRecentData(chatMessage);
-//                } else if (currentFragment instanceof ContactsFragment) {
-//                        menuAdapter.notifyDataSetChanged();
-//                        ((ContactsFragment) currentFragment).updateContactsData(chatMessage.getBelongId());
-//                } else {
-//                        menuAdapter.notifyDataSetChanged();
-//                }
                 LogUtil.e("同意消息格式");
                 LogUtil.e(chatMessage);
                 onNewChatMessageCome(chatMessage);
@@ -797,6 +772,7 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
                 } else {
                         addOrReplaceFragment(mFragments[1]);
                 }
+                ((RecentFragment) mFragments[0]).notifyUserAdd(id);
 
         }
 

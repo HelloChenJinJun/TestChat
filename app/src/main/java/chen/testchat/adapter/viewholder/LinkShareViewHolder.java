@@ -28,14 +28,14 @@ public class LinkShareViewHolder extends BaseShareMessageViewHolder {
 
         public void bindData(final SharedMessage sharedMessage, final OnShareMessageItemClickListener listener) {
                 //                初始化链接的主要部分数据
-                setVisible(R.id.tv_share_fragment_item_main_link_title,true);
-                if (sharedMessage.getUrlList() == null) {
-                        setText(R.id.tv_share_fragment_item_main_link_title, "分享一个精选笑话");
-                        setVisible(R.id.iv_share_fragment_item_link_avatar, false);
-                } else {
-                        setVisible(R.id.iv_share_fragment_item_link_avatar, true)
-                       .setImageUrl(R.id.iv_share_fragment_item_link_avatar,sharedMessage.getUrlList().get(0))
-                        .setOnClickListener(R.id.ll_share_fragment_item_container, new View.OnClickListener() {
+                if (sharedMessage.getUrlTitle() == null) {
+                        setVisible(R.id.tv_share_fragment_item_link_title,false);
+                }else {
+                        setVisible(R.id.tv_share_fragment_item_link_title,true)
+                                .setText(R.id.tv_share_fragment_item_link_title,sharedMessage.getUrlTitle());
+                }
+                setVisible(R.id.tv_share_fragment_item_main_link_title,true)
+                .setOnClickListener(R.id.ll_share_fragment_item_container, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                         if (listener != null) {
@@ -43,8 +43,18 @@ public class LinkShareViewHolder extends BaseShareMessageViewHolder {
                                         }
                                 }
                         });
+                if (sharedMessage.getUrlList().size()==0) {
+                        setText(R.id.tv_share_fragment_item_main_link_title, "分享一个精选笑话");
+                        setVisible(R.id.iv_share_fragment_item_link_avatar, false);
+                } else {
+                        setVisible(R.id.iv_share_fragment_item_link_avatar, true)
+                       .setImageUrl(R.id.iv_share_fragment_item_link_avatar,sharedMessage.getUrlList().get(0));
                         if (sharedMessage.getUrlList().size() == 1) {
-                                setText(R.id.tv_share_fragment_item_main_link_title, "分享一个精选趣图");
+                                if (sharedMessage.getUrlTitle() == null) {
+                                        setText(R.id.tv_share_fragment_item_main_link_title, "分享一个美女图片");
+                                }else {
+                                        setText(R.id.tv_share_fragment_item_main_link_title, "分享一个精选趣图");
+                                }
                         } else {
                                 setText(R.id.tv_share_fragment_item_main_link_title, "分享一个精选微信");
                         }

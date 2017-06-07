@@ -79,6 +79,7 @@
             android:id="@+id/riv_user_detail_avatar"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:scaleType="centerCrop"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:src="@drawable/head"

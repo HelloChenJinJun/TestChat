@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,15 @@ public class ImagePageAdapter extends PagerAdapter {
                         }
                 });
                 ImageItem imageItem = data.get(position);
-                Glide.with(mContext).load(imageItem.getPath()).override(screenWidth, screenHeight).into(photoView);
+                String url=imageItem.getPath();
+                if (url.endsWith(".gif")) {
+
+                        LogUtil.e("是gif图片12356");
+                                                Glide.with(mContext).load(url).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).override(screenWidth, screenHeight).thumbnail(0.1f).into(photoView);
+//                        Glide.with(mContext).load(url).asGif().override(screenWidth, screenHeight).into(photoView);
+                }else {
+                        Glide.with(mContext).load(url).override(screenWidth, screenHeight).into(photoView);
+                }
 //                mCommonImageLoader.getImageLoader().displayImage(mContext, imageItem.getPath(), photoView, screenWidth, screenHeight);
                 container.addView(photoView);
                 return photoView;

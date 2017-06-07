@@ -23,6 +23,7 @@ import chen.testchat.bean.GroupTableMessage;
 import chen.testchat.bean.HappyBean;
 import chen.testchat.bean.HappyContentBean;
 import chen.testchat.bean.ImageItem;
+import chen.testchat.bean.PictureBean;
 import chen.testchat.bean.RecentMsg;
 import chen.testchat.bean.SharedMessage;
 import chen.testchat.bean.User;
@@ -35,7 +36,6 @@ import chen.testchat.listener.DealMessageCallBack;
 import chen.testchat.listener.DealUserInfoCallBack;
 import chen.testchat.listener.LoadShareMessageCallBack;
 import chen.testchat.listener.OnCreateSharedMessageListener;
-import chen.testchat.listener.OnReceiveGroupTableListener;
 import chen.testchat.listener.OnReceiveListener;
 import chen.testchat.listener.OnSendMessageListener;
 import chen.testchat.listener.OnSendPushMessageListener;
@@ -115,6 +115,7 @@ public class MsgManager {
                                                         recentMsg.setBelongId(list.get(0).getObjectId());
                                                         recentMsg.setName(list.get(0).getUsername());
                                                         recentMsg.setTime(msg.getCreateTime());
+                                                        LogUtil.e(recentMsg);
                                                         LogUtil.e("保存同意消息到最近会话列表中");
                                                         ChatDB.create().saveRecentMessage(recentMsg);
                                                         LogUtil.e("保存同意消息到聊天消息表中");
@@ -949,7 +950,7 @@ public class MsgManager {
                 recentMsg.setAvatar(message.getGroupAvatar());
                 recentMsg.setLastMsgContent(groupChatMessage.getContent());
 //                                                到时候再设置群昵称
-                recentMsg.setNick(message.getGroupName());
+//                recentMsg.setNick(message.getGroupName());
                 return recentMsg;
         }
 
@@ -1639,57 +1640,56 @@ public class MsgManager {
         }
 
 
-        /**
-         * 更新某用户的群结构表的已读状态
-         *
-         * @param groupId 群ID
-         * @param toId    接受用户ID
-         */
-        public void updateGroupTableMessageReaded(String groupId, final String toId, final OnReceiveGroupTableListener listener) {
-                queryGroupTableMessage(groupId, toId, new FindListener<GroupTableMessage>() {
-                                @Override
-                                public void onSuccess(List<GroupTableMessage> list) {
-                                        if (list != null && list.size() > 0) {
-                                                final GroupTableMessage message = list.get(0);
-                                                message.setReadStatus(Constant.READ_STATUS_READED);
-                                                message.setSendStatus(Constant.SEND_STATUS_SUCCESS);
-                                                message.update(CustomApplication.getInstance(), new UpdateListener() {
-                                                                @Override
-                                                                public void onSuccess() {
-                                                                        LogUtil.e("更新群结构表成功");
-                                                                        ChatDB.create().saveGroupTableMessage(message);
-                                                                        MessageCacheManager.getInstance().addGroupTableMessage(message);
-                                                                        listener.onSuccess(message);
-                                                                }
 
-                                                                @Override
-                                                                public void onFailure(int i, String s) {
-                                                                        LogUtil.e("更新群结构表失败");
-                                                                        listener.onFailed(i, s);
-                                                                }
-                                                        }
-                                                );
-                                        } else {
-                                                LogUtil.e("这种情况出现可能是，由于推送比较即时，由于还没上传个人的群结构消息到服务器上的时候就已经推送消息到了");
-                                                listener.onFailed(0, "推送太快");
-                                        }
-                                }
-
-                                @Override
-                                public void onError(int i, String s) {
-                                        LogUtil.e("在服务器上查询该用户群结构表失败" + s + i);
-                                        listener.onFailed(i, s);
-                                }
-                        }
-                );
+        public void updateGroupTableMessageReaded(GroupTableMessage message, UpdateListener listener) {
+                message.update(CustomApplication.getInstance(),listener);
+//                queryGroupTableMessage(groupId, toId, new FindListener<GroupTableMessage>() {
+//                                @Override
+//                                public void onSuccess(List<GroupTableMessage> list) {
+//                                        if (list != null && list.size() > 0) {
+//                                                final GroupTableMessage message = list.get(0);
+//                                                message.setReadStatus(Constant.READ_STATUS_READED);
+//                                                message.setSendStatus(Constant.SEND_STATUS_SUCCESS);
+//                                                message.update(CustomApplication.getInstance(), new UpdateListener() {
+//                                                                @Override
+//                                                                public void onSuccess() {
+//
+////                                                                        这里更新后立即实时监听到群结构消息
+//
+//                                                                        LogUtil.e("更新群结构表成功");
+//                                                                        ChatDB.create().saveGroupTableMessage(message);
+//                                                                        MessageCacheManager.getInstance().addGroupTableMessage(message);
+//                                                                        listener.onSuccess(message);
+//                                                                }
+//
+//                                                                @Override
+//                                                                public void onFailure(int i, String s) {
+//                                                                        LogUtil.e("更新群结构表失败");
+//                                                                        listener.onFailed(i, s);
+//                                                                }
+//                                                        }
+//                                                );
+//                                        } else {
+//                                                LogUtil.e("这种情况出现可能是，由于推送比较即时，由于还没上传个人的群结构消息到服务器上的时候就已经推送消息到了");
+//                                                listener.onFailed(0, "推送太快");
+//                                        }
+//                                }
+//
+//                                @Override
+//                                public void onError(int i, String s) {
+//                                        LogUtil.e("在服务器上查询该用户群结构表失败" + s + i);
+//                                        listener.onFailed(i, s);
+//                                }
+//                        }
+//                );
         }
 
-        private void queryGroupTableMessage(String groupId, String toId, FindListener<GroupTableMessage> findListener) {
-                BmobQuery<GroupTableMessage> query = new BmobQuery<>();
-                query.addWhereEqualTo(Constant.GROUP_ID, groupId);
-                query.addWhereEqualTo(Constant.TAG_TO_ID, toId);
-                query.findObjects(CustomApplication.getInstance(), findListener);
-        }
+//        private void queryGroupTableMessage(String groupId, String toId, FindListener<GroupTableMessage> findListener) {
+//                BmobQuery<GroupTableMessage> query = new BmobQuery<>();
+//                query.addWhereEqualTo(Constant.GROUP_ID, groupId);
+//                query.addWhereEqualTo(Constant.TAG_TO_ID, toId);
+//                query.findObjects(CustomApplication.getInstance(), findListener);
+//        }
 
 
         public GroupTableMessage createReceiveGroupTableMsg(JSONObject jsonObject) {
@@ -1950,7 +1950,7 @@ public class MsgManager {
                                                         if (message.getVisibleType().equals(Constant.SHARE_MESSAGE_VISIBLE_TYPE_PRIVATE)) {
                                                                 result.remove(message);
                                                         } else {
-                                                                if (!message.getVisibleUserList().contains(UserManager.getInstance().getCurrentUserObjectId())) {
+                                                                if (message.getInVisibleUserList().contains(UserManager.getInstance().getCurrentUserObjectId())) {
                                                                         result.remove(message);
                                                                 }
                                                         }
@@ -1983,9 +1983,9 @@ public class MsgManager {
         }
 
 
-        public void createAndUploadGroupTableMessage(GroupTableMessage message, OnReceiveGroupTableListener listener) {
-                updateGroupTableMessageReaded(message.getGroupId(), UserCacheManager.getInstance().getUser().getObjectId(), listener);
-        }
+//        public void createAndUploadGroupTableMessage(GroupTableMessage message, OnReceiveGroupTableListener listener) {
+//                updateGroupTableMessageReaded(message.getGroupId(), UserCacheManager.getInstance().getUser().getObjectId(), listener);
+//        }
 
 
         public void updateUserInstallationId(UpdateListener listener) {
@@ -2059,19 +2059,19 @@ public class MsgManager {
         }
 
         public void createSharedMessage(HappyBean happyBean, HappyContentBean happyContentBean,
-                                        WinXinBean winXinBean, String location, String videoPath, String displayPath, String content, final List<ImageItem> imageList, List<String> selectedVisibleUsers, int visibleType, final OnCreateSharedMessageListener listener) {
+                                        WinXinBean winXinBean, PictureBean pictureBean, String location, String videoPath, String displayPath, String content, final List<ImageItem> imageList, List<String> selectedInVisibleUsers, int visibleType, final OnCreateSharedMessageListener listener) {
                 final SharedMessage sharedMessage = new SharedMessage();
                 if (!location.equals("不显示")) {
                         sharedMessage.setAddress(location);
                 }
                 if (visibleType == Constant.SHARE_MESSAGE_VISIBLE_TYPE_PUBLIC) {
-                        sharedMessage.setVisibleUserList(selectedVisibleUsers);
+                        sharedMessage.setInVisibleUserList(selectedInVisibleUsers);
                 }
                 sharedMessage.setVisibleType(visibleType);
                 sharedMessage.setBelongId(UserCacheManager.getInstance().getUser().getObjectId());
                 sharedMessage.setCreateTime(String.valueOf(System.currentTimeMillis()));
                 sharedMessage.setContent(content);
-                if (happyBean != null || happyContentBean != null || winXinBean != null) {
+                if (happyBean != null || happyContentBean != null || winXinBean != null||pictureBean!=null) {
                         sharedMessage.setMsgType(Constant.MSG_TYPE_SHARE_MESSAGE_LINK);
                         if (happyBean != null) {
                                 List<String> urlList = new ArrayList<>();
@@ -2080,7 +2080,11 @@ public class MsgManager {
                                 sharedMessage.setUrlTitle(happyBean.getContent());
                         } else if (happyContentBean != null) {
                                 sharedMessage.setUrlTitle(happyContentBean.getContent());
-                        } else {
+                        } else if (pictureBean != null) {
+                                List<String> urlList=new ArrayList<>();
+                                urlList.add(pictureBean.getUrl());
+                                sharedMessage.setUrlList(urlList);
+                        }else {
                                 List<String> list = new ArrayList<>();
                                 list.add(winXinBean.getPicUrl());
                                 list.add(winXinBean.getUrl());
@@ -2195,16 +2199,16 @@ public class MsgManager {
                                         sharedMessage.setLikerList(list);
                                 }
                         }
-                        if (object.has("visibleUserList")) {
-                                JSONArray jsonArray = object.getJSONArray("visibleUserList");
+                        if (object.has("inVisibleUserList")) {
+                                JSONArray jsonArray = object.getJSONArray("inVisibleUserList");
                                 if (jsonArray.length() > 0) {
                                         List<String> list = new ArrayList<>();
                                         for (int i = 0; i < jsonArray.length(); i++) {
                                                 String uid = jsonArray.getString(i);
-                                                LogUtil.e("可见的用户ID：" + uid);
+                                                LogUtil.e("不可见的用户ID：" + uid);
                                                 list.add(uid);
                                         }
-                                        sharedMessage.setVisibleUserList(list);
+                                        sharedMessage.setInVisibleUserList(list);
                                 }
                         }
                         if (object.has("commentMsgList")) {
@@ -2465,7 +2469,7 @@ public class MsgManager {
                 query.findObjects(CustomApplication.getInstance(), new FindCallback() {
                         @Override
                         public void onSuccess(JSONArray jsonArray) {
-                                LogUtil.e("群消息解析");
+                                LogUtil.e("12群消息解析");
                                 LogUtil.e("jsonArray：" + jsonArray.toString());
                                 List<GroupChatMessage> list = new ArrayList<>();
                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -2474,17 +2478,13 @@ public class MsgManager {
                                                 GroupChatMessage groupChatMessage = MsgManager.getInstance().createReceiveGroupChatMsg(jsonObject);
                                                 groupChatMessage.setSendStatus(Constant.SEND_STATUS_SUCCESS);
                                                 groupChatMessage.setReadStatus(Constant.RECEIVE_UNREAD);
+                                                groupChatMessage.setBelongNick(nick);
                                                 list.add(groupChatMessage);
                                         } catch (JSONException e) {
                                                 e.printStackTrace();
                                         }
                                 }
                                 if (list.size() > 0) {
-                                        for (GroupChatMessage message
-                                                : list
-                                                ) {
-                                                message.setBelongId(nick);
-                                        }
                                         List<BmobObject> updateList = new ArrayList<>();
                                         updateList.addAll(list);
                                         new BmobObject().updateBatch(CustomApplication.getInstance(), updateList, new UpdateListener() {
@@ -2639,34 +2639,34 @@ public class MsgManager {
                 });
         }
 
-        public void loadAllMyShareMessages(boolean isPullRefresh, String time, final LoadShareMessageCallBack loadShareMessageCallBack) {
-                if (CommonUtils.isNetWorkAvailable()) {
-                        realLoadAllMyShareMessages(isPullRefresh, time, new LoadShareMessageCallBack() {
-                                @Override
-                                public void onSuccess(List<SharedMessage> data) {
-                                        LogUtil.e("下拉刷新从服务器上面加载数据成功");
-                                        ChatDB.create().saveAllSharedMessage(data);
-                                        loadShareMessageCallBack.onSuccess(data);
-                                }
-
-                                @Override
-                                public void onFailed(String errorMsg, int errorId) {
-                                        LogUtil.e("下拉刷新从服务器上面加载数据失败" + errorMsg + errorId);
-                                        loadShareMessageCallBack.onFailed(errorMsg, errorId);
-                                }
-                        });
-                } else {
-                        List<SharedMessage> list;
-                        list = ChatDB.create().getMyAllSharedMessage(isPullRefresh, time, 10);
-                        if (list != null) {
-                                LogUtil.e("无网络时从数据库中加载数据成功");
-                                loadShareMessageCallBack.onSuccess(list);
-                        } else {
-                                LogUtil.e("无网络时从数据库中加载数据失败");
-                                loadShareMessageCallBack.onFailed("数据库中加载说说消息失败", 0);
-                        }
-                }
-        }
+//        public void loadAllMyShareMessages(boolean isPullRefresh, String time, final LoadShareMessageCallBack loadShareMessageCallBack) {
+//                if (CommonUtils.isNetWorkAvailable()) {
+//                        realLoadAllMyShareMessages(isPullRefresh, time, new LoadShareMessageCallBack() {
+//                                @Override
+//                                public void onSuccess(List<SharedMessage> data) {
+//                                        LogUtil.e("下拉刷新从服务器上面加载数据成功");
+//                                        ChatDB.create().saveAllSharedMessage(data);
+//                                        loadShareMessageCallBack.onSuccess(data);
+//                                }
+//
+//                                @Override
+//                                public void onFailed(String errorMsg, int errorId) {
+//                                        LogUtil.e("下拉刷新从服务器上面加载数据失败" + errorMsg + errorId);
+//                                        loadShareMessageCallBack.onFailed(errorMsg, errorId);
+//                                }
+//                        });
+//                } else {
+//                        List<SharedMessage> list;
+//                        list = ChatDB.create().getMyAllSharedMessage(isPullRefresh, time, 10);
+//                        if (list != null) {
+//                                LogUtil.e("无网络时从数据库中加载数据成功");
+//                                loadShareMessageCallBack.onSuccess(list);
+//                        } else {
+//                                LogUtil.e("无网络时从数据库中加载数据失败");
+//                                loadShareMessageCallBack.onFailed("数据库中加载说说消息失败", 0);
+//                        }
+//                }
+//        }
 
         private void realLoadAllMyShareMessages(boolean isPullRefresh, String time, final LoadShareMessageCallBack loadShareMessageCallBack) {
                 try {
@@ -2717,6 +2717,7 @@ public class MsgManager {
                 }
 
         }
+
 
 
 }

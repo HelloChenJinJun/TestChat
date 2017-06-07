@@ -59,10 +59,40 @@ public class VoiceRecordPlayListener implements View.OnClickListener {
                         currentListener.stopAnimation();
                         LogUtil.e("播放时按其他的语音");
                 }
-                String localPath;
+                LogUtil.e("这里开始播放声音");
                 if (mMessage.getBelongId().equals(UserManager.getInstance().getCurrentUserObjectId())) {
-                        localPath = mMessage.getContent().split("&")[0];
-                        startRecord(localPath, true);
+                        String localPath = mMessage.getContent().split("&")[0];
+                        LogUtil.e("这里localPath" + localPath);
+
+                        if (new File(localPath).exists()) {
+                                startRecord(localPath, true);
+                        } else {
+                                if (listener != null) {
+                                        DownLoadManager.getInstance().downFile(mMessage, new OnDownLoadFileListener() {
+                                                @Override
+                                                public void onStart() {
+                                                        listener.onStart();
+                                                }
+
+                                                @Override
+                                                public void onProgress(int value) {
+                                                        listener.onProgress(value);
+                                                }
+
+                                                @Override
+                                                public void onSuccess(String localPath) {
+                                                        listener.onSuccess(localPath);
+                                                        startRecord(localPath, true);
+                                                }
+
+                                                @Override
+                                                public void onFailed(BmobException e) {
+                                                        listener.onFailed(e);
+                                                }
+                                        });
+                                }
+                        }
+
                 } else {
 //                        别人发过来的,如果存在直接获取，否则在线下载存储到当地路径
                         if (!FileUtil.isExistFileLocalPath(mMessage.getBelongId(), mMessage.getCreateTime())) {
@@ -90,6 +120,8 @@ public class VoiceRecordPlayListener implements View.OnClickListener {
                                                         listener.onFailed(e);
                                                 }
                                         });
+                                } else {
+                                        LogUtil.e("监听为空111");
                                 }
                         } else {
                                 startRecord(FileUtil.getUserVoiceFilePath(mMessage.getBelongId(), mMessage.getCreateTime()), true);
@@ -107,8 +139,11 @@ public class VoiceRecordPlayListener implements View.OnClickListener {
         private void startRecord(String localPath, boolean b) {
                 File file = new File(localPath);
                 if (!file.exists()) {
+                        LogUtil.e("文件不存在");
                         return;
                 }
+
+                LogUtil.e("这里啦啦啦");
                 AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
                 mPlayer = new MediaPlayer();
                 if (b) {
@@ -145,6 +180,7 @@ public class VoiceRecordPlayListener implements View.OnClickListener {
                         currentListener = this;
                 } catch (IOException e) {
                         e.printStackTrace();
+                        LogUtil.e("io异常" + e.getMessage());
                 }
         }
 

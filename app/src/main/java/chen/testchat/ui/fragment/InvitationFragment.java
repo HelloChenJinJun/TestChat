@@ -1,5 +1,7 @@
 package chen.testchat.ui.fragment;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
@@ -12,7 +14,6 @@ import org.pointstone.cugappplat.base.cusotomview.swipeview.SwipeMenuCreator;
 import org.pointstone.cugappplat.base.cusotomview.swipeview.SwipeMenuItem;
 import org.pointstone.cugappplat.base.cusotomview.swipeview.SwipeMenuRecyclerView;
 import org.pointstone.cugappplat.baseadapter.BaseWrappedViewHolder;
-import org.pointstone.cugappplat.util.ToastUtils;
 
 import chen.testchat.R;
 import chen.testchat.adapter.NewFriendAdapter;
@@ -71,14 +72,9 @@ public class InvitationFragment extends org.pointstone.cugappplat.base.basemvp.B
                                 int width = (int) getResources().getDimension(R.dimen.recent_top_height);
                                 int height = ViewGroup.LayoutParams.MATCH_PARENT;
                                 SwipeMenuItem item = new SwipeMenuItem(getActivity());
-                                item.setHeight(height).setWidth(width).setText("删除").setBackgroundColor(getResources().getColor(R.color.base_color_bg_gray));
+                                item.setBackgroundDrawable(new ColorDrawable(Color.rgb(0xF9,
+                                        0x3F, 0x25))).setText("删除").setTextColor(Color.WHITE).setHeight(height).setWidth(width);
                                 swipeRightMenu.addMenuItem(item);
-                        }
-                });
-                display.setSwipeMenuItemClickListener(new OnSwipeMenuItemClickListener() {
-                        @Override
-                        public void onItemClick(Closeable closeable, int adapterPosition, int menuPosition, int direction) {
-                                ToastUtils.showShortToast("删除操作");
                         }
                 });
         }

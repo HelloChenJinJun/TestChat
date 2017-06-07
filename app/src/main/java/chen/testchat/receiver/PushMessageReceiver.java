@@ -193,23 +193,6 @@ public class PushMessageReceiver extends BroadcastReceiver implements OnReceiveL
 
                         //                        聊天消息
                         ChatNotificationManager.getInstance(context).sendChatMessageNotification(chatMessage, context);
-//                        if (tag == null || tag.equals("")) {
-//                                if (chatMessage.getMsgType().equals(Constant.TAG_MSG_TYPE_IMAGE)) {
-//                                        showNotification(Constant.NOTIFICATION_TAG_MESSAGE, context, chatMessage.getBelongNick(), R.mipmap.ic_launcher, "[图片]", MainActivity.class);
-//                                } else if (chatMessage.getMsgType().equals(Constant.TAG_MSG_TYPE_LOCATION)) {
-//                                        showNotification(Constant.NOTIFICATION_TAG_MESSAGE, context, chatMessage.getBelongNick(), R.mipmap.ic_launcher, "[位置]", MainActivity.class);
-//                                } else if (chatMessage.getMsgType().equals(Constant.TAG_MSG_TYPE_VOICE)) {
-//                                        showNotification(Constant.NOTIFICATION_TAG_MESSAGE, context, chatMessage.getBelongNick(), R.mipmap.ic_launcher, "[语音]", MainActivity.class);
-//                                } else {
-//                                        showNotification(Constant.NOTIFICATION_TAG_MESSAGE, context, chatMessage.getBelongNick(), R.mipmap.ic_launcher, FaceTextUtil.toSpannableString(context, chatMessage.getContent()), MainActivity.class);
-//                                }
-//
-//                        } else if (tag.equals(Constant.TAG_AGREE)) {
-//                                showNotification(Constant.NOTIFICATION_TAG_AGREE, context, chatMessage.getBelongNick(), R.mipmap.ic_launcher, chatMessage.getBelongUserName() + "已同意添加你为好友", MainActivity.class);
-//                        } else if (tag.equals(Constant.TAG_ADD_FRIEND)) {
-//                                showNotification(Constant.NOTIFICATION_TAG_ADD, context, chatMessage.getBelongNick(), R.mipmap.ic_launcher, chatMessage.getBelongUserName() + "请求添加你为好友", MainActivity.class);
-//                        }
-
                 }
         }
 

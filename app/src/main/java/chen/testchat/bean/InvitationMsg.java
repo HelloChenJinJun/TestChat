@@ -129,7 +129,7 @@ public class InvitationMsg {
         public boolean equals(Object obj) {
                 if (obj instanceof InvitationMsg) {
                         InvitationMsg invitationMsg = (InvitationMsg) obj;
-                        return invitationMsg.getBelongId().equals(getBelongId()) && invitationMsg.getToId().equals(getToId());
+                        return invitationMsg.getBelongId().equals(getBelongId()) &&invitationMsg.getReadStatus().equals(getReadStatus());
                 }
                 return false;
         }

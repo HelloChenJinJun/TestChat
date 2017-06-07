@@ -166,7 +166,9 @@ public class GroupMessageService extends Service {
                                                         ChatDB.create().saveGroupTableMessage(message);
                                                         MessageCacheManager.getInstance().addGroupTableMessage(message);
                                                         RecentMsg recentMsg=ChatDB.create().getRecentMsg(message.getGroupId());
+                                                        LogUtil.e("这里更改最近群消息");
                                                         if (recentMsg != null) {
+                                                                LogUtil.e("这里正式更改最近群消息");
                                                                 recentMsg.setAvatar(message.getGroupAvatar());
                                                                 recentMsg.setName(message.getGroupName());
                                                                 ChatDB.create().saveRecentMessage(recentMsg);
@@ -245,6 +247,19 @@ public class GroupMessageService extends Service {
                                 }
                         } else {
                                 LogUtil.e("网络异常，数据与服务器上连接不上group");
+                        }
+                }
+
+
+                public void addUser(String uid){
+                        if (data.isConnected()) {
+                                if (!uidList.contains(uid)) {
+                                        data.subRowUpdate(table, uid);
+                                }else {
+                                        LogUtil.e("已经监听该好友");
+                                }
+                        }else {
+                                LogUtil.e("网络异常，数据也服务器连接不上");
                         }
                 }
 

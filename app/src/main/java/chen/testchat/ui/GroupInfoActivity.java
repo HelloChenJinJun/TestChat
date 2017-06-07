@@ -457,15 +457,17 @@ public class GroupInfoActivity extends SlideBaseActivity implements View.OnClick
                                         mGroupTableMessage.setGroupNick(message);
                                         numberNick.setText(message);
                                         List<GroupNumberInfo> list = MessageCacheManager.getInstance().getAllGroupNumberInfo(mGroupTableMessage.getGroupId());
-                                        for (GroupNumberInfo info :
-                                                list) {
-                                                if (info.getUser().getObjectId().equals(UserCacheManager.getInstance().getUser().getObjectId())) {
-                                                        info.setGroupNick(message);
-                                                        break;
+                                        if (list != null) {
+                                                for (GroupNumberInfo info :
+                                                        list) {
+                                                        if (info.getUser().getObjectId().equals(UserCacheManager.getInstance().getUser().getObjectId())) {
+                                                                info.setGroupNick(message);
+                                                                break;
+                                                        }
                                                 }
+                                                mAdapter.clearData();
+                                                mAdapter.addData(list);
                                         }
-                                        mAdapter.clearData();
-                                        mAdapter.addData(list);
                                         RxBusManager.getInstance().post(new GroupInfoEvent(message,GroupInfoEvent.TYPE_GROUP_NICK));
                                         break;
                                 case Constant.REQUEST_CODE_EDIT_GROUP_INFO_DESCRIPTION:
@@ -478,16 +480,11 @@ public class GroupInfoActivity extends SlideBaseActivity implements View.OnClick
                                         mGroupTableMessage.setNotification(message);
                                         notification.setText(message);
                                         RxBusManager.getInstance().post(new GroupInfoEvent(message,GroupInfoEvent.TYPE_GROUP_NOTIFICATION));
-
                                         break;
                                 case Constant.REQUEST_CODE_EDIT_GROUP_INFO_GROUP_NAME:
                                         mGroupTableMessage.setGroupName(message);
                                         groupName.setText(message);
                                         groupName1.setText(message);
-//                                        Intent groupNameIntent = new Intent();
-//                                        groupNameIntent.putExtra("from","groupName");
-//                                        groupNameIntent.putExtra("content", message);
-//                                        setResult(Activity.RESULT_OK, groupNameIntent);
                                         RxBusManager.getInstance().post(new GroupInfoEvent(message,GroupInfoEvent.TYPE_GROUP_NAME));
                                         break;
                         }

@@ -23,6 +23,7 @@ import chen.testchat.mvp.PictureInfoTask.PictureContacts;
 import chen.testchat.mvp.PictureInfoTask.PictureModel;
 import chen.testchat.mvp.PictureInfoTask.PicturePresenter;
 import chen.testchat.ui.BasePreViewActivity;
+import chen.testchat.ui.EditShareMessageActivity;
 
 /**
  * 项目名称:    TestChat
@@ -105,10 +106,15 @@ public class PictureFragment extends org.pointstone.cugappplat.base.basemvp.Base
                         protected void onItemChildClick(BaseWrappedViewHolder baseWrappedViewHolder, int id, View view, int position) {
                                 PictureBean bean = mAdapter.getData(position);
                                 if (id == R.id.iv_fragment_picture_item_share) {
-                                        Intent intent = new Intent(Intent.ACTION_SEND);
+
+                                        Intent intent = new Intent(getActivity(), EditShareMessageActivity.class);
+                                        intent.setAction(Intent.ACTION_SEND);
                                         intent.putExtra(Intent.EXTRA_TEXT, bean.getUrl());
+                                        intent.putExtra("share_info", bean);
+                                        intent.putExtra("type", "picture");
+                                        intent.putExtra("destination", "url");
                                         intent.setType("text/plain");
-                                        startActivity(Intent.createChooser(intent, "分享到"));
+                                        startActivity(intent);
 
                                 } else if (id == R.id.iv_fragment_picture_item_picture) {
                                         ChatDB.create().updatePictureReaded(bean.getUrl(), 1);

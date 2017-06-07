@@ -66,8 +66,8 @@ public class LocationManager implements AMapLocationListener {
                 option.setGpsFirst(false);
 //                连接超时3秒
                 option.setHttpTimeOut(3000);
-//                设置定位间隔20秒
-                option.setInterval(20000);
+//                设置定位间隔60秒
+                option.setInterval(60000);
 //                设置是否返回地址，默认返回
                 option.setNeedAddress(true);
 //                设置是否单次定位
@@ -101,9 +101,7 @@ public class LocationManager implements AMapLocationListener {
                 if (aMapLocation != null) {
                         if (aMapLocation.getErrorCode() == 0) {
                                 LogUtil.e("1获取到位置信息拉");
-
                                 //                获取纬度
-
                                 if (latitude != aMapLocation.getLatitude() || longitude != aMapLocation.getLongitude()) {
                                         latitude = aMapLocation.getLatitude();
                                         //                获取经度
@@ -117,8 +115,6 @@ public class LocationManager implements AMapLocationListener {
                                         LogUtil.e("street" + aMapLocation.getStreet());
                                         LogUtil.e("aoiName", aMapLocation.getAoiName());
                                         LogUtil.e("streetNumber", aMapLocation.getStreetNum());
-
-
 //                                        aMapLocation.getLocationType();//获取当前定位结果来源
 //                                        aMapLocation.getLatitude();//获取纬度
 //                                        aMapLocation.getLongitude();//获取经度
@@ -151,7 +147,9 @@ public class LocationManager implements AMapLocationListener {
                                         UserManager.getInstance().updateUserInfo("location", longitude + "&" + latitude, new UpdateListener() {
                                                 @Override
                                                 public void onSuccess() {
-                                                        UserCacheManager.getInstance().getUser().setLocation(new BmobGeoPoint(longitude,latitude));
+                                                        if (UserCacheManager.getInstance().getUser()!=null) {
+                                                                UserCacheManager.getInstance().getUser().setLocation(new BmobGeoPoint(longitude,latitude));
+                                                        }
                                                 }
                                                 @Override
                                                 public void onFailure(int i, String s) {

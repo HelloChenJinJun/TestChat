@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import org.pointstone.cugappplat.baseadapter.BaseMultipleWrappedAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import chen.testchat.R;
@@ -20,6 +21,7 @@ import chen.testchat.adapter.viewholder.SendLocationHolder;
 import chen.testchat.adapter.viewholder.SendTextHolder;
 import chen.testchat.adapter.viewholder.SendVoiceHolder;
 import chen.testchat.bean.BaseMessage;
+import chen.testchat.util.LogUtil;
 
 /**
  * 项目名称:    TestChat
@@ -91,7 +93,6 @@ public class ChatMessageAdapter extends BaseMultipleWrappedAdapter<BaseMessage, 
                         return new SendTextHolder(layoutInflater.inflate(getLayoutIds().get(viewType), parent, false));
                 } else if (viewType == TYPE_SEND_IMAGE) {
                         return new SendImageHolder(layoutInflater.inflate(getLayoutIds().get(viewType), parent, false));
-
                 } else if (viewType == TYPE_SEND_LOCATION) {
                         return new SendLocationHolder(layoutInflater.inflate(getLayoutIds().get(viewType), parent, false));
 
@@ -123,5 +124,59 @@ public class ChatMessageAdapter extends BaseMultipleWrappedAdapter<BaseMessage, 
 
         private boolean shouldShowTime(int position) {
                 return position == 0 || Long.valueOf(data.get(position).getCreateTime()) - Long.valueOf(data.get(position - 1).getCreateTime()) > TIME_INTERVAL;
+        }
+
+//        @Override
+//        public void addData(BaseMessage newData) {
+//                if (data.contains(newData)) {
+//                        int index = data.indexOf(newData);
+//                        data.set(index, newData);
+//                        notifyDataSetChanged();
+//                }else {
+//                        super.addData(newData);
+//                }
+//        }
+
+
+        @Override
+        public void addData(int position, BaseMessage newData) {
+                if (data.contains(newData)) {
+                        data.remove(newData);
+                }
+                super.addData(position, newData);
+        }
+
+        @Override
+        public void addData(int position, List<BaseMessage> newData) {
+                LogUtil.e("添加数据1234567891");
+                if (newData == null || newData.size() == 0) {
+                        return;
+                }
+                List<BaseMessage> temp=new ArrayList<>();
+                List<BaseMessage> copyData=new ArrayList<>(data);
+                for (BaseMessage message :
+                        newData) {
+                        for (BaseMessage item :
+                                copyData) {
+                                if (message.equals(item)) {
+                                        temp.add(message);
+                                }
+                        }
+                }
+                if (temp.size() > 0) {
+                        LogUtil.e("大于0");
+                        int index=0;
+                        for (BaseMessage message :
+                                temp) {
+                                index=data.indexOf(message);
+                                data.set(index,message);
+                                newData.remove(message);
+                        }
+                }
+                LogUtil.e("这里呢123456");
+                LogUtil.e("position"+position);
+                LogUtil.e("newData"+newData.size());
+                LogUtil.e("data"+data.size());
+                super.addData(position, newData);
         }
 }

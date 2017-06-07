@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import org.pointstone.cugappplat.baseadapter.BaseMultipleWrappedAdapter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import chen.testchat.R;
@@ -141,16 +140,9 @@ public class ShareMultipleLayoutAdapter extends BaseMultipleWrappedAdapter<Share
 
         @Override
         public void addData(int position, SharedMessage newData) {
-                List<SharedMessage> copy=new ArrayList<>(data);
-                for (SharedMessage message :
-                        copy) {
-                        if (message.equals(newData)) {
-                                Collections.replaceAll(data,message,newData);
-                                notifyDataSetChanged();
-                                return;
-                        }
+                if (data.contains(newData)) {
+                        data.remove(newData);
                 }
-                LogUtil.e("这里呢1");
                 super.addData(position, newData);
         }
 

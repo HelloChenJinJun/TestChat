@@ -22,6 +22,7 @@ import chen.testchat.db.ChatDB;
 import chen.testchat.listener.AddBlackCallBackListener;
 import chen.testchat.listener.AddFriendCallBackListener;
 import chen.testchat.listener.CancelBlackCallBlackListener;
+import chen.testchat.util.CommonUtils;
 import chen.testchat.util.LogUtil;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
@@ -452,6 +453,7 @@ public class UserManager {
                                 break;
                         case "nick":
                                 user.setNick(content);
+                                user.setSortedKey(CommonUtils.getSortedKey(content));
                                 break;
                         case "avatar":
                                 user.setAvatar(content);

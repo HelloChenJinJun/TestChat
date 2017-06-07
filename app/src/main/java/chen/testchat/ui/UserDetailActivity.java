@@ -203,12 +203,12 @@ public class UserDetailActivity extends SlideBaseActivity implements View.OnClic
         }
 
 
-        private void loadMoreData() {
-                LogUtil.e("不鸟你11111111");
-                if (mShareMultipleLayoutAdapter.getAllData() != null && mShareMultipleLayoutAdapter.getAllData().size() > 0) {
-                        presenter.loadShareMessages(uid, false, mShareMultipleLayoutAdapter.getAllData().get(mShareMultipleLayoutAdapter.getAllData().size() - 1).getCreatedAt());
-                }
-        }
+//        private void loadMoreData() {
+//                LogUtil.e("不鸟你11111111");
+//                if (mShareMultipleLayoutAdapter.getAllData() != null && mShareMultipleLayoutAdapter.getAllData().size() > 0) {
+//                        presenter.loadShareMessages(uid, false, mShareMultipleLayoutAdapter.getAllData().get(mShareMultipleLayoutAdapter.getAllData().size() - 1).getCreatedAt());
+//                }
+//        }
 
         @Override
         public void initData() {
@@ -271,7 +271,7 @@ public class UserDetailActivity extends SlideBaseActivity implements View.OnClic
                                 refresh.setRefreshing(true);
                                 onRefresh();
                         }
-                }, 2000);
+                }, 200);
                 updateUserData();
         }
 

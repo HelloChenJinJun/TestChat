@@ -24,6 +24,7 @@ import chen.testchat.db.ChatDB;
 import chen.testchat.mvp.WinXinInfoTask.WinXinInfoContacts;
 import chen.testchat.mvp.WinXinInfoTask.WinXinInfoModel;
 import chen.testchat.mvp.WinXinInfoTask.WinXinInfoPresenter;
+import chen.testchat.ui.EditShareMessageActivity;
 import chen.testchat.ui.WeiXinNewsActivity;
 import chen.testchat.util.LogUtil;
 import chen.testchat.view.ListViewDecoration;
@@ -139,13 +140,13 @@ public class WeiXinFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
                                                 public boolean onMenuItemClick(MenuItem item) {
                                                         switch (item.getItemId()) {
                                                                 case R.id.wei_xin_fragment_item_menu_share:
-                                                                        Intent intent = new Intent(Intent.ACTION_SEND);
+                                                                        Intent intent = new Intent(getActivity(), EditShareMessageActivity.class);
                                                                         intent.putExtra(Intent.EXTRA_TEXT, bean.getTitle() + "," + bean.getUrl());
                                                                         intent.putExtra("share_info", bean);
                                                                         intent.putExtra("type", "wei_xin");
                                                                         intent.putExtra("destination", "url");
                                                                         intent.setType("text/plain");
-                                                                        startActivity(Intent.createChooser(intent, "分享到"));
+                                                                        startActivity(intent);
                                                                         break;
                                                                 case R.id.wei_xin_fragment_item_menu_read:
                                                                         if (item.getTitle().equals("标记为未读状态")) {

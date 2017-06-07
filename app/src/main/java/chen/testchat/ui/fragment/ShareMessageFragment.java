@@ -57,12 +57,14 @@ import chen.testchat.mvp.ShareMessageTask.ShareMessagePresenter;
 import chen.testchat.service.GroupMessageService;
 import chen.testchat.ui.BasePreViewActivity;
 import chen.testchat.ui.EditShareMessageActivity;
+import chen.testchat.ui.HappyContentDisplayActivity;
 import chen.testchat.ui.ImageDisplayActivity;
 import chen.testchat.ui.MainActivity;
 import chen.testchat.ui.SelectedPictureActivity;
 import chen.testchat.ui.UserDetailActivity;
 import chen.testchat.ui.VideoPlayActivity;
 import chen.testchat.ui.WallPaperActivity;
+import chen.testchat.ui.WeiXinNewsActivity;
 import chen.testchat.util.CommonUtils;
 import chen.testchat.util.LogUtil;
 import chen.testchat.util.PhotoUtil;
@@ -775,6 +777,29 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
         @Override
         public void onLinkViewClick(SharedMessage shareMessage) {
 
+                Intent happyContentIntent = new Intent(getActivity(), HappyContentDisplayActivity.class);
+                if (shareMessage.getUrlList().size() == 0) {
+//                     笑话
+                        happyContentIntent.putExtra("content",shareMessage.getUrlTitle());
+                        startActivity(happyContentIntent);
+                } else if (shareMessage.getUrlList().size() == 1) {
+//                        趣图
+                        if (shareMessage.getUrlTitle() == null) {
+//                                美女图片
+                                List<ImageItem> list=new ArrayList<>();
+                                ImageItem imageItem=new ImageItem();
+                                imageItem.setPath(shareMessage.getUrlList().get(0));
+                                list.add(imageItem);
+                                BasePreViewActivity.startBasePreview(getActivity(),list,0);
+                        }else {
+                                happyContentIntent.putExtra("content",shareMessage.getUrlTitle());
+                                happyContentIntent.putExtra("url",shareMessage.getUrlList().get(0));
+                                startActivity(happyContentIntent);
+                        }
+                }else {
+//                        微信精选
+                        WeiXinNewsActivity.start(getActivity(), shareMessage.getUrlList().get(0), shareMessage.getUrlList().get(1));
+                }
         }
 
         private void enterUserDetailActivity(String uid) {

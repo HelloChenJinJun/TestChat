@@ -224,6 +224,9 @@ public class RecentFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
                         LogUtil.e("当前的状态为" + isConnected + "   当前的连接类型移动网络");
                 }
                 if (isConnected) {
+
+//                        查询好友信息
+
 //                        这里拉取网络中断这段时间内的信息
 //                        queryGroupChatMessage();
                         MsgManager.getInstance().queryGroupChatMessage(MessageCacheManager.getInstance().getAllGroupId(), new FindListener<GroupChatMessage>() {
@@ -391,6 +394,13 @@ public class RecentFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
                         }
                 } else {
                         LogUtil.e("binder为空");
+                }
+        }
+
+        public void notifyUserAdd(String id) {
+                if (binder != null) {
+                        LogUtil.e("实时监听新增的用户信息");
+                        binder.addUser(id);
                 }
         }
 

@@ -126,7 +126,8 @@ public abstract class BaseItemClickListener implements RecyclerView.OnItemTouchL
                                                 for (Integer id :
                                                         ids) {
                                                         final View childView = mPressedView.findViewById(id);
-                                                        if (childView != null) {
+                                                        if (childView != null&&childView.getVisibility()==View.VISIBLE) {
+
 //                                                                判断点击位置是否在该view上和该view是否可点击
                                                                 if (isOnRange(e, childView) && childView.isEnabled()) {
 //                                                                        这里要排除掉嵌套的recyclerView的点击事件
@@ -146,15 +147,10 @@ public abstract class BaseItemClickListener implements RecyclerView.OnItemTouchL
                                                                 } else {
                                                                         LogUtil.e("isEnabled" + childView.isEnabled());
                                                                 }
-                                                        } else {
-                                                                LogUtil.e("childView");
                                                         }
                                                 }
-                                        } else {
-                                                LogUtil.e("else");
                                         }
                                         //                                        如果执行到这里，证明没有设置点击事件,所以设置itemView的点击事件
-
                                         setChildHotSpot(mPressedView, e);
                                         mPressedView.setPressed(true);
                                         onItemClick(baseWrappedViewHolder, baseWrappedViewHolder.itemView.getId(), mPressedView, baseWrappedViewHolder.getLayoutPosition() - mBaseWrappedAdapter.getHeaderViewCount());

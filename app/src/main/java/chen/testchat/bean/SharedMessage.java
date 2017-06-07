@@ -15,7 +15,7 @@ import cn.bmob.v3.BmobObject;
  */
 
 public class SharedMessage extends BmobObject implements MultipleItem {
-        private List<String> visibleUserList;
+        private List<String> inVisibleUserList;
         private List<String> likerList;
         private String belongId;
         private String content;
@@ -43,6 +43,9 @@ public class SharedMessage extends BmobObject implements MultipleItem {
         }
 
         public List<String> getUrlList() {
+                if (urlList == null) {
+                        urlList=new ArrayList<>();
+                }
                 return urlList;
         }
 
@@ -120,16 +123,31 @@ public class SharedMessage extends BmobObject implements MultipleItem {
                 this.likerList = likerList;
         }
 
-        public List<String> getVisibleUserList() {
-                if (visibleUserList == null) {
-                        visibleUserList = new ArrayList<>();
+//        public List<String> getVisibleUserList() {
+//                if (inVisibleUserList == null) {
+//                        inVisibleUserList = new ArrayList<>();
+//                }
+//                return inVisibleUserList;
+//        }
+
+
+
+        public List<String>getInVisibleUserList(){
+                if (inVisibleUserList == null) {
+                        inVisibleUserList = new ArrayList<>();
                 }
-                return visibleUserList;
+                return inVisibleUserList;
         }
 
-        public void setVisibleUserList(List<String> visibleUserList) {
-                this.visibleUserList = visibleUserList;
+        public void setInVisibleUserList(List<String> visibleUserList) {
+                this.inVisibleUserList = visibleUserList;
         }
+
+
+
+//        public void setVisibleUserList(List<String> visibleUserList) {
+//                this.inVisibleUserList = visibleUserList;
+//        }
 
         public List<String> getCommentMsgList() {
                 if (commentMsgList == null) {

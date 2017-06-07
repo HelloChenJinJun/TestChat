@@ -57,7 +57,8 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
             <ImageView
-                android:id="@+id/iv_edit_share_message_url_avatar" android:layout_width="60dp"
+                android:id="@+id/iv_edit_share_message_url_avatar"
+                android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/head"/>
