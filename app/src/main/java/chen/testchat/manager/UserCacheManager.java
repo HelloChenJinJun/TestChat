@@ -193,8 +193,10 @@ public class UserCacheManager {
                 if (!isLogin) {
                         return;
                 }
+                LogUtil.e("sh");
                 if (uid != null) {
                         if (getContacts() != null&&getContacts().containsKey(uid)) {
+                                LogUtil.e("开始删除用户啦啦啦");
                                 getContacts().remove(uid);
                         }
                 }

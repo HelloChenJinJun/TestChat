@@ -254,4 +254,14 @@ public class MessageCacheManager {
                         mUserDataTimeMap.clear();
                 }
         }
+
+        public void deleteGroupTableMessage(String groupId) {
+                if (groupId == null) {
+                        return;
+                }
+                if (getAllGroupTableMap().containsKey(groupId)) {
+                        LogUtil.e("删除缓存的群结构消息成功");
+                        getAllGroupTableMap().remove(groupId);
+                }
+        }
 }

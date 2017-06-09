@@ -79,14 +79,15 @@ public class UserInfoActivity extends SlideBaseActivity implements View.OnClickL
         @Override
         public void initData() {
                 String uid = getIntent().getStringExtra("uid");
-                if (UserCacheManager.getInstance().getUser(uid) != null) {
-                        user=UserCacheManager.getInstance().getUser(uid);
+                if (UserCacheManager.getInstance().getContacts().keySet().contains(uid)) {
+                        user=UserCacheManager.getInstance().getContacts().get(uid);
                         add.setVisibility(View.GONE);
                         black.setVisibility(View.VISIBLE);
                         black.setText("添加为黑名单");
                 } else if (UserCacheManager.getInstance().getBlackUser(uid) != null) {
                         user=UserCacheManager.getInstance().getBlackUser(uid);
                         black.setText("取消黑名单");
+                        black.setVisibility(View.VISIBLE);
                         add.setVisibility(View.GONE);
                         isBlack=true;
                 }else if (uid.equals(UserManager.getInstance().getCurrentUserObjectId())){

@@ -47,7 +47,7 @@ public class HappyContentFragment extends org.pointstone.cugappplat.base.basemvp
 
         @Override
         protected boolean isNeedEmptyLayout() {
-                return false;
+                return true;
         }
 
         @Override

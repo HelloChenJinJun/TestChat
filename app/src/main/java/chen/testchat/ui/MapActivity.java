@@ -29,7 +29,7 @@ import java.util.List;
 
 import chen.testchat.R;
 import chen.testchat.manager.LocationManager;
-import chen.testchat.manager.UserCacheManager;
+import chen.testchat.manager.UserManager;
 import chen.testchat.util.LogUtil;
 import chen.testchat.util.TimeUtil;
 import cn.bmob.v3.datatype.BmobGeoPoint;
@@ -109,7 +109,7 @@ public class MapActivity extends SlideBaseActivity implements View.OnClickListen
                         latitude = Double.valueOf(getIntent().getStringExtra("latitude"));
                         address = getIntent().getStringExtra("address");
                 } else {
-                        BmobGeoPoint point = UserCacheManager.getInstance().getUser().getLocation();
+                        BmobGeoPoint point = UserManager.getInstance().getCurrentUser().getLocation();
                         longitude = point.getLongitude();
                         latitude = point.getLatitude();
                         address = LocationManager.getInstance().getLocationList().get(0);
@@ -297,7 +297,7 @@ public class MapActivity extends SlideBaseActivity implements View.OnClickListen
                                 latitude = Double.valueOf(getIntent().getStringExtra("latitude"));
                                 address = getIntent().getStringExtra("address");
                         } else {
-                                BmobGeoPoint point = UserCacheManager.getInstance().getUser().getLocation();
+                                BmobGeoPoint point = UserManager.getInstance().getCurrentUser().getLocation();
                                 longitude = point.getLongitude();
                                 latitude = point.getLatitude();
                                 if (LocationManager.getInstance().getLocationList() != null) {

@@ -49,7 +49,6 @@ import chen.testchat.bean.SharedMessage;
 import chen.testchat.bean.User;
 import chen.testchat.listener.OnShareMessageReceivedListener;
 import chen.testchat.manager.MessageCacheManager;
-import chen.testchat.manager.UserCacheManager;
 import chen.testchat.manager.UserManager;
 import chen.testchat.mvp.ShareMessageTask.ShareMessageContacts;
 import chen.testchat.mvp.ShareMessageTask.ShareMessageModel;
@@ -287,7 +286,7 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
                                                                         public void onSuccess() {
                                                                                 hideLoading();
                                                                                 LogUtil.e("更新用户背景成功");
-                                                                                UserCacheManager.getInstance().getUser().setTitleWallPaper(bmobFile.getFileUrl(CustomApplication.getInstance()));
+                                                                                UserManager.getInstance().getCurrentUser().setTitleWallPaper(bmobFile.getFileUrl(CustomApplication.getInstance()));
                                                                                 updateHeaderView();
                                                                         }
 
@@ -314,7 +313,7 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
         }
 
         private void updateHeaderView() {
-                Glide.with(this).load(UserCacheManager.getInstance().getUser().getTitleWallPaper())
+                Glide.with(this).load(UserManager.getInstance().getCurrentUser().getTitleWallPaper())
                         .into((ImageView) headerView.findViewById(R.id.iv_share_fragment_item_header_background));
         }
 
@@ -482,6 +481,7 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
         public void updateShareMessageAdded(SharedMessage shareMessage) {
                 if (shareMessage != null) {
                         mAdapter.addData(0, shareMessage);
+                        mAdapter.notifyDataSetChanged();
                 }
         }
 
@@ -746,7 +746,7 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
         private void showCommentDialog(final String id, final int position) {
                 List<String> list = new ArrayList<>();
                 list.add("复制");
-                if (CommonUtils.content2List(mAdapter.getSharedMessageById(id).getCommentMsgList().get(position)).get(0).equals(UserCacheManager.getInstance().getUser().getObjectId())) {
+                if (CommonUtils.content2List(mAdapter.getSharedMessageById(id).getCommentMsgList().get(position)).get(0).equals(UserManager.getInstance().getCurrentUser().getObjectId())) {
                         list.add("删除");
                 }
                 ((org.pointstone.cugappplat.base.basemvp.BaseActivity) getActivity()).showChooseDialog("操作", list, new AdapterView.OnItemClickListener() {
@@ -834,21 +834,9 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
         @Override
         public void onPhotoItemClick(final View view, final String id, final int position, final String url) {
                 LogUtil.e("点击图片");
-                LogUtil.e("点击的说说ID");
                 List<String> cache = MessageCacheManager.getInstance().getShareMessageCache(id);
-                final String newUrl;
                 if (!url.contains("$")) {
-                        LogUtil.e("这是图片URL");
-                        if (cache == null || cache.size() == 0) {
-                                LogUtil.e("没有缓存证明不是自己发的说说");
-                                newUrl = url;
-                        } else {
-                                LogUtil.e("有缓存证明是自己的图片说说，这里就是用缓存");
-                                newUrl = cache.get(position);
-                        }
-                        LogUtil.e("url:" + newUrl);
-//                        File file = new File(newUrl);
-                        List<ImageItem> list = new ArrayList<>();
+                        List<ImageItem> list=new ArrayList<>();
                         if (cache != null) {
                                 for (String cacheId :
                                         cache) {
@@ -856,10 +844,10 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
                                         imageItem.setPath(cacheId);
                                         list.add(imageItem);
                                 }
-
                         } else {
+                                SharedMessage message=mAdapter.getSharedMessageById(id);
                                 for (String pId :
-                                        mAdapter.getData(position).getImageList()) {
+                                        message.getImageList()) {
                                         ImageItem imageItem = new ImageItem();
                                         imageItem.setPath(pId);
                                         list.add(imageItem);
@@ -868,7 +856,6 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
                         BasePreViewActivity.startBasePreview(getActivity(),list,position);
                 } else {
                         if (cache == null || cache.size() == 0) {
-                                LogUtil.e("没有缓存证明不是自己发的说说");
                                 LogUtil.e("这是视频和封面混合的URL列表");
                                 List<String> urlList = CommonUtils.content2List(url);
                                 if (urlList != null && urlList.size() > 0) {

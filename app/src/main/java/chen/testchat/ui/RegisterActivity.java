@@ -119,6 +119,7 @@ public class RegisterActivity extends org.pointstone.cugappplat.base.basemvp.Bas
 
                                         @Override
                                         public void onFailure(int i, String s) {
+                                                dismissLoadDialog();
                                                 ToastUtils.showShortToast("注册失败" + s + i);
                                         }
                                 });

@@ -21,7 +21,7 @@ import java.util.List;
 import chen.testchat.R;
 import chen.testchat.bean.WeatherInfoBean;
 import chen.testchat.manager.LocationManager;
-import chen.testchat.manager.UserCacheManager;
+import chen.testchat.manager.UserManager;
 import chen.testchat.util.CommonUtils;
 import chen.testchat.util.LogUtil;
 
@@ -123,7 +123,7 @@ public class WeatherInfoActivity extends SlideBaseActivity implements WeatherSea
 
         private void initActionBar() {
                 ToolBarOption toolBarOption = new ToolBarOption();
-                toolBarOption.setAvatar(UserCacheManager.getInstance().getUser().getAvatar());
+                toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
                 toolBarOption.setTitle("天气情况");
                 toolBarOption.setNeedNavigation(true);
                 setToolBar(toolBarOption);

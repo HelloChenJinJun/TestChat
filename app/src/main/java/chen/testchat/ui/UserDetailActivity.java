@@ -519,7 +519,7 @@ public class UserDetailActivity extends SlideBaseActivity implements View.OnClic
         private void showCommentDialog(final String id, final int commentPosition) {
                 List<String> list = new ArrayList<>();
                 list.add("复制");
-                if (CommonUtils.content2List(mShareMultipleLayoutAdapter.getSharedMessageById(id).getCommentMsgList().get(commentPosition)).get(0).equals(UserCacheManager.getInstance().getUser().getObjectId())) {
+                if (CommonUtils.content2List(mShareMultipleLayoutAdapter.getSharedMessageById(id).getCommentMsgList().get(commentPosition)).get(0).equals(UserManager.getInstance().getCurrentUser().getObjectId())) {
                         list.add("删除");
                 }
                 showChooseDialog("操作", list, new AdapterView.OnItemClickListener() {
@@ -542,7 +542,7 @@ public class UserDetailActivity extends SlideBaseActivity implements View.OnClic
         }
 
         private void enterUserDetailActivity(String uid) {
-                if (uid.equals(UserCacheManager.getInstance().getUser().getObjectId())) {
+                if (uid.equals(UserManager.getInstance().getCurrentUser().getObjectId())) {
                         return;
                 }
                 Intent intent = new Intent(this, UserDetailActivity.class);

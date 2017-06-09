@@ -303,7 +303,7 @@ public class UserManager {
                                         } else {
                                                 addBlackCallBackListener.onFailed(new BmobException("在数据库更新用户黑名单状态失败或者是删除最近会话失败"));
                                         }
-                                        LogUtil.e("在服务器上关联该用户为黑名单失败");
+//                                        LogUtil.e("在服务器上关联该用户为黑名单失败");
                                 }
 
                                 @Override
@@ -443,7 +443,8 @@ public class UserManager {
         }
 
         public void updateUserInfo(String name, String content, UpdateListener listener) {
-                User user = UserCacheManager.getInstance().getUser();
+                User user=new User();
+                user.setObjectId(UserManager.getInstance().getCurrentUserObjectId());
                 switch (name) {
                         case "phone":
                                 user.setMobilePhoneNumber(content);
@@ -495,7 +496,7 @@ public class UserManager {
                         query.addWhereEqualTo("sex", isSex);
                 }
                 query.addWhereNear("location", new BmobGeoPoint(longitude, latitude));
-                query.addWhereNotEqualTo("objectId", UserCacheManager.getInstance().getUser().getObjectId());
+                query.addWhereNotEqualTo("objectId", UserManager.getInstance().getCurrentUser().getObjectId());
                 query.findObjects(CustomApplication.getInstance(), findListener);
         }
 

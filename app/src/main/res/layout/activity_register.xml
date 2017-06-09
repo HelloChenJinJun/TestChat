@@ -25,7 +25,6 @@
             android:layout_height="48dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/et_input_bg_selector"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="bottom"

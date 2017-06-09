@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="250dp">
+                android:layout_height="250dp"
+                android:background="@color/chat_bg"
+>
     <ImageView
         android:id="@+id/iv_share_fragment_item_header_background"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/wallpaper2"
+        android:src="@drawable/wallpaper1"
     />
     <ImageView
         android:id="@+id/iv_share_fragment_item_header_avatar"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginBottom="20dp"
         android:layout_marginRight="20dp"
         android:elevation="20dp"

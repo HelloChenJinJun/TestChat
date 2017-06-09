@@ -117,11 +117,14 @@ public class PushMessageReceiver extends BroadcastReceiver implements OnReceiveL
                         if (toId != null && !toId.equals("") && fromId != null && !fromId.equals("")) {
                                 if (mUserManager.getCurrentUser() != null && mUserManager.getCurrentUser().getObjectId().equals(toId)) {
                                         if (ChatDB.create(toId).hasFriend(fromId) && !ChatDB.create(toId).isBlackUser(fromId)) {
+                                                LogUtil.e("本用户的好友");
                                                 mMsgManager.createReceiveMsg(json, this);
                                         } else if (!ChatDB.create().hasFriend(fromId)) {
+                                                LogUtil.e("陌生人用户");
                                                 //                                        陌生人发来消息的情况,,,直接接受
                                                 mMsgManager.createReceiveMsg(json, this);
                                         } else {
+                                                LogUtil.e("黑名单用户");
                                                 //      黑名单的情况,直接在服务器上面更新为已读状态,防止从定时服务那里又可以获取到
                                                 mMsgManager.updateMsgReaded(false, JsonUtil.getString(jsonObject, Constant.TAG_CONVERSATION), JsonUtil.getString(jsonObject, Constant.TAG_CREATE_TIME));
                                         }

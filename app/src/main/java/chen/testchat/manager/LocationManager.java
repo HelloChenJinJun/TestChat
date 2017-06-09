@@ -143,12 +143,12 @@ public class LocationManager implements AMapLocationListener {
                                         locationList.add(aMapLocation.getProvince() + aMapLocation.getCity());
                                         locationList.add(aMapLocation.getProvince());
                                 }
-                                if (UserCacheManager.getInstance().getUser() != null) {
+                                if (UserManager.getInstance().getCurrentUser() != null) {
                                         UserManager.getInstance().updateUserInfo("location", longitude + "&" + latitude, new UpdateListener() {
                                                 @Override
                                                 public void onSuccess() {
-                                                        if (UserCacheManager.getInstance().getUser()!=null) {
-                                                                UserCacheManager.getInstance().getUser().setLocation(new BmobGeoPoint(longitude,latitude));
+                                                        if (UserManager.getInstance().getCurrentUser()!=null) {
+                                                                UserManager.getInstance().getCurrentUser().setLocation(new BmobGeoPoint(longitude,latitude));
                                                         }
                                                 }
                                                 @Override

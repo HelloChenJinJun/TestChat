@@ -123,11 +123,11 @@ public class PollService extends Service {
                 if (lastGroupMessageTime == null) {
                         return;
                 }
+                groupTableQuery.addWhereEqualTo("readStatus", Constant.READ_STATUS_UNREAD);
                 if (lastGroupMessageTime.equals("0000-00-00 01:00:00")) {
                         LogUtil.e("第一次检测群结构消息，不设条件");
                 } else {
                         LogUtil.e("1不是第一次检测消息");
-                        groupTableQuery.addWhereEqualTo("readStatus", Constant.READ_STATUS_UNREAD);
                         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         try {
                                 Date oldDate=sdf1.parse(MessageCacheManager.getInstance().getLastShareMessageTime(Constant.GROUP_TABLE_TIME));
@@ -177,14 +177,14 @@ public class PollService extends Service {
                 if (UserCacheManager.getInstance().getContacts() != null && UserCacheManager.getInstance().getContacts().size() > 0) {
                         List<String> list = new ArrayList<>(UserCacheManager.getInstance().getContacts().keySet());
                         list.add(UserManager.getInstance().getCurrentUserObjectId());
-                        list.add(UserCacheManager.getInstance().getUser().getObjectId());
+//                        list.add(UserCacheManager.getInstance().getUser().getObjectId());
                         shareQuery.addWhereContainedIn("belongId", list);
                 } else {
-                        if (UserCacheManager.getInstance().getUser() == null) {
+                        if (UserManager.getInstance().getCurrentUser() == null) {
                                 LogUtil.e("用户已退出登录");
                                 return;
                         }
-                        shareQuery.addWhereEqualTo("belongId", UserCacheManager.getInstance().getUser().getObjectId());
+                        shareQuery.addWhereEqualTo("belongId", UserManager.getInstance().getCurrentUser().getObjectId());
                 }
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 if (!MessageCacheManager.getInstance().getLastShareMessageTime(Constant.SHARE_TIME).equals("0000-00-00 01:00:00")) {

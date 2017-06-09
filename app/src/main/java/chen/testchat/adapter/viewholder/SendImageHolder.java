@@ -8,6 +8,7 @@ import chen.testchat.base.Constant;
 import chen.testchat.bean.BaseMessage;
 import chen.testchat.bean.ChatMessage;
 import chen.testchat.util.LogUtil;
+import chen.testchat.util.TimeUtil;
 
 /**
  * 项目名称:    TestChat
@@ -23,6 +24,12 @@ public class SendImageHolder extends BaseChatHolder {
 
         @Override
         public void bindData(final BaseMessage baseMessage, final ChatMessageAdapter.OnItemClickListener listener, boolean isShowTime) {
+
+                if (isShowTime) {
+                        setText(R.id.tv_chat_send_image_item_time, TimeUtil.getTime(Long.valueOf(baseMessage.getCreateTime())));
+                }
+                setVisible(R.id.tv_chat_send_image_item_time, isShowTime);
+
                 if (baseMessage instanceof ChatMessage) {
                         setVisible(R.id.tv_chat_send_image_item_name, false);
                 } else {

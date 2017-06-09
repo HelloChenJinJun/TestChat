@@ -15,7 +15,7 @@ import chen.testchat.adapter.GroupListAdapter;
 import chen.testchat.bean.GroupTableMessage;
 import chen.testchat.listener.OnBaseItemClickListener;
 import chen.testchat.manager.MessageCacheManager;
-import chen.testchat.manager.UserCacheManager;
+import chen.testchat.manager.UserManager;
 import chen.testchat.view.ListViewDecoration;
 
 /**
@@ -74,7 +74,7 @@ public class GroupListActivity extends SlideBaseActivity {
 
         private void initActionBar() {
                 ToolBarOption toolBarOption = new ToolBarOption();
-                toolBarOption.setAvatar(UserCacheManager.getInstance().getUser().getAvatar());
+                toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
                 toolBarOption.setTitle("群列表");
                 toolBarOption.setNeedNavigation(true);
                 setToolBar(toolBarOption);

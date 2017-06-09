@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.pointstone.cugappplat.util.ToastUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import chen.testchat.CustomApplication;
@@ -50,9 +51,7 @@ public class LoginActivity extends org.pointstone.cugappplat.base.basemvp.BaseAc
         private TextView forget;
         private ImageView bg;
         private boolean isFirstLogin = false;
-
-
-
+        private List<GroupTableMessage> newData;
 
 
         @Override
@@ -148,6 +147,9 @@ public class LoginActivity extends org.pointstone.cugappplat.base.basemvp.BaseAc
                         user.setLocation(new BmobGeoPoint(LocationManager.getInstance().getLongitude(), LocationManager.getInstance()
                                 .getLatitude()));
                 }
+                if (newData != null) {
+                        newData.clear();
+                }
                 user.login(CustomApplication.getInstance(), new SaveListener() {
                                 @Override
                                 public void onSuccess() {
@@ -207,8 +209,16 @@ public class LoginActivity extends org.pointstone.cugappplat.base.basemvp.BaseAc
                                                                                                           @Override
                                                                                                           public void onSuccess(final List<GroupTableMessage> list) {
                                                                                                                   if (list != null && list.size() > 0) {
-                                                                                                                          LogUtil.e("在服务器上查询到该用户所有的群,数目:" + list.size());
-                                                                                                                          if (ChatDB.create().saveGroupTableMessage(list)) {
+                                                                                                                           newData=new ArrayList<>();
+                                                                                                                          for (GroupTableMessage message :
+                                                                                                                                  list) {
+//                                                                                                                                  这里进行判断出现是因为有可能建群失败的时候，未能把groupId上传上去
+                                                                                                                                  if (message.getGroupId()!=null) {
+                                                                                                                                          newData.add(message);
+                                                                                                                                  }
+                                                                                                                          }
+                                                                                                                          LogUtil.e("在服务器上查询到该用户所有的群,数目:" + newData.size());
+                                                                                                                          if (ChatDB.create().saveGroupTableMessage(newData)) {
                                                                                                                                   LogUtil.e("保存用户所拥有的群结构消息到数据库中成功");
 //                                                                                                                                  MessageCacheManager.getInstance().addGroupTableMessage(list);
                                                                                                                           } else {
@@ -227,7 +237,7 @@ public class LoginActivity extends org.pointstone.cugappplat.base.basemvp.BaseAc
                                                                                                                                                   UserCacheManager.getInstance().setLogin(true);
                                                                                                                                                   MessageCacheManager.getInstance().setLogin(true);
                                                                                                                                                   CustomApplication.getInstance().getSharedPreferencesUtil().setLogin(true);
-                                                                                                                                                  MessageCacheManager.getInstance().addGroupTableMessage(list);
+                                                                                                                                                  MessageCacheManager.getInstance().addGroupTableMessage(newData);
                                                                                                                                                   if (contacts != null && contacts.size() > 0) {
                                                                                                                                                           UserCacheManager.getInstance().setContactsList(BmobUtils.list2map(contacts));
                                                                                                                                                   }

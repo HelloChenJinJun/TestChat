@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import chen.testchat.CustomApplication;
-import chen.testchat.manager.UserCacheManager;
+import chen.testchat.manager.UserManager;
 
 
 /**
@@ -345,12 +345,13 @@ public class CommonUtils {
         }
 
         public static boolean isPhone(String content) {
-                return content.length() == 13;
+//                先暂时测试
+                return content.length() == 11;
         }
 
         public static String getDistance(double longitude, double latitude) {
-                double localLongitude = UserCacheManager.getInstance().getUser().getLocation().getLongitude();
-                double localLatitude = UserCacheManager.getInstance().getUser().getLocation().getLatitude();
+                double localLongitude = UserManager.getInstance().getCurrentUser().getLocation().getLongitude();
+                double localLatitude = UserManager.getInstance().getCurrentUser().getLocation().getLatitude();
                 int distance = (int) AMapUtils.calculateLineDistance(new LatLng(localLatitude, localLongitude), new LatLng(latitude, longitude));
                 return distance + "";
         }

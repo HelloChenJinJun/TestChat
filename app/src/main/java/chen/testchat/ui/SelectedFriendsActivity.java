@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import org.pointstone.cugappplat.base.basemvp.OnEditDataCompletedListener;
 import org.pointstone.cugappplat.base.cusotomview.ToolBarOption;
+import org.pointstone.cugappplat.baseadapter.BaseWrappedViewHolder;
 import org.pointstone.cugappplat.util.ToastUtils;
 
 import java.util.ArrayList;
@@ -90,38 +91,39 @@ public class SelectedFriendsActivity extends SlideBaseActivity implements MyLett
                         public void onClick(View v) {
                                 if (from.equals("createGroup")) {
                                         List<String> list = new ArrayList<>();
-                                        list.add("群名");
+                                        list.add("群组名");
                                         list.add("群描述");
-                                        showEditDialog("建群", list, new OnEditDataCompletedListener() {
-                                                @Override
-                                                public void onDataInputCompleted(List<String> data) {
-                                                        if (!CommonUtils.isNetWorkAvailable(CustomApplication.getInstance())) {
-                                                                LogUtil.e("网络连接失败");
-                                                                ToastUtils.showShortToast("网络连接失败");
-                                                                return;
+                                        if (selectedContacts != null && selectedContacts.size() > 0) {
+                                                showEditDialog("建群", list, new OnEditDataCompletedListener() {
+                                                        @Override
+                                                        public void onDataInputCompleted(List<String> data) {
+                                                                if (!CommonUtils.isNetWorkAvailable(CustomApplication.getInstance())) {
+                                                                        LogUtil.e("网络连接失败");
+                                                                        ToastUtils.showShortToast("网络连接失败");
+                                                                        return;
+                                                                }
+                                                                if (selectedContacts.size() > 0) {
+                                                                        showLoadDialog("正在建群中.....");
+                                                                        MsgManager.getInstance().sendCreateGroupMessage(data.get(0), data.get(1), selectedContacts, new SaveListener() {
+                                                                                @Override
+                                                                                public void onSuccess() {
+                                                                                        LogUtil.e("1总体建群成功");
+                                                                                        ToastUtils.showShortToast("建群成功");
+                                                                                        dismissLoadDialog();
+                                                                                        finish();
+                                                                                }
+                                                                                @Override
+                                                                                public void onFailure(int i, String s) {
+                                                                                        dismissLoadDialog();
+                                                                                        LogUtil.e("总体建群失败" + s + i);
+                                                                                }
+                                                                        });
+                                                                } else {
+                                                                        ToastUtils.showShortToast("你没有选择好友");
+                                                                }
                                                         }
-                                                        if (selectedContacts.size() > 0) {
-                                                                showLoadDialog("正在建群中.....");
-                                                                MsgManager.getInstance().sendCreateGroupMessage(data.get(0), data.get(1), selectedContacts, new SaveListener() {
-                                                                        @Override
-                                                                        public void onSuccess() {
-                                                                                LogUtil.e("1总体建群成功");
-                                                                                ToastUtils.showShortToast("建群成功");
-                                                                                dismissBaseDialog();
-                                                                                finish();
-                                                                        }
-
-                                                                        @Override
-                                                                        public void onFailure(int i, String s) {
-                                                                                dismissBaseDialog();
-                                                                                LogUtil.e("总体建群失败" + s + i);
-                                                                        }
-                                                                });
-                                                        } else {
-                                                                ToastUtils.showShortToast("你没有选择好友");
-                                                        }
-                                                }
-                                        });
+                                                });
+                                        }
                                 } else if (from.equals("select_visibility")) {
                                         Intent intent = new Intent();
                                         intent.putStringArrayListExtra(Constant.RESULT_CODE_SELECT_VISIBILITY, (ArrayList<String>) selectedContacts);
@@ -168,8 +170,10 @@ public class SelectedFriendsActivity extends SlideBaseActivity implements MyLett
                 return avatar;
         }
 
+
+
         @Override
-        public void onItemChecked(boolean isCheck, User user) {
+        public void onItemChecked(boolean isCheck, User user, BaseWrappedViewHolder holder) {
                 if (isCheck) {
                         selectedContacts.add(user.getObjectId());
                         bottomDisplay.addView(getImageView(user.getAvatar(), user.getObjectId()));
@@ -182,6 +186,5 @@ public class SelectedFriendsActivity extends SlideBaseActivity implements MyLett
                         }
                 }
                 bottomDisplay.invalidate();
-                adapter.notifyDataSetChanged();
         }
 }

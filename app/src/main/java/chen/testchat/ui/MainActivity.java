@@ -236,7 +236,7 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
         }
 
         private void initUserInfo() {
-                user = UserCacheManager.getInstance().getUser();
+                user = UserManager.getInstance().getCurrentUser();
                 if (user!=null) {
                         Glide.with(this).load(user.getAvatar()).centerCrop()
                                 .into(avatar);
@@ -493,7 +493,7 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
                                         finish();
                                         return;
                                 }
-                                LogUtil.e("接受到广播发来的消息");
+                                LogUtil.e("1接受到广播发来的消息");
                                 if (intent.getStringExtra("from").equals("person")) {
                                         List<ChatMessage> list;
                                         list = (List<ChatMessage>) intent.getSerializableExtra(Constant.NEW_MESSAGE);
@@ -770,6 +770,7 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
                                 notifyMenuUpdate();
                         }
                 } else {
+                        currentPosition=1;
                         addOrReplaceFragment(mFragments[1]);
                 }
                 ((RecentFragment) mFragments[0]).notifyUserAdd(id);

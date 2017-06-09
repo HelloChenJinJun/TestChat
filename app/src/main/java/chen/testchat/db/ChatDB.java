@@ -31,7 +31,6 @@ import chen.testchat.bean.SharedMessage;
 import chen.testchat.bean.TxResponse;
 import chen.testchat.bean.User;
 import chen.testchat.bean.WinXinBean;
-import chen.testchat.manager.UserCacheManager;
 import chen.testchat.manager.UserManager;
 import chen.testchat.util.CommonUtils;
 import chen.testchat.util.LogUtil;
@@ -1269,7 +1268,7 @@ public class ChatDB {
                         values.put(GROUP_READ_STATUS, message.getReadStatus());
                         values.put(GROUP_NOTIFICATION, message.getNotification());
                         values.put(GROUP_NUMBER, CommonUtils.list2string(message.getGroupNumber()));
-                        if (!hasGroupTableMessage(message.getObjectId())) {
+                        if (!hasGroupTableMessage(message.getGroupId())) {
                                 result = mDatabase.insert(GROUP_TABLE, null, values);
                         } else {
                                 LogUtil.e("在数据库中更新群结构消息");
@@ -1349,7 +1348,7 @@ public class ChatDB {
         private boolean hasGroupTableMessage(String id) {
                 boolean result = false;
                 if (mDatabase.isOpen()) {
-                        Cursor cursor = mDatabase.query(GROUP_TABLE, null, GROUP_OBJECT_ID + " =?", new String[]{id}, null, null, null);
+                        Cursor cursor = mDatabase.query(GROUP_TABLE, null, GROUP_ID + " =?", new String[]{id}, null, null, null);
                         if (cursor != null && cursor.moveToFirst()) {
                                 result = true;
                         }
@@ -1695,7 +1694,7 @@ public class ChatDB {
                 if (mDatabase.isOpen()) {
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(GROUP_FROM_NICK, nick);
-                        result = mDatabase.update(GROUP_MESSAGE_TABLE, contentValues, GROUP_ID + " =? AND " + GROUP_FROM_ID + " =?", new String[]{groupId, UserCacheManager.getInstance().getUser().getObjectId()});
+                        result = mDatabase.update(GROUP_MESSAGE_TABLE, contentValues, GROUP_ID + " =? AND " + GROUP_FROM_ID + " =?", new String[]{groupId, UserManager.getInstance().getCurrentUserObjectId()});
                 }
                 if (result > 0) {
                         LogUtil.e("在数据库中更新群消息上的昵称成功");
@@ -1960,7 +1959,7 @@ public class ChatDB {
                 if (mDatabase.isOpen()) {
                         int id = getIDFromTime(time);
                         String sql;
-                        String uid = UserCacheManager.getInstance().getUser().getObjectId();
+                        String uid = UserManager.getInstance().getCurrentUserObjectId();
                         if (isPullRefresh) {
                                 sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " < " + id + " AND " + SHARED_BELONG_ID + " =?" + " ORDER BY " + _ID + " DESC LIMIT "
                                         + count;
@@ -2110,6 +2109,23 @@ public class ChatDB {
                 return result;
         }
 
+        public long deleteGroupTableMessage(String groupId) {
+                long result = -1;
+                if (mDatabase.isOpen()) {
+                        if (!hasGroupTableMessage(groupId)) {
+                                LogUtil.e("数据库中没有群结构消息可删");
+                        } else {
+                                result = mDatabase.delete(GROUP_TABLE, GROUP_ID + " =? ", new String[]{groupId});
+                                LogUtil.e("删除的群结构消息行号" + result);
+                        }
+                }
+                if (result > 0) {
+                        LogUtil.e("删除群结构消息成功");
+                } else {
+                        LogUtil.e("删除群结构消息失败");
+                }
+                return result;
+        }
 
 
         /**

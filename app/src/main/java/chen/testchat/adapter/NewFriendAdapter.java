@@ -37,13 +37,13 @@ public class NewFriendAdapter extends BaseSwipeWrappedAdapter<InvitationMsg, Bas
 
 
         @Override
-        public void addData(InvitationMsg newData) {
+        public void addData(int position, InvitationMsg newData) {
                 if (data.contains(newData)) {
                         int index = data.indexOf(newData);
                         data.set(index, newData);
                         notifyDataSetChanged();
                 } else {
-                        super.addData(newData);
+                        super.addData(position, newData);
                 }
         }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 import chen.testchat.R;
 import chen.testchat.bean.ImageItem;
-import chen.testchat.manager.UserCacheManager;
+import chen.testchat.manager.UserManager;
 
 /**
  * 项目名称:    TestChat
@@ -80,7 +80,7 @@ public class HappyContentDisplayActivity extends SlideBaseActivity {
         private void initActionBar() {
                 ToolBarOption toolBarOption = new ToolBarOption();
                 toolBarOption.setNeedNavigation(true);
-                toolBarOption.setAvatar(UserCacheManager.getInstance().getUser().getAvatar());
+                toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
                 toolBarOption.setTitle("内容");
                 setToolBar(toolBarOption);
         }

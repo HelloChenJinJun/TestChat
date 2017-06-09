@@ -116,7 +116,7 @@ public class LikerTextView extends android.support.v7.widget.AppCompatTextView {
 
         private SpannableString setImageSpan(List<String> list) {
                 SpannableString spannableString = new SpannableString("..");
-                if (list != null && list.contains(UserCacheManager.getInstance().getUser().getObjectId())) {
+                if (list != null && list.contains(UserManager.getInstance().getCurrentUser().getObjectId())) {
                         spannableString.setSpan(new ImageSpan(getContext(), R.drawable.ic_favorite_deep_orange_a700_24dp, DynamicDrawableSpan.ALIGN_BASELINE), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } else {
                         spannableString.setSpan(new ImageSpan(getContext(), R.drawable.ic_favorite_border_deep_orange_a700_24dp, DynamicDrawableSpan.ALIGN_BASELINE), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

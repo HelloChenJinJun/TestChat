@@ -141,9 +141,12 @@ public class ShareMultipleLayoutAdapter extends BaseMultipleWrappedAdapter<Share
         @Override
         public void addData(int position, SharedMessage newData) {
                 if (data.contains(newData)) {
-                        data.remove(newData);
+                        int index = data.indexOf(newData);
+                        data.set(index, newData);
+                        notifyDataSetChanged();
+                } else {
+                        super.addData(position, newData);
                 }
-                super.addData(position, newData);
         }
 
 

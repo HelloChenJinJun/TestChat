@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -40,6 +41,7 @@ import chen.testchat.listener.OnBaseItemClickListener;
 import chen.testchat.manager.MessageCacheManager;
 import chen.testchat.manager.MsgManager;
 import chen.testchat.manager.UserCacheManager;
+import chen.testchat.manager.UserManager;
 import chen.testchat.util.LogUtil;
 import chen.testchat.util.TimeUtil;
 import cn.bmob.v3.datatype.BmobFile;
@@ -146,7 +148,6 @@ public class GroupInfoActivity extends SlideBaseActivity implements View.OnClick
                                         Intent intent = new Intent(GroupInfoActivity.this, GroupNumberInfoDetailActivity.class);
                                         GroupNumberInfo groupNumberInfo = mAdapter.getData(position);
                                         intent.putExtra("isCreator", isCreator);
-                                        intent.putExtra("position", position);
                                         intent.putExtra("groupId", mGroupTableMessage.getGroupId());
                                         intent.putExtra("groupNumberInfo", groupNumberInfo);
                                         startActivity(intent);
@@ -154,7 +155,7 @@ public class GroupInfoActivity extends SlideBaseActivity implements View.OnClick
                         }
                 });
                 numberAvatar.setAdapter(mAdapter);
-                if (UserCacheManager.getInstance().getUser().getObjectId().equals(mGroupTableMessage.getCreatorId())) {
+                if (UserManager.getInstance().getCurrentUser().getObjectId().equals(mGroupTableMessage.getCreatorId())) {
                         isCreator = true;
                         LogUtil.e("当前用户为群主，可以修改群头像");
                         headerLayout.setClickable(true);
@@ -175,6 +176,74 @@ public class GroupInfoActivity extends SlideBaseActivity implements View.OnClick
                 setToolBar(mToolBarOption);
                 isRemind = CustomApplication.getInstance().getSharedPreferencesUtil().isRemind(mGroupTableMessage.getGroupId());
                 updateData();
+                numberAvatar.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                                if (MessageCacheManager.getInstance().getAllGroupNumberInfo(mGroupTableMessage.getGroupId()) == null) {
+                                        showLoadDialog("正在加载群成员消息，请稍候............");
+                                        MsgManager.getInstance().queryAllGroupNumber(mGroupTableMessage.getGroupId(), new FindListener<User>() {
+                                                @Override
+                                                public void onSuccess(final List<User> userList) {
+                                                        if (userList != null && userList.size() > 0) {
+                                                                LogUtil.e("群成员信息");
+                                                                for (User user :
+                                                                        userList) {
+                                                                        LogUtil.e(user);
+                                                                }
+                                                                MsgManager.getInstance().queryAllGroupTableMessage(mGroupTableMessage.getGroupId(), new FindListener<GroupTableMessage>() {
+                                                                        @Override
+                                                                        public void onSuccess(List<GroupTableMessage> list) {
+                                                                                dismissLoadDialog();
+                                                                                List<GroupNumberInfo> groupInfoList;
+                                                                                if (list != null && list.size() > 0) {
+                                                                                        groupInfoList = new ArrayList<>();
+                                                                                        GroupNumberInfo groupNumberInfo;
+                                                                                        LogUtil.e("查询得到的成员群结构消息列表");
+                                                                                        for (GroupTableMessage message :
+                                                                                                list) {
+                                                                                                LogUtil.e(message);
+                                                                                                groupNumberInfo = new GroupNumberInfo();
+                                                                                                groupNumberInfo.setGroupNick(message.getGroupNick());
+                                                                                                for (User user :
+                                                                                                        userList
+                                                                                                        ) {
+                                                                                                        if (user.getObjectId().equals(message.getToId())) {
+                                                                                                                groupNumberInfo.setUser(user);
+                                                                                                        }
+                                                                                                }
+                                                                                                groupInfoList.add(groupNumberInfo);
+                                                                                        }
+                                                                                        MessageCacheManager.getInstance().setAllGroupNumberInfo(mGroupTableMessage.getGroupId(), groupInfoList);
+                                                                                        mAdapter.clearData();
+                                                                                        mAdapter.addData(MessageCacheManager.getInstance().getAllGroupNumberInfo(mGroupTableMessage.getGroupId()));
+                                                                                        mAdapter.notifyDataSetChanged();
+                                                                                } else {
+                                                                                        LogUtil.e("在服务器上没有查询到群结构消息");
+                                                                                }
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onError(int i, String s) {
+                                                                                LogUtil.e("查询群成员的群资料失败" + s + i);
+                                                                                dismissLoadDialog();
+                                                                        }
+                                                                });
+                                                        }
+                                                }
+
+                                                @Override
+                                                public void onError(int i, String s) {
+                                                        dismissLoadDialog();
+                                                        LogUtil.e("查询群成员信息失败" + s + i);
+                                                }
+                                        });
+                                } else {
+                                        mAdapter.clearData();
+                                        mAdapter.addData(MessageCacheManager.getInstance().getAllGroupNumberInfo(mGroupTableMessage.getGroupId()));
+                                        mAdapter.notifyDataSetChanged();
+                                }
+                        }
+                },200);
         }
 
         private void updateData() {
@@ -203,69 +272,6 @@ public class GroupInfoActivity extends SlideBaseActivity implements View.OnClick
         @Override
         protected void onResume() {
                 super.onResume();
-                if (MessageCacheManager.getInstance().getAllGroupNumberInfo(mGroupTableMessage.getGroupId()) == null) {
-                        showLoadDialog("正在加载群成员消息，请稍候............");
-                        MsgManager.getInstance().queryAllGroupNumber(mGroupTableMessage.getGroupId(), new FindListener<User>() {
-                                @Override
-                                public void onSuccess(final List<User> userList) {
-                                        if (userList != null && userList.size() > 0) {
-                                                LogUtil.e("群成员信息");
-                                                for (User user :
-                                                        userList) {
-                                                        LogUtil.e(user);
-                                                }
-                                                MsgManager.getInstance().queryAllGroupTableMessage(mGroupTableMessage.getGroupId(), new FindListener<GroupTableMessage>() {
-                                                        @Override
-                                                        public void onSuccess(List<GroupTableMessage> list) {
-                                                                dismissLoadDialog();
-                                                                List<GroupNumberInfo> groupInfoList;
-                                                                if (list != null && list.size() > 0) {
-                                                                        groupInfoList = new ArrayList<>();
-                                                                        GroupNumberInfo groupNumberInfo;
-                                                                        LogUtil.e("查询得到的成员群结构消息列表");
-                                                                        for (GroupTableMessage message :
-                                                                                list) {
-                                                                                LogUtil.e(message);
-                                                                                groupNumberInfo = new GroupNumberInfo();
-                                                                                groupNumberInfo.setGroupNick(message.getGroupNick());
-                                                                                for (User user :
-                                                                                        userList
-                                                                                        ) {
-                                                                                        if (user.getObjectId().equals(message.getToId())) {
-                                                                                                groupNumberInfo.setUser(user);
-                                                                                        }
-                                                                                }
-                                                                                groupInfoList.add(groupNumberInfo);
-                                                                        }
-                                                                        MessageCacheManager.getInstance().setAllGroupNumberInfo(mGroupTableMessage.getGroupId(), groupInfoList);
-                                                                        mAdapter.clearData();
-                                                                        mAdapter.addData(MessageCacheManager.getInstance().getAllGroupNumberInfo(mGroupTableMessage.getGroupId()));
-                                                                        mAdapter.notifyDataSetChanged();
-                                                                } else {
-                                                                        LogUtil.e("在服务器上没有查询到群结构消息");
-                                                                }
-                                                        }
-
-                                                        @Override
-                                                        public void onError(int i, String s) {
-                                                                LogUtil.e("查询群成员的群资料失败" + s + i);
-                                                                dismissLoadDialog();
-                                                        }
-                                                });
-                                        }
-                                }
-
-                                @Override
-                                public void onError(int i, String s) {
-                                        dismissLoadDialog();
-                                        LogUtil.e("查询群成员信息失败" + s + i);
-                                }
-                        });
-                } else {
-                        mAdapter.clearData();
-                        mAdapter.addData(MessageCacheManager.getInstance().getAllGroupNumberInfo(mGroupTableMessage.getGroupId()));
-                        mAdapter.notifyDataSetChanged();
-                }
         }
 
         @Override
@@ -347,6 +353,31 @@ public class GroupInfoActivity extends SlideBaseActivity implements View.OnClick
                                 }
                                 break;
                         case R.id.btn_group_info_exit_group:
+                                if (mGroupTableMessage.getCreatorId().equals(UserManager.getInstance().getCurrentUserObjectId())) {
+//                                        群主退出该群,
+                                        Toast.makeText(this, "群组不能退出该群", Toast.LENGTH_SHORT).show();
+                                }else {
+                                        GroupTableMessage groupTableMessage=new GroupTableMessage();
+                                        groupTableMessage.setObjectId(mGroupTableMessage.getGroupId());
+                                        List<String> numberList=new ArrayList<>(mGroupTableMessage.getGroupNumber());
+                                        if (numberList.contains(UserManager.getInstance().getCurrentUserObjectId())) {
+                                                numberList.remove(UserManager.getInstance().getCurrentUserObjectId());
+                                        }
+                                        groupTableMessage.setGroupNumber(numberList);
+                                        groupTableMessage.update(this, new UpdateListener() {
+                                                @Override
+                                                public void onSuccess() {
+                                                        LogUtil.e("更新群主的群结构消息成功");
+                                                        finish();
+                                                }
+
+                                                @Override
+                                                public void onFailure(int i, String s) {
+                                                        LogUtil.e("更新群主的群结构消息失败"+s+i);
+                                                }
+                                        });
+                                }
+
                                 break;
                         default:
                                 break;
@@ -460,7 +491,7 @@ public class GroupInfoActivity extends SlideBaseActivity implements View.OnClick
                                         if (list != null) {
                                                 for (GroupNumberInfo info :
                                                         list) {
-                                                        if (info.getUser().getObjectId().equals(UserCacheManager.getInstance().getUser().getObjectId())) {
+                                                        if (info.getUser().getObjectId().equals(UserManager.getInstance().getCurrentUser().getObjectId())) {
                                                                 info.setGroupNick(message);
                                                                 break;
                                                         }
@@ -485,6 +516,10 @@ public class GroupInfoActivity extends SlideBaseActivity implements View.OnClick
                                         mGroupTableMessage.setGroupName(message);
                                         groupName.setText(message);
                                         groupName1.setText(message);
+
+
+
+
                                         RxBusManager.getInstance().post(new GroupInfoEvent(message,GroupInfoEvent.TYPE_GROUP_NAME));
                                         break;
                         }

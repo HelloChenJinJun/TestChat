@@ -122,6 +122,7 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
         private String from;
         private String groupId;
         private GroupTableMessage mGroupTableMessage;
+        private boolean exit=false;
 
 
         @Override
@@ -234,7 +235,9 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         public void call(GroupInfoEvent groupInfoEvent) {
 //                                刷新过来的，更新下群结构消息
                                 mGroupTableMessage = MessageCacheManager.getInstance().getGroupTableMessage(groupId);
-                                LogUtil.e(mGroupTableMessage);
+                                if (mGroupTableMessage != null) {
+                                        LogUtil.e(mGroupTableMessage);
+                                }
                                 int type = groupInfoEvent.getType();
                                 String content = groupInfoEvent.getContent();
                                 switch (type) {
@@ -264,8 +267,13 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                                                 LogUtil.e("这里要做群头像的界面展示" + content);
                                                 break;
                                         case GroupInfoEvent.TYPE_GROUP_NUMBER:
-                                                LogUtil.e("这里通知成员的变化" + content);
-
+                                                if (groupId != null) {
+                                                        LogUtil.e("这里通知成员的变化" + content);
+                                                        if (content.equals(groupId)) {
+                                                                exit=true;
+                                                                Toast.makeText(ChatActivity.this, "你已经被提出该群", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                }
                                                 break;
                                         default:
                                                 break;
@@ -352,6 +360,12 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                                         GroupChatMessage message = (GroupChatMessage) intent.getSerializableExtra(Constant.NEW_MESSAGE);
                                         if (from.equals("group") && message.getGroupId().equals(groupId)) {
                                                 if (MsgManager.getInstance().saveRecentAndChatGroupMessage(message)) {
+
+                                                        boolean isRefresh=intent.getBooleanExtra("isRefresh",false);
+                                                        if (!isRefresh&&!hasFocus) {
+                                                                ChatNotificationManager.getInstance(ChatActivity.this).sendGroupMessageNotification(message, ChatActivity.this);
+                                                        }
+
                                                         onNewGroupChatMessageCome(message);
                                                 }
                                         } else {
@@ -533,6 +547,16 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
          * @param recordTime 录制的时间
          */
         private void sendVoiceMessage(String localPath, int recordTime) {
+                if (exit) {
+                        Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
+                        return;
+                }
+
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
+
                 MsgManager manager = MsgManager.getInstance();
                 String id;
                 final boolean result;
@@ -607,6 +631,9 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
         }
 
 
+        private boolean isBlack=false;
+
+
         @Override
         protected void onResume() {
                 super.onResume();
@@ -615,6 +642,9 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
 //                        String title = mGroupTableMessage.getGroupName() + "(" + mGroupTableMessage.getGroupNumber().size() + ")";
 //                        getCustomTitle().setText(title);
 //                }
+                if (uid != null) {
+                        isBlack=ChatDB.create().isBlackUser(uid);
+                }
                 PushMessageReceiver.registerListener(this);
         }
 
@@ -793,6 +823,14 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
          * @param address   地址
          */
         private void sendLocationChatMessage(String localPath, String latitude, String longitude, String address) {
+                if (exit) {
+                        Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
+                        return;
+                }
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
                 if (l1_more.getVisibility() == View.VISIBLE) {
                         l1_more.setVisibility(View.GONE);
                         l1_add.setVisibility(View.GONE);
@@ -840,7 +878,14 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
          * @param localImagePath 图片的本地地址
          */
         private void sendImageMessage(String localImagePath) {
-
+                if (exit) {
+                        Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
+                        return;
+                }
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
 
                 if (l1_more.getVisibility() == View.VISIBLE) {
                         l1_more.setVisibility(View.GONE);
@@ -904,6 +949,14 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
          * @param content 内容
          */
         private void sendTextMessage(final String content) {
+                if (exit) {
+                        Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
+                        return;
+                }
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
                 MsgManager manager = MsgManager.getInstance();
                 BaseMessage baseMessage;
                 String id;
@@ -1170,9 +1223,7 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
 
         @Override
         public void onNewGroupChatMessageCome(GroupChatMessage message) {
-                if (!hasFocus) {
-                        ChatNotificationManager.getInstance(this).sendGroupMessageNotification(message, this);
-                }
+
                 ChatDB.create().updateReceivedGroupChatMessageReaded(groupId, true);
                 mAdapter.addData(message);
                 scrollToBottom();

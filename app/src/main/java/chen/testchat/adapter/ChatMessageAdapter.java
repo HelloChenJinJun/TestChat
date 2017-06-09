@@ -141,14 +141,17 @@ public class ChatMessageAdapter extends BaseMultipleWrappedAdapter<BaseMessage, 
         @Override
         public void addData(int position, BaseMessage newData) {
                 if (data.contains(newData)) {
-                        data.remove(newData);
+                        int index = data.indexOf(newData);
+                        data.set(index, newData);
+                        notifyDataSetChanged();
+                } else {
+                        super.addData(position,newData);
                 }
-                super.addData(position, newData);
         }
 
         @Override
         public void addData(int position, List<BaseMessage> newData) {
-                LogUtil.e("添加数据1234567891");
+                LogUtil.e("添加数据12345678910");
                 if (newData == null || newData.size() == 0) {
                         return;
                 }
@@ -173,10 +176,6 @@ public class ChatMessageAdapter extends BaseMultipleWrappedAdapter<BaseMessage, 
                                 newData.remove(message);
                         }
                 }
-                LogUtil.e("这里呢123456");
-                LogUtil.e("position"+position);
-                LogUtil.e("newData"+newData.size());
-                LogUtil.e("data"+data.size());
                 super.addData(position, newData);
         }
 }

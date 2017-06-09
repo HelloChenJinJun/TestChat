@@ -11,6 +11,7 @@ import chen.testchat.listener.OnDownLoadFileListener;
 import chen.testchat.listener.VoiceRecordPlayListener;
 import chen.testchat.manager.DownLoadManager;
 import chen.testchat.util.LogUtil;
+import chen.testchat.util.TimeUtil;
 import cn.bmob.v3.exception.BmobException;
 
 /**
@@ -27,6 +28,11 @@ public class ReceiveVoiceHolder extends BaseChatHolder implements OnDownLoadFile
 
         @Override
         public void bindData(final BaseMessage baseMessage, final ChatMessageAdapter.OnItemClickListener listener, boolean isShowTime) {
+                if (isShowTime) {
+                        setText(R.id.tv_chat_receive_voice_item_time, TimeUtil.getTime(Long.valueOf(baseMessage.getCreateTime())));
+                }
+                setVisible(R.id.tv_chat_receive_voice_item_time, isShowTime);
+
                 if (baseMessage instanceof ChatMessage) {
                         setVisible(R.id.tv_chat_receive_voice_item_name, false);
                 } else {

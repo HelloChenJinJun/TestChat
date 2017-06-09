@@ -19,7 +19,7 @@ import org.pointstone.cugappplat.base.cusotomview.ToolBarOption;
 
 import chen.testchat.R;
 import chen.testchat.bean.WinXinBean;
-import chen.testchat.manager.UserCacheManager;
+import chen.testchat.manager.UserManager;
 import chen.testchat.util.CommonUtils;
 import chen.testchat.view.fab.FloatingActionButton;
 import chen.testchat.view.fab.FloatingActionsMenu;
@@ -130,7 +130,7 @@ public class WeiXinNewsActivity extends SlideBaseActivity implements View.OnClic
 
         private void initActionBar() {
                 ToolBarOption toolBarOption = new ToolBarOption();
-                toolBarOption.setAvatar(UserCacheManager.getInstance().getUser().getAvatar());
+                toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
                 toolBarOption.setNeedNavigation(true);
                 toolBarOption.setTitle(title);
                 setToolBar(toolBarOption);
@@ -143,13 +143,13 @@ public class WeiXinNewsActivity extends SlideBaseActivity implements View.OnClic
                 }
                 switch (v.getId()) {
                         case R.id.fab_wei_xin_news_share:
-                                Intent intent = new Intent(Intent.ACTION_SEND);
-                                intent.putExtra(Intent.EXTRA_TEXT, title + "," + url);
+                                Intent intent = new Intent(this, EditShareMessageActivity.class);
+                                intent.putExtra(Intent.EXTRA_TEXT, bean.getTitle() + "," + bean.getUrl());
                                 intent.putExtra("share_info", bean);
                                 intent.putExtra("type", "wei_xin");
                                 intent.putExtra("destination", "url");
                                 intent.setType("text/plain");
-                                startActivity(Intent.createChooser(intent, "分享到"));
+                                startActivity(intent);
                                 break;
                         case R.id.fab_wei_xin_news_browser:
                                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
