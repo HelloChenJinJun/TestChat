@@ -20,7 +20,7 @@ import chen.testchat.R;
 import chen.testchat.adapter.NearbyPeopleAdapter;
 import chen.testchat.bean.User;
 import chen.testchat.listener.OnBaseItemClickListener;
-import chen.testchat.manager.UserCacheManager;
+import chen.testchat.manager.UserManager;
 import chen.testchat.mvp.NearByPeopleTask.NearbyPeopleContacts;
 import chen.testchat.mvp.NearByPeopleTask.NearbyPeopleModel;
 import chen.testchat.mvp.NearByPeopleTask.NearbyPeoplePresenter;
@@ -76,7 +76,7 @@ public class NearbyPeopleActivity extends SlideBaseActivity implements SwipeRefr
         public void initData() {
                 mNearbyPeoplePresenter=new NearbyPeoplePresenter();
                 mNearbyPeoplePresenter.setViewAndModel(this,new NearbyPeopleModel());
-                BmobGeoPoint bmobGeoPoint = UserCacheManager.getInstance().getUser().getLocation();
+                BmobGeoPoint bmobGeoPoint = UserManager.getInstance().getCurrentUser().getLocation();
                 longitude = bmobGeoPoint.getLongitude();
                 latitude = bmobGeoPoint.getLatitude();
                 display.setLayoutManager(new LinearLayoutManager(this));
@@ -106,13 +106,14 @@ public class NearbyPeopleActivity extends SlideBaseActivity implements SwipeRefr
 
         private void initActionBar() {
                 ToolBarOption toolBarOption = new ToolBarOption();
-                toolBarOption.setAvatar(UserCacheManager.getInstance().getUser().getAvatar());
-                toolBarOption.setTitle("附近的人1");
+                toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
+                toolBarOption.setTitle("附近的人");
                 toolBarOption.setNeedNavigation(true);
                 toolBarOption.setRightResId(R.drawable.ic_list_blue_grey_900_24dp);
                 toolBarOption.setRightListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+
                                 List<String> list = new ArrayList<>();
                                 list.add("查看全部");
                                 list.add("只查看女生");

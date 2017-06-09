@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import chen.testchat.CustomApplication;
@@ -48,8 +49,12 @@ public class SplashActivity extends org.pointstone.cugappplat.base.basemvp.BaseA
                         }
                 }
         };
+        private List<GroupTableMessage> newData;
 
         private void updateUserInfo() {
+                if (newData != null) {
+                        newData.clear();
+                }
                 UserManager.getInstance().queryAndSaveCurrentContactsList(new FindListener<User>() {
                                                                                   @Override
                                                                                   public void onSuccess(final List<User> contacts) {
@@ -70,7 +75,15 @@ public class SplashActivity extends org.pointstone.cugappplat.base.basemvp.BaseA
                                                                                                           public void onSuccess(final List<GroupTableMessage> list) {
                                                                                                                   if (list != null && list.size() > 0) {
                                                                                                                           LogUtil.e("在服务器上查询到该用户所有的群,数目:" + list.size());
-                                                                                                                          if (ChatDB.create().saveGroupTableMessage(list)) {
+                                                                                                                          newData=new ArrayList<>();
+                                                                                                                          for (GroupTableMessage message :
+                                                                                                                                  list) {
+//                                                                                                                                  这里进行判断出现是因为有可能建群失败的时候，未能把groupId上传上去
+                                                                                                                                  if (message.getGroupId()!=null) {
+                                                                                                                                          newData.add(message);
+                                                                                                                                  }
+                                                                                                                          }
+                                                                                                                          if (ChatDB.create().saveGroupTableMessage(newData)) {
                                                                                                                                   LogUtil.e("保存用户所拥有的群结构消息到数据库中成功");
                                                                                                                           } else {
                                                                                                                                   LogUtil.e("保存用户所拥有的群结构消息到数据库中失败");
@@ -87,7 +100,7 @@ public class SplashActivity extends org.pointstone.cugappplat.base.basemvp.BaseA
                                                                                                                                   if (contacts != null && contacts.size() > 0) {
                                                                                                                                           UserCacheManager.getInstance().setContactsList(BmobUtils.list2map(contacts));
                                                                                                                                   }
-                                                                                                                                  MessageCacheManager.getInstance().addGroupTableMessage(list);
+                                                                                                                                  MessageCacheManager.getInstance().addGroupTableMessage(newData);
                                                                                                                                   Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                                                                                                                                   startActivity(intent);
                                                                                                                                   finish();

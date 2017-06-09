@@ -165,4 +165,14 @@ public class User extends BmobUser implements Comparable<User> {
         public int compareTo(User another) {
                 return getSortedKey().compareTo(another.getSortedKey());
         }
+
+
+        @Override
+        public boolean equals(Object obj) {
+                if (obj instanceof User) {
+                        User user= (User) obj;
+                        return user.getObjectId().equals(getObjectId());
+                }
+                return false;
+        }
 }

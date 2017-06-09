@@ -20,6 +20,7 @@ import chen.testchat.listener.OnBaseItemChildClickListener;
 import chen.testchat.mvp.HappyContentInfoTask.HappyContentContacts;
 import chen.testchat.mvp.HappyContentInfoTask.HappyContentModel;
 import chen.testchat.mvp.HappyContentInfoTask.HappyContentPresenter;
+import chen.testchat.ui.EditShareMessageActivity;
 import chen.testchat.view.ListViewDecoration;
 
 /**
@@ -46,7 +47,7 @@ public class HappyContentFragment extends org.pointstone.cugappplat.base.basemvp
 
         @Override
         protected boolean isNeedEmptyLayout() {
-                return false;
+                return true;
         }
 
         @Override
@@ -81,13 +82,14 @@ public class HappyContentFragment extends org.pointstone.cugappplat.base.basemvp
                         protected void onItemChildClick(BaseWrappedViewHolder baseWrappedViewHolder, int id, View view, int position) {
                                 if (id == R.id.iv_fragment_happy_content_item_share) {
                                         HappyContentBean bean = mHappyAdapter.getData(position);
-                                        Intent intent = new Intent(Intent.ACTION_SEND);
+                                        Intent intent = new Intent(getActivity(), EditShareMessageActivity.class);
+                                        intent.setAction(Intent.ACTION_SEND);
                                         intent.putExtra(Intent.EXTRA_TEXT, bean.getContent());
                                         intent.putExtra("share_info", bean);
                                         intent.putExtra("type", "happy_content");
                                         intent.putExtra("destination", "url");
                                         intent.setType("text/plain");
-                                        startActivity(Intent.createChooser(intent, "分享到"));
+                                        startActivity(intent);
                                 }
                         }
                 });

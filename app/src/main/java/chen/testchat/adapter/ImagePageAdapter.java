@@ -3,14 +3,18 @@ package chen.testchat.adapter;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import chen.testchat.R;
 import chen.testchat.bean.ImageItem;
 import chen.testchat.util.CommonUtils;
 import chen.testchat.util.LogUtil;
@@ -39,6 +43,9 @@ public class ImagePageAdapter extends PagerAdapter {
         private int screenHeight;
 //        private CommonImageLoader mCommonImageLoader;
 
+//        private ImageLoadListener listener;
+
+
 
         public interface OnPhotoViewClickListener {
                 void onPhotoViewClick(View view, int position);
@@ -59,7 +66,9 @@ public class ImagePageAdapter extends PagerAdapter {
 
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
-                PhotoView photoView = new PhotoView(mContext);
+                View view= LayoutInflater.from(mContext).inflate(R.layout.base_pre_view_item_layout,null);
+                PhotoView photoView = (PhotoView) view.findViewById(R.id.pv_base_pre_view_item_display);
+                ProgressBar progressBar= (ProgressBar) view.findViewById(R.id.pb_base_pre_view_item_load);
                 LogUtil.e("执行到这里,可以了");
                 photoView.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
                         @Override
@@ -71,10 +80,19 @@ public class ImagePageAdapter extends PagerAdapter {
                         }
                 });
                 ImageItem imageItem = data.get(position);
-                Glide.with(mContext).load(imageItem.getPath()).override(screenWidth, screenHeight).into(photoView);
+                String url=imageItem.getPath();
+                if (url.endsWith(".gif")) {
+
+
+                        LogUtil.e("是gif图片12356");
+                                                Glide.with(mContext).load(url).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).override(screenWidth, screenHeight).thumbnail(0.1f).into(photoView);
+//                        Glide.with(mContext).load(url).asGif().override(screenWidth, screenHeight).into(photoView);
+                }else {
+                        Glide.with(mContext).load(url).override(screenWidth, screenHeight).into(photoView);
+                }
 //                mCommonImageLoader.getImageLoader().displayImage(mContext, imageItem.getPath(), photoView, screenWidth, screenHeight);
-                container.addView(photoView);
-                return photoView;
+                container.addView(view);
+                return view;
         }
 
         @Override

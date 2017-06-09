@@ -31,7 +31,6 @@ import chen.testchat.bean.SharedMessage;
 import chen.testchat.bean.TxResponse;
 import chen.testchat.bean.User;
 import chen.testchat.bean.WinXinBean;
-import chen.testchat.manager.UserCacheManager;
 import chen.testchat.manager.UserManager;
 import chen.testchat.util.CommonUtils;
 import chen.testchat.util.LogUtil;
@@ -240,7 +239,7 @@ public class ChatDB {
         private static final String SHARED_LIKER = "shared_liker";
         private static final String SHARED_IMAGE_URL = "shared_image_url";
         private static final String SHARED_VISIBLE_TYPE = "shared_visible_type";
-        private static final String SHARED_VISIBLE_USER = "shared_visible_user";
+        private static final String SHARED_INVISIBLE_USER = "shared_invisible_user";
         private static final String SHARED_SEVER_CREATE_TIME = "shared_sever_create_time";
         private static final String SHARED_ADDRESS = "address";
         private static final String SHARED_URL_TITLE = "url_title";
@@ -258,7 +257,7 @@ public class ChatDB {
                 + SHARED_SEVER_CREATE_TIME + " TEXT, "
                 + SHARED_ADDRESS + " TEXT, "
                 + SHARED_VISIBLE_TYPE + " INTEGER, "
-                + SHARED_VISIBLE_USER + " TEXT, "
+                + SHARED_INVISIBLE_USER + " TEXT, "
                 + SHARED_URL_TITLE + " TEXT, "
                 + SHARED_URL + " TEXT, "
                 + SHARED_IMAGE_URL + " TEXT); ";
@@ -1269,7 +1268,7 @@ public class ChatDB {
                         values.put(GROUP_READ_STATUS, message.getReadStatus());
                         values.put(GROUP_NOTIFICATION, message.getNotification());
                         values.put(GROUP_NUMBER, CommonUtils.list2string(message.getGroupNumber()));
-                        if (!hasGroupTableMessage(message.getObjectId())) {
+                        if (!hasGroupTableMessage(message.getGroupId())) {
                                 result = mDatabase.insert(GROUP_TABLE, null, values);
                         } else {
                                 LogUtil.e("在数据库中更新群结构消息");
@@ -1349,7 +1348,7 @@ public class ChatDB {
         private boolean hasGroupTableMessage(String id) {
                 boolean result = false;
                 if (mDatabase.isOpen()) {
-                        Cursor cursor = mDatabase.query(GROUP_TABLE, null, GROUP_OBJECT_ID + " =?", new String[]{id}, null, null, null);
+                        Cursor cursor = mDatabase.query(GROUP_TABLE, null, GROUP_ID + " =?", new String[]{id}, null, null, null);
                         if (cursor != null && cursor.moveToFirst()) {
                                 result = true;
                         }
@@ -1409,7 +1408,7 @@ public class ChatDB {
                                         contentValues.put(SHARED_IMAGE_URL, CommonUtils.list2string(sharedMessage.getImageList()));
                                         contentValues.put(SHARED_COMMENT, CommonUtils.list2Comment(sharedMessage.getCommentMsgList()));
                                         contentValues.put(SHARED_LIKER, CommonUtils.list2string(sharedMessage.getLikerList()));
-                                        contentValues.put(SHARED_VISIBLE_USER, CommonUtils.list2string(sharedMessage.getVisibleUserList()));
+                                        contentValues.put(SHARED_INVISIBLE_USER, CommonUtils.list2string(sharedMessage.getInVisibleUserList()));
                                         contentValues.put(SHARED_MSG_TYPE, sharedMessage.getMsgType());
                                         contentValues.put(SHARED_CREATE_TIME, sharedMessage.getCreateTime());
                                         contentValues.put(SHARED_SEVER_CREATE_TIME, sharedMessage.getCreatedAt());
@@ -1444,19 +1443,27 @@ public class ChatDB {
                                                 + count;
                                 }else {
 
-                                        sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " >" + id + " AND "+SHARED_BELONG_ID+" ="+uid+" ORDER BY " + _ID + " DESC LIMIT "
+                                        sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " > " + id + " AND "+SHARED_BELONG_ID+" =?"+" ORDER BY " + _ID + " DESC LIMIT "
                                                 + count;
                                 }
                         } else {
                                 if (isAll) {
-                                        sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " <" + id + " ORDER BY " + _ID + " DESC LIMIT "
+                                        sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " < " + id + " ORDER BY " + _ID + " DESC LIMIT "
                                                 + count;
                                 }else {
-                                        sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " <" + id + " AND "+SHARED_BELONG_ID+" ="+uid+" ORDER BY " + _ID + " DESC LIMIT "
+
+
+                                        sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " > " + id + " AND " + SHARED_BELONG_ID + " =?"+" ORDER BY " + _ID + " DESC LIMIT "
                                                 + count;
                                 }
                         }
-                        Cursor cursor = mDatabase.rawQuery(sql, null);
+                        LogUtil.e("查询数据库中所有说说的sql语句"+sql);
+                        Cursor cursor=null;
+                        if (isAll) {
+                                 cursor = mDatabase.rawQuery(sql, null);
+                        }else {
+                                cursor=mDatabase.rawQuery(sql, new String[]{uid});
+                        }
                         if (cursor != null) {
                                 SharedMessage shareMessage;
                                 list = new ArrayList<>();
@@ -1465,7 +1472,7 @@ public class ChatDB {
                                         shareMessage.setContent(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_CONTENT)));
                                         shareMessage.setVisibleType(cursor.getInt(cursor.getColumnIndexOrThrow(SHARED_VISIBLE_TYPE)));
                                         shareMessage.setBelongId(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_BELONG_ID)));
-                                        shareMessage.setVisibleUserList(CommonUtils.string2list(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_VISIBLE_USER))));
+                                        shareMessage.setInVisibleUserList(CommonUtils.string2list(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_INVISIBLE_USER))));
                                         shareMessage.setLikerList(CommonUtils.string2list(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_LIKER))));
                                         shareMessage.setMsgType(cursor.getInt(cursor.getColumnIndexOrThrow(SHARED_MSG_TYPE)));
                                         shareMessage.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_CREATE_TIME)));
@@ -1481,12 +1488,19 @@ public class ChatDB {
                                 if (!cursor.isClosed()) {
                                         cursor.close();
                                 }
+                                LogUtil.e("查询得到的说说大小为"+list.size());
+                                LogUtil.e("具体的说说消息如下");
+                                for (SharedMessage message :
+                                        list) {
+                                        LogUtil.e(message);
+                                }
                         }
                 }
                 return list;
         }
 
         private int getIDFromTime(String time) {
+                LogUtil.e("123获取_id之前的时间"+time);
                 int result = -1;
                 if (mDatabase.isOpen()) {
                         Cursor cursor = mDatabase.query(SHARED_TABLE, null, SHARED_SEVER_CREATE_TIME + " =?", new String[]{time}, null, null, null);
@@ -1511,7 +1525,7 @@ public class ChatDB {
                                 sharedMessage = new SharedMessage();
                                 sharedMessage.setContent(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_CONTENT)));
                                 sharedMessage.setVisibleType(cursor.getInt(cursor.getColumnIndexOrThrow(SHARED_VISIBLE_TYPE)));
-                                sharedMessage.setVisibleUserList(CommonUtils.string2list(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_VISIBLE_USER))));
+                                sharedMessage.setInVisibleUserList(CommonUtils.string2list(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_INVISIBLE_USER))));
                                 sharedMessage.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_CREATE_TIME)));
                                 sharedMessage.setImageList(CommonUtils.string2list(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_IMAGE_URL))));
                                 sharedMessage.setBelongId(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_BELONG_ID)));
@@ -1565,7 +1579,7 @@ public class ChatDB {
                                 contentValues.put(SHARED_VISIBLE_TYPE, sharedMessage.getVisibleType());
                                 contentValues.put(SHARED_CONTENT, sharedMessage.getContent());
                                 contentValues.put(SHARED_IMAGE_URL, CommonUtils.list2string(sharedMessage.getImageList()));
-                                contentValues.put(SHARED_VISIBLE_USER, CommonUtils.list2string(sharedMessage.getVisibleUserList()));
+                                contentValues.put(SHARED_INVISIBLE_USER, CommonUtils.list2string(sharedMessage.getInVisibleUserList()));
                                 contentValues.put(SHARED_MSG_TYPE, sharedMessage.getMsgType());
                                 contentValues.put(SHARED_CREATE_TIME, sharedMessage.getCreateTime());
                                 contentValues.put(SHARED_SEVER_CREATE_TIME, sharedMessage.getCreatedAt());
@@ -1680,7 +1694,7 @@ public class ChatDB {
                 if (mDatabase.isOpen()) {
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(GROUP_FROM_NICK, nick);
-                        result = mDatabase.update(GROUP_MESSAGE_TABLE, contentValues, GROUP_ID + " =? AND " + GROUP_FROM_ID + " =?", new String[]{groupId, UserCacheManager.getInstance().getUser().getObjectId()});
+                        result = mDatabase.update(GROUP_MESSAGE_TABLE, contentValues, GROUP_ID + " =? AND " + GROUP_FROM_ID + " =?", new String[]{groupId, UserManager.getInstance().getCurrentUserObjectId()});
                 }
                 if (result > 0) {
                         LogUtil.e("在数据库中更新群消息上的昵称成功");
@@ -1945,7 +1959,7 @@ public class ChatDB {
                 if (mDatabase.isOpen()) {
                         int id = getIDFromTime(time);
                         String sql;
-                        String uid = UserCacheManager.getInstance().getUser().getObjectId();
+                        String uid = UserManager.getInstance().getCurrentUserObjectId();
                         if (isPullRefresh) {
                                 sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " < " + id + " AND " + SHARED_BELONG_ID + " =?" + " ORDER BY " + _ID + " DESC LIMIT "
                                         + count;
@@ -1964,7 +1978,7 @@ public class ChatDB {
                                         shareMessage.setContent(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_CONTENT)));
                                         shareMessage.setVisibleType(cursor.getInt(cursor.getColumnIndexOrThrow(SHARED_VISIBLE_TYPE)));
                                         shareMessage.setBelongId(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_BELONG_ID)));
-                                        shareMessage.setVisibleUserList(CommonUtils.string2list(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_VISIBLE_USER))));
+                                        shareMessage.setInVisibleUserList(CommonUtils.string2list(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_INVISIBLE_USER))));
                                         shareMessage.setLikerList(CommonUtils.string2list(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_LIKER))));
                                         shareMessage.setMsgType(cursor.getInt(cursor.getColumnIndexOrThrow(SHARED_MSG_TYPE)));
                                         shareMessage.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(SHARED_CREATE_TIME)));
@@ -2095,6 +2109,23 @@ public class ChatDB {
                 return result;
         }
 
+        public long deleteGroupTableMessage(String groupId) {
+                long result = -1;
+                if (mDatabase.isOpen()) {
+                        if (!hasGroupTableMessage(groupId)) {
+                                LogUtil.e("数据库中没有群结构消息可删");
+                        } else {
+                                result = mDatabase.delete(GROUP_TABLE, GROUP_ID + " =? ", new String[]{groupId});
+                                LogUtil.e("删除的群结构消息行号" + result);
+                        }
+                }
+                if (result > 0) {
+                        LogUtil.e("删除群结构消息成功");
+                } else {
+                        LogUtil.e("删除群结构消息失败");
+                }
+                return result;
+        }
 
 
         /**

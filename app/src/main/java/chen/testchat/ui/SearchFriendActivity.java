@@ -96,7 +96,7 @@ public class SearchFriendActivity extends SlideBaseActivity implements View.OnCl
         }
 
         private void searchUsers() {
-                showLoadDialog("11111正在搜索，请稍候.......");
+                showLoadDialog("正在搜索，请稍候.......");
                 if (TextUtils.isEmpty(input.getText().toString().trim())) {
                         dismissLoadDialog();
                         ToastUtils.showShortToast("请输入用户名进行查询!");

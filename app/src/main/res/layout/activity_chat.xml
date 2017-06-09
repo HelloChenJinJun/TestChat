@@ -4,12 +4,12 @@
               android:layout_height="match_parent"
               android:fitsSystemWindows="true"
               android:orientation="vertical">
-
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0.0dp"
         android:layout_weight="1"
         android:background="@color/chat_bg">
+
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swl_chat_refresh"
             android:layout_width="match_parent"
@@ -27,7 +27,7 @@
             android:id="@+id/r1_chat_middle_voice_container"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_gravity="center"
+            android:layout_centerInParent="true"
             android:background="@drawable/chat_top_voice_bg"
             android:padding="10dp"
             android:visibility="invisible">
@@ -50,8 +50,6 @@
                 android:textColor="@color/base_color_text_white"
                 android:textSize="14sp"/>
         </RelativeLayout>
-    </FrameLayout>
-
+    </RelativeLayout>
     <include layout="@layout/include_chat_bottom_bar"/>
-
 </LinearLayout>

@@ -11,16 +11,13 @@ import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.TextView;
 
 import java.util.List;
 
-import chen.testchat.CustomApplication;
 import chen.testchat.R;
 import chen.testchat.bean.User;
 import chen.testchat.manager.UserCacheManager;
 import chen.testchat.manager.UserManager;
-import chen.testchat.util.LogUtil;
 
 /**
  * 项目名称:    TestChat
@@ -29,7 +26,7 @@ import chen.testchat.util.LogUtil;
  * QQ:             1981367757
  */
 
-public class LikerTextView extends TextView {
+public class LikerTextView extends android.support.v7.widget.AppCompatTextView {
         private int clickBgColor;
         private int defaultBgColor;
 
@@ -64,16 +61,21 @@ public class LikerTextView extends TextView {
 
         public void bindData(List<String> list) {
                 setText(null);
-                if (list == null || list.size() == 0) {
-                        LogUtil.e("传入的点赞item为空!!!!!!!");
-                        return;
-                }
                 SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
 //                添加点赞图标
                 spannableStringBuilder.append(setImageSpan(list));
+//                if (list == null || list.size() == 0) {
+//                        LogUtil.e("传入的点赞item为空!!!!!!!");
+//                        return;
+//                }
                 int size = list.size();
                 for (int i = 0; i < size; i++) {
-                        spannableStringBuilder.append(getClickableSpan(list.get(i)));
+                        String uid=list.get(i);
+                        if (!uid.equals(UserManager.getInstance().getCurrentUserObjectId())&&UserCacheManager.getInstance().getUser(uid)==null) {
+//                                不是好友的点赞，不显示出来啊
+                                continue;
+                        }
+                        spannableStringBuilder.append(getClickableSpan(uid));
                         if (i != size - 1) {
                                 spannableStringBuilder.append(",");
                         }
@@ -114,7 +116,7 @@ public class LikerTextView extends TextView {
 
         private SpannableString setImageSpan(List<String> list) {
                 SpannableString spannableString = new SpannableString("..");
-                if (list != null && list.contains(UserCacheManager.getInstance().getUser().getObjectId())) {
+                if (list != null && list.contains(UserManager.getInstance().getCurrentUser().getObjectId())) {
                         spannableString.setSpan(new ImageSpan(getContext(), R.drawable.ic_favorite_deep_orange_a700_24dp, DynamicDrawableSpan.ALIGN_BASELINE), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } else {
                         spannableString.setSpan(new ImageSpan(getContext(), R.drawable.ic_favorite_border_deep_orange_a700_24dp, DynamicDrawableSpan.ALIGN_BASELINE), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

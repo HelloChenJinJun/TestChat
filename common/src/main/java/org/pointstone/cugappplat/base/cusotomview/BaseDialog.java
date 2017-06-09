@@ -4,18 +4,18 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.widget.AppCompatEditText;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.List;
-
 import org.common.R;
+
+import java.util.List;
 
 
 /**
@@ -157,11 +157,13 @@ public class BaseDialog extends Dialog {
                 if (middleLayout.getChildCount() > 0) {
                         middleLayout.removeAllViews();
                 }
+
                 for (String name :
                         names) {
                         TextView textView = new TextView(getContext());
                         textView.setText(name);
-                        EditText editText = new EditText(getContext());
+                        textView.setTextColor(getContext().getResources().getColor(R.color.base_color_text_black));
+                         AppCompatEditText editText = new AppCompatEditText(getContext(),null, android.R.attr.editTextStyle);
                         editText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         editText.setHint("请输入" + name);
                         editText.setPadding(10, 0, 0, 0);

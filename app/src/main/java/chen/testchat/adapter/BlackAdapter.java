@@ -23,7 +23,6 @@ public class BlackAdapter extends BaseWrappedAdapter<User, BaseWrappedViewHolder
         @Override
         protected void convert(BaseWrappedViewHolder holder, User data) {
                 holder.setText(R.id.tv_black_list_item_nick, data.getNick())
-                        .setImageUrl(R.id.riv_black_list_item_avatar, data.getAvatar())
-                        .setOnClickListener(R.id.ll_black_list_item_container);
+                        .setImageUrl(R.id.riv_black_list_item_avatar, data.getAvatar());
         }
 }

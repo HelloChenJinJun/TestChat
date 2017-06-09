@@ -25,7 +25,6 @@ import chen.testchat.R;
 import chen.testchat.base.CommonImageLoader;
 import chen.testchat.base.Constant;
 import chen.testchat.bean.User;
-import chen.testchat.manager.UserCacheManager;
 import chen.testchat.manager.UserManager;
 import chen.testchat.util.LogUtil;
 import chen.testchat.util.PhotoUtil;
@@ -99,7 +98,7 @@ public class EditUserInfoActivity extends SlideBaseActivity implements View.OnCl
 
         @Override
         public void initData() {
-                mUser = UserCacheManager.getInstance().getUser();
+                mUser = UserManager.getInstance().getCurrentUser();
                 nick.setText(mUser.getNick());
                 birth.setText(mUser.getBirthDay());
                 phone.setText(mUser.getMobilePhoneNumber());
@@ -274,6 +273,9 @@ public class EditUserInfoActivity extends SlideBaseActivity implements View.OnCl
                                 case Constant.REQUEST_CODE_ADDRESS:
                                         address.setText(message);
                                         mUser.setAddress(message);
+                                case Constant.REQUEST_CODE_PHONE:
+                                        phone.setText(message);
+                                        mUser.setMobilePhoneNumber(message);
                                 default:
                                         break;
                         }

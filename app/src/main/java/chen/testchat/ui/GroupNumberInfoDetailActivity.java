@@ -9,13 +9,12 @@ import com.bumptech.glide.Glide;
 
 import org.pointstone.cugappplat.base.cusotomview.RoundAngleImageView;
 import org.pointstone.cugappplat.base.cusotomview.ToolBarOption;
-import org.pointstone.cugappplat.rxbus.RxBusManager;
 import org.pointstone.cugappplat.util.ToastUtils;
 
 import chen.testchat.R;
 import chen.testchat.bean.GroupNumberInfo;
-import chen.testchat.events.GroupInfoEvent;
 import chen.testchat.manager.MsgManager;
+import chen.testchat.manager.UserManager;
 import chen.testchat.util.CommonUtils;
 import chen.testchat.util.LogUtil;
 import cn.bmob.v3.listener.UpdateListener;
@@ -74,14 +73,15 @@ public class GroupNumberInfoDetailActivity extends SlideBaseActivity implements 
                 name.setText(mGroupNumberInfo.getUser().getNick());
                 groupNick.setText(mGroupNumberInfo.getGroupNick());
                 groupId = getIntent().getStringExtra("groupId");
-                if (getIntent().getIntExtra("position", -1) == 0) {
+                if (getIntent().getBooleanExtra("isCreator", false)) {
                         type.setText("群主");
+                        if (mGroupNumberInfo.getUser().getObjectId().equals(UserManager.getInstance().getCurrentUserObjectId())) {
+                                exit.setVisibility(View.GONE);
+                        }else {
+                                exit.setVisibility(View.VISIBLE);
+                        }
                 } else {
                         type.setText("群成员");
-                }
-                if (getIntent().getBooleanExtra("isCreator", false)) {
-                        exit.setVisibility(View.VISIBLE);
-                } else {
                         exit.setVisibility(View.GONE);
                 }
 
@@ -105,8 +105,7 @@ public class GroupNumberInfoDetailActivity extends SlideBaseActivity implements 
                                 MsgManager.getInstance().updateGroupMessage(groupId, "deleteNumber", deleteId, new UpdateListener() {
                                         @Override
                                         public void onSuccess() {
-                                                LogUtil.e("删除群成员成功");
-                                                RxBusManager.getInstance().post(new GroupInfoEvent(deleteId, GroupInfoEvent.TYPE_GROUP_NUMBER));
+                                                LogUtil.e("1删除群成员成功");
                                         }
 
                                         @Override

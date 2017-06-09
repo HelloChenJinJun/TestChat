@@ -15,6 +15,7 @@ import chen.testchat.adapter.BlackAdapter;
 import chen.testchat.bean.User;
 import chen.testchat.listener.OnBaseItemClickListener;
 import chen.testchat.manager.UserCacheManager;
+import chen.testchat.manager.UserManager;
 import chen.testchat.view.ListViewDecoration;
 
 /**
@@ -62,13 +63,10 @@ public class BlackListActivity extends SlideBaseActivity {
                 display.addOnItemTouchListener(new OnBaseItemClickListener() {
                         @Override
                         protected void onItemClick(BaseWrappedViewHolder baseWrappedViewHolder, int id, View view, int position) {
-                                if (id == R.id.ll_black_list_item_container) {
                                         User user = mBlackAdapter.getData(position);
-                                        Intent intent = new Intent(BlackListActivity.this, ChatActivity.class);
-                                        intent.putExtra("from", "person");
+                                        Intent intent = new Intent(BlackListActivity.this, UserInfoActivity.class);
                                         intent.putExtra("uid", user.getObjectId());
                                         startActivity(intent);
-                                }
                         }
                 });
                 display.setAdapter(mBlackAdapter);
@@ -78,7 +76,7 @@ public class BlackListActivity extends SlideBaseActivity {
         private void initActionBar() {
                 ToolBarOption toolBarOption = new ToolBarOption();
                 toolBarOption.setNeedNavigation(true);
-                toolBarOption.setAvatar(UserCacheManager.getInstance().getUser().getAvatar());
+                toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
                 toolBarOption.setTitle("黑名单列表");
                 setToolBar(toolBarOption);
         }

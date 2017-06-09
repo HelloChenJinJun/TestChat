@@ -127,6 +127,13 @@ public class ShareMessageModel implements ShareMessageContacts.Model {
                 MsgManager.getInstance().loadAllShareMessages(isPullRefresh, time, new LoadShareMessageCallBack() {
                         @Override
                         public void onSuccess(List<SharedMessage> data) {
+                                LogUtil.e("保存到数据库之前的说说消息");
+                                if (data != null) {
+                                        for (SharedMessage sharedMessage :
+                                                data) {
+                                                LogUtil.e(sharedMessage);
+                                        }
+                                }
                                 ChatDB.create().saveAllSharedMessage(data);
                                 loadShareMessageCallBack.onSuccess(data);
                         }
@@ -134,15 +141,15 @@ public class ShareMessageModel implements ShareMessageContacts.Model {
                         @Override
                         public void onFailed(String errorMsg, int errorId) {
                                 LogUtil.e("从服务器上获取说说数据失败，这里从数据库中获取");
-                                List<SharedMessage> list;
-                                list = ChatDB.create().getAllSharedMessage(true,isPullRefresh, time, 10);
-                                if (list != null) {
-                                        LogUtil.e("无网络时从数据库中加载数据成功");
-                                        loadShareMessageCallBack.onSuccess(list);
-                                } else {
-                                        LogUtil.e("无网络时从数据库中加载数据失败");
-                                        loadShareMessageCallBack.onFailed("数据库中加载说说消息失败", 0);
-                                }
+//                                List<SharedMessage> list;
+//                                list = ChatDB.create().getAllSharedMessage(true,isPullRefresh, time, 10);
+//                                if (list != null) {
+//                                        LogUtil.e("无网络时从数据库中加载数据成功");
+//                                        loadShareMessageCallBack.onSuccess(list);
+//                                } else {
+//                                        LogUtil.e("无网络时从数据库中加载数据失败");
+//                                        loadShareMessageCallBack.onFailed("数据库中加载说说消息失败", 0);
+//                                }
                                 loadShareMessageCallBack.onFailed(errorMsg, errorId);
                         }
                 });
@@ -155,6 +162,14 @@ public class ShareMessageModel implements ShareMessageContacts.Model {
                         public void onSuccess(List<SharedMessage> data) {
                                 if (uid.equals(UserManager.getInstance().getCurrentUserObjectId())) {
                                         LogUtil.e("本地用户，保存到数据库中");
+                                        LogUtil.e("保存本用户的说说消息如下");
+                                        if (data != null) {
+                                                for (SharedMessage sharedMessage :
+                                                        data) {
+                                                        LogUtil.e(sharedMessage);
+                                                }
+                                        }
+
                                         ChatDB.create().saveAllSharedMessage(data);
                                 }
                                 loadShareMessageCallBack.onSuccess(data);
@@ -173,8 +188,6 @@ public class ShareMessageModel implements ShareMessageContacts.Model {
                                                 loadShareMessageCallBack.onFailed("数据库中加载说说消息失败", 0);
                                         }
                                 }
-
-
                                 LogUtil.e("查询说说失败"+errorMsg+errorId);
                                 loadShareMessageCallBack.onFailed(errorMsg,errorId);
                         }

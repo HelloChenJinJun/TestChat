@@ -69,16 +69,18 @@ public class MessageCacheManager {
                 if (!isLogin) {
                         return null;
                 }
-                if (groupList.containsKey(groupId)) {
-                        return groupList.get(groupId);
+                if (getAllGroupTableMap().containsKey(groupId)) {
+                        return getAllGroupTableMap().get(groupId);
                 }
                 return null;
         }
 
         public void addGroupTableMessage(List<GroupTableMessage> list) {
-                for (GroupTableMessage message :
-                        list) {
-                        addGroupTableMessage(message);
+                if (list != null) {
+                        for (GroupTableMessage message :
+                                list) {
+                                addGroupTableMessage(message);
+                        }
                 }
         }
 
@@ -87,20 +89,10 @@ public class MessageCacheManager {
                 if (!isLogin || message == null) {
                         return;
                 }
-                if (groupList.size()==0) {
-                        groupList = new HashMap<>();
-                        List<GroupTableMessage> list = ChatDB.create().getAllGroupMessage();
-                        if (list != null && list.size() > 0) {
-                                groupList.putAll(BmobUtils.list_map(list));
-                        }
-                }
-                if (!getAllGroupId().contains(message.getGroupId())) {
-                        getAllGroupId().add(message.getGroupId());
-                }
                 LogUtil.e("执行到这里了吧，这里是把查询得到的群结构表消息存入内存中");
-                if (!groupList.containsKey(message.getGroupId())) {
+                if (!getAllGroupTableMap().containsKey(message.getGroupId())) {
                         LogUtil.e(message);
-                        groupList.put(message.getGroupId(), message);
+                        getAllGroupTableMap().put(message.getGroupId(), message);
                 }
         }
 
@@ -109,17 +101,13 @@ public class MessageCacheManager {
                         return null;
                 }
                 if (allGroupId.size()==0) {
-                        LogUtil.e("为01");
-                        for (GroupTableMessage groupTableMessage :
-                                getAllGroupTableMessage()) {
-                                allGroupId.add(groupTableMessage.getGroupId());
+                        if (getAllGroupTableMap() != null) {
+                                for (GroupTableMessage groupTableMessage :
+                                        getAllGroupTableMessage()) {
+                                        allGroupId.add(groupTableMessage.getGroupId());
+                                }
                         }
-                }else {
-                        LogUtil.e("不为0");
-
                 }
-
-
                 return allGroupId;
         }
 
@@ -127,7 +115,18 @@ public class MessageCacheManager {
                 if (!isLogin) {
                         return null;
                 }
-                LogUtil.e("获取所有的群id");
+                if (getAllGroupTableMap() != null) {
+                        return BmobUtils.map_list(getAllGroupTableMap());
+                }
+                return null;
+        }
+
+
+
+        public Map<String,GroupTableMessage >  getAllGroupTableMap(){
+                if (!isLogin) {
+                        return null;
+                }
                 if (groupList.size()==0) {
                         List<GroupTableMessage> list = ChatDB.create().getAllGroupMessage();
                         for (int i = 0; i < list.size(); i++) {
@@ -137,7 +136,7 @@ public class MessageCacheManager {
                                 groupList.putAll(BmobUtils.list_map(list));
                         }
                 }
-                return BmobUtils.map_list(groupList);
+                return groupList;
         }
 
 
@@ -208,10 +207,10 @@ public class MessageCacheManager {
                 if (!isLogin) {
                         return;
                 }
-
                 mUserDataTimeMap.put(objectId, userDataLastUpdateTime);
                 SPUtils.put(SPUtils.USER_DATA_LAST_UPDATE_TIME, userDataLastUpdateTime);
         }
+
 
 
         public String getUserDataLastUpdateTime(String objectId) {
@@ -219,7 +218,7 @@ public class MessageCacheManager {
                         return null;
                 }
                 if (!mUserDataTimeMap.containsKey(objectId)) {
-                        String time = (String) SPUtils.get(SPUtils.USER_DATA_LAST_UPDATE_TIME, "");
+                        String time = (String) SPUtils.get(SPUtils.USER_DATA_LAST_UPDATE_TIME, "0000-00-00 01:00:00");
                         mUserDataTimeMap.put(objectId, time);
                 }
                 return mUserDataTimeMap.get(objectId);
@@ -253,6 +252,16 @@ public class MessageCacheManager {
 
                 if (mUserDataTimeMap != null) {
                         mUserDataTimeMap.clear();
+                }
+        }
+
+        public void deleteGroupTableMessage(String groupId) {
+                if (groupId == null) {
+                        return;
+                }
+                if (getAllGroupTableMap().containsKey(groupId)) {
+                        LogUtil.e("删除缓存的群结构消息成功");
+                        getAllGroupTableMap().remove(groupId);
                 }
         }
 }

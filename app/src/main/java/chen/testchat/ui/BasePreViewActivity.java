@@ -318,5 +318,6 @@ public class BasePreViewActivity extends SlideBaseActivity implements View.OnCli
                 Intent intent = new Intent(activity, BasePreViewActivity.class);
                 intent.putExtra(CommonImageLoader.PREVIEW_FROM, CommonImageLoader.PREVIEW_BASE);
                 intent.putExtra(CommonImageLoader.CURRENT_POSITION, position);
+                activity.startActivity(intent);
         }
 }

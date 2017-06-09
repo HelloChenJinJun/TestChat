@@ -71,16 +71,15 @@ public class ConversationListAdapter extends BaseSwipeWrappedAdapter<RecentMsg, 
         }
 
 
+
         @Override
-        public void addData(RecentMsg newData) {
-                if (!data.contains(newData)) {
-                        super.addData(newData);
-                } else {
-                        LogUtil.e("替换的recentMsg");
-                        LogUtil.e(newData);
-                        data.remove(newData);
-                        data.add(0, newData);
+        public void addData(int position, RecentMsg newData) {
+                if (data.contains(newData)) {
+                        int index = data.indexOf(newData);
+                        data.set(index, newData);
                         notifyDataSetChanged();
+                } else {
+                        super.addData(position, newData);
                 }
         }
 }

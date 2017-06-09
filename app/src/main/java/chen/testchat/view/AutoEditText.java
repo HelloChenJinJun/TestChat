@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
-import android.widget.EditText;
 
 import chen.testchat.R;
 import chen.testchat.util.LogUtil;
@@ -21,7 +20,7 @@ import chen.testchat.util.LogUtil;
  * QQ:             1981367757
  */
 
-public class AutoEditText extends EditText implements TextWatcher, View.OnFocusChangeListener {
+public class AutoEditText extends android.support.v7.widget.AppCompatEditText implements TextWatcher, View.OnFocusChangeListener {
         private Drawable deleteIcon;
 
         public AutoEditText(Context context) {

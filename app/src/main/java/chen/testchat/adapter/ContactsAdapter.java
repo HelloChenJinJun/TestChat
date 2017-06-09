@@ -33,7 +33,7 @@ public class ContactsAdapter extends BaseWrappedAdapter<User, BaseWrappedViewHol
 
         public interface OnItemCheckListener{
 
-                public void onItemChecked(boolean isCheck,User user);
+                public void onItemChecked(boolean isCheck,User user,BaseWrappedViewHolder holder);
 
 
 
@@ -51,7 +51,7 @@ public class ContactsAdapter extends BaseWrappedAdapter<User, BaseWrappedViewHol
         }
 
         @Override
-        protected void convert(BaseWrappedViewHolder holder, final User data) {
+        protected void convert(final BaseWrappedViewHolder holder, final User data) {
                 LogUtil.e("这里getView211");
                 int position = holder.getAdapterPosition();
                 int selection = mSectionIndexer.getSectionForPosition(position);
@@ -79,7 +79,7 @@ public class ContactsAdapter extends BaseWrappedAdapter<User, BaseWrappedViewHol
                                 .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                         @Override
                                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                                mOnCheckedChangeListener.onItemChecked(isChecked,data);
+                                                mOnCheckedChangeListener.onItemChecked(isChecked,data,holder);
                                         }
                                 });
                 }else {
@@ -89,5 +89,17 @@ public class ContactsAdapter extends BaseWrappedAdapter<User, BaseWrappedViewHol
 
         public void setSectionIndexer(SectionIndexer indexer) {
                 this.mSectionIndexer = indexer;
+        }
+
+
+        @Override
+        public void addData(int position, User newData) {
+                if (data.contains(newData)) {
+                        int index = data.indexOf(newData);
+                        data.set(index, newData);
+                        notifyDataSetChanged();
+                } else {
+                        super.addData(position,newData);
+                }
         }
 }

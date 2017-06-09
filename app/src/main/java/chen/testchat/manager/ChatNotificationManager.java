@@ -79,29 +79,7 @@ public class ChatNotificationManager {
 
         public void sendGroupMessageNotification(final GroupChatMessage message, final Context context) {
                 GroupTableMessage groupTableMessage = MessageCacheManager.getInstance().getGroupTableMessage(message.getGroupId());
-//                这里获取得到的群结构消息表可能为空，所以要判断下
-
-//                if (groupTableMessage == null) {
-//                        LogUtil.e("获取得到的群结构消息为空");
-//                        MsgManager.getInstance().queryGroupTableMessage(message.getGroupId(), new FindListener<GroupTableMessage>() {
-//                                @Override
-//                                public void onSuccess(List<GroupTableMessage> list) {
-//                                        if (list != null && list.size() > 0) {
-//                                                ChatDB.create().saveRecentMessage(MsgManager.getInstance().createGroupRecentMsg(message, list.get(0)));
-//                                                MessageCacheManager.getInstance().addGroupTableMessage(list.get(0));
-//                                                realSendGroupMessageNotification(list.get(0), message, context);
-//                                        }
-//                                }
-//
-//                                @Override
-//                                public void onError(int i, String s) {
-//
-//                                }
-//                        });
-//                } else {
-//                        LogUtil.e("获取得到的群结构消息不为空");
                 realSendGroupMessageNotification(groupTableMessage, message, context);
-//                }
         }
 
 

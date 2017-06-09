@@ -11,6 +11,7 @@
         android:id="@+id/riv_group_list_item_avatar"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:scaleType="centerCrop"
         app:roundHeight="25dp"
         app:roundWidth="25dp"/>
     <TextView

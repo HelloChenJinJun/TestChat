@@ -63,6 +63,7 @@ import chen.testchat.listener.AddFriendCallBackListener;
 import chen.testchat.listener.OnMessageReceiveListener;
 import chen.testchat.listener.OnSendMessageListener;
 import chen.testchat.listener.SendFileListener;
+import chen.testchat.manager.ChatNotificationManager;
 import chen.testchat.manager.MessageCacheManager;
 import chen.testchat.manager.MsgManager;
 import chen.testchat.manager.UserCacheManager;
@@ -121,6 +122,7 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
         private String from;
         private String groupId;
         private GroupTableMessage mGroupTableMessage;
+        private boolean exit=false;
 
 
         @Override
@@ -156,6 +158,18 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                 add.setOnClickListener(this);
                 emotion.setOnClickListener(this);
                 input.addTextChangedListener(this);
+                input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                        @Override
+                        public void onFocusChange(View v, boolean hasFocus) {
+                                if (hasFocus) {
+                                        LogUtil.e("聚焦");
+                                        scrollToBottom();
+                                        if (l1_more.getVisibility() == View.VISIBLE) {
+                                                l1_more.setVisibility(View.GONE);
+                                        }
+                                }
+                        }
+                });
                 voice.setOnClickListener(this);
                 send.setOnClickListener(this);
                 keyboard.setOnClickListener(this);
@@ -192,11 +206,19 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                 initEmotionInfo();
                 mLinearLayoutManager = new LinearLayoutManager(this);
                 display.setLayoutManager(mLinearLayoutManager);
-                display.setHasFixedSize(true);
+//                display.setHasFixedSize(true);
                 display.setItemAnimator(new DefaultItemAnimator());
 //                mAdapter = new ChatAdapter(this, null);
                 mAdapter = new ChatMessageAdapter();
                 mAdapter.setOnItemClickListener(this);
+                display.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                                        hideSoftInpuutView();
+                                }
+                        }
+                });
                 display.setAdapter(mAdapter);
                 IntentFilter intentFilter = new IntentFilter(Constant.NEW_MESSAGE_ACTION);
                 intentFilter.setPriority(20);
@@ -213,7 +235,9 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         public void call(GroupInfoEvent groupInfoEvent) {
 //                                刷新过来的，更新下群结构消息
                                 mGroupTableMessage = MessageCacheManager.getInstance().getGroupTableMessage(groupId);
-                                LogUtil.e(mGroupTableMessage);
+                                if (mGroupTableMessage != null) {
+                                        LogUtil.e(mGroupTableMessage);
+                                }
                                 int type = groupInfoEvent.getType();
                                 String content = groupInfoEvent.getContent();
                                 switch (type) {
@@ -243,8 +267,13 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                                                 LogUtil.e("这里要做群头像的界面展示" + content);
                                                 break;
                                         case GroupInfoEvent.TYPE_GROUP_NUMBER:
-                                                LogUtil.e("这里通知成员的变化" + content);
-
+                                                if (groupId != null) {
+                                                        LogUtil.e("这里通知成员的变化" + content);
+                                                        if (content.equals(groupId)) {
+                                                                exit=true;
+                                                                Toast.makeText(ChatActivity.this, "你已经被提出该群", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                }
                                                 break;
                                         default:
                                                 break;
@@ -287,9 +316,10 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                 }
                 setToolBar(toolBarOption);
         }
+        
 
         private void refreshData() {
-                LogUtil.e("refreshData");
+                LogUtil.e("refreshData12356");
                 if (from.equals("person")) {
                         if (ChatDB.create().updateReceivedChatMessageReaded(user, true) > 0) {
                                 LogUtil.e("更新该用户所发来的消息为已读状态成功");
@@ -298,9 +328,6 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         }
                         mAdapter.clearData();
                         mAdapter.getAllData().addAll(ChatDB.create().queryChatMessagesFromDB(uid, 1, 0));
-//                        mAdapter.getData().clear();
-//                        mAdapter.getData().addAll(ChatDB.create().queryChatMessagesFromDB(uid, 1, 0));
-//                        mAdapter.notifyDataSetChanged();
                 } else {
                         if (ChatDB.create().updateReceivedGroupChatMessageReaded(groupId, true)) {
                                 LogUtil.e("更新该群所发来的消息为已读状态成功");
@@ -333,6 +360,12 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                                         GroupChatMessage message = (GroupChatMessage) intent.getSerializableExtra(Constant.NEW_MESSAGE);
                                         if (from.equals("group") && message.getGroupId().equals(groupId)) {
                                                 if (MsgManager.getInstance().saveRecentAndChatGroupMessage(message)) {
+
+                                                        boolean isRefresh=intent.getBooleanExtra("isRefresh",false);
+                                                        if (!isRefresh&&!hasFocus) {
+                                                                ChatNotificationManager.getInstance(ChatActivity.this).sendGroupMessageNotification(message, ChatActivity.this);
+                                                        }
+
                                                         onNewGroupChatMessageCome(message);
                                                 }
                                         } else {
@@ -514,6 +547,16 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
          * @param recordTime 录制的时间
          */
         private void sendVoiceMessage(String localPath, int recordTime) {
+                if (exit) {
+                        Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
+                        return;
+                }
+
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
+
                 MsgManager manager = MsgManager.getInstance();
                 String id;
                 final boolean result;
@@ -580,11 +623,15 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         }
                 }
                 int size = list.size();
-                mAdapter.addData(list);
+                LogUtil.e("向上拉取的消息大小为" + size);
+                mAdapter.addData(0, list);
 //                mAdapter.addMessages(list);
                 mLinearLayoutManager.scrollToPositionWithOffset(size, 0);
                 mSwipeRefreshLayout.setRefreshing(false);
         }
+
+
+        private boolean isBlack=false;
 
 
         @Override
@@ -595,6 +642,9 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
 //                        String title = mGroupTableMessage.getGroupName() + "(" + mGroupTableMessage.getGroupNumber().size() + ")";
 //                        getCustomTitle().setText(title);
 //                }
+                if (uid != null) {
+                        isBlack=ChatDB.create().isBlackUser(uid);
+                }
                 PushMessageReceiver.registerListener(this);
         }
 
@@ -631,6 +681,7 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                                         l1_more.setVisibility(View.VISIBLE);
                                         l1_add.setVisibility(View.VISIBLE);
                                         r1_emotion.setVisibility(View.GONE);
+                                        hideSoftInpuutView();
                                 } else if (l1_add.getVisibility() == View.VISIBLE) {
                                         l1_more.setVisibility(View.GONE);
                                 } else {
@@ -649,11 +700,13 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                                         l1_more.setVisibility(View.VISIBLE);
                                         l1_add.setVisibility(View.GONE);
                                         r1_emotion.setVisibility(View.VISIBLE);
+                                        hideSoftInpuutView();
                                 } else if (r1_emotion.getVisibility() == View.VISIBLE) {
                                         l1_more.setVisibility(View.GONE);
                                 } else {
                                         l1_add.setVisibility(View.GONE);
                                         r1_emotion.setVisibility(View.VISIBLE);
+                                        hideSoftInpuutView();
                                 }
                                 break;
                         case R.id.btn_chat_bottom_voice:
@@ -770,6 +823,14 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
          * @param address   地址
          */
         private void sendLocationChatMessage(String localPath, String latitude, String longitude, String address) {
+                if (exit) {
+                        Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
+                        return;
+                }
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
                 if (l1_more.getVisibility() == View.VISIBLE) {
                         l1_more.setVisibility(View.GONE);
                         l1_add.setVisibility(View.GONE);
@@ -817,7 +878,14 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
          * @param localImagePath 图片的本地地址
          */
         private void sendImageMessage(String localImagePath) {
-
+                if (exit) {
+                        Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
+                        return;
+                }
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
 
                 if (l1_more.getVisibility() == View.VISIBLE) {
                         l1_more.setVisibility(View.GONE);
@@ -881,6 +949,14 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
          * @param content 内容
          */
         private void sendTextMessage(final String content) {
+                if (exit) {
+                        Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
+                        return;
+                }
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
                 MsgManager manager = MsgManager.getInstance();
                 BaseMessage baseMessage;
                 String id;
@@ -993,22 +1069,31 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
         public void onPictureClick(final View view, final String contentUrl, int position) {
                 LogUtil.e("点击了图片");
                 List<BaseMessage> list = mAdapter.getAllData();
-                List<ImageItem> result = new ArrayList<>();
-                int picturePosition = 0;
-                for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).getMsgType().equals(Constant.TAG_MSG_TYPE_IMAGE)) {
-                                String content = list.get(i).getContent();
-                                if (content.contains("&")) {
-                                        content = content.split("&")[0];
-                                }
-                                if (content.equals(contentUrl)) {
-                                        picturePosition = i;
-                                }
-                                ImageItem imageItem = new ImageItem();
-                                imageItem.setPath(content);
-                                result.add(imageItem);
+                List<BaseMessage> imageList = new ArrayList<>();
+                for (BaseMessage baseMessage :
+                        list) {
+                        if (baseMessage.getMsgType().equals(Constant.TAG_MSG_TYPE_IMAGE)) {
+                                imageList.add(baseMessage);
                         }
                 }
+                List<ImageItem> result = new ArrayList<>();
+                int picturePosition = 0;
+                LogUtil.e("contentUrl" + contentUrl);
+                for (int i = 0; i < imageList.size(); i++) {
+                        String content = imageList.get(i).getContent();
+                        LogUtil.e("content" + content);
+                        if (content.contains("&")) {
+                                content = content.split("&")[0];
+                        }
+                        if (content.equals(contentUrl)) {
+                                picturePosition = i;
+                                LogUtil.e("相等position" + i);
+                        }
+                        ImageItem imageItem = new ImageItem();
+                        imageItem.setPath(content);
+                        result.add(imageItem);
+                }
+                LogUtil.e("position" + picturePosition);
                 BasePreViewActivity.startBasePreview(this, result, picturePosition);
 //                ImageDisplayActivity.start(ChatActivity.this, view, contentUrl);
         }
@@ -1138,9 +1223,18 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
 
         @Override
         public void onNewGroupChatMessageCome(GroupChatMessage message) {
+
                 ChatDB.create().updateReceivedGroupChatMessageReaded(groupId, true);
                 mAdapter.addData(message);
                 scrollToBottom();
+        }
+
+
+        private volatile boolean hasFocus = true;
+
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus) {
+                this.hasFocus = hasFocus;
         }
 
         @Override
@@ -1300,4 +1394,6 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         container.removeView(mViews.get(position));
                 }
         }
+
+
 }

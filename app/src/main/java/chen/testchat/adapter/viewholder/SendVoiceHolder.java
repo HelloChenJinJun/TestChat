@@ -9,8 +9,12 @@ import chen.testchat.adapter.ChatMessageAdapter;
 import chen.testchat.base.Constant;
 import chen.testchat.bean.BaseMessage;
 import chen.testchat.bean.ChatMessage;
+import chen.testchat.bean.GroupChatMessage;
+import chen.testchat.listener.OnDownLoadFileListener;
 import chen.testchat.listener.VoiceRecordPlayListener;
+import chen.testchat.util.LogUtil;
 import chen.testchat.util.TimeUtil;
+import cn.bmob.v3.exception.BmobException;
 
 /**
  * 项目名称:    TestChat
@@ -19,7 +23,7 @@ import chen.testchat.util.TimeUtil;
  * QQ:             1981367757
  */
 
-public class SendVoiceHolder extends BaseChatHolder {
+public class SendVoiceHolder extends BaseChatHolder implements OnDownLoadFileListener {
         private Context mContext;
 
         public SendVoiceHolder(View itemView) {
@@ -30,6 +34,12 @@ public class SendVoiceHolder extends BaseChatHolder {
 
         @Override
         public void bindData(final BaseMessage baseMessage, final ChatMessageAdapter.OnItemClickListener listener, boolean isShowTime) {
+                LogUtil.e("声音如下");
+                if (baseMessage instanceof ChatMessage) {
+                        LogUtil.e((ChatMessage) baseMessage);
+                }else {
+                        LogUtil.e((GroupChatMessage) baseMessage);
+                }
                 if (isShowTime) {
                         setText(R.id.tv_chat_send_voice_item_time, TimeUtil.getTime(Long.valueOf(baseMessage.getCreateTime())));
                 }
@@ -79,6 +89,30 @@ public class SendVoiceHolder extends BaseChatHolder {
                         }
                 })
                 .setImageResource(R.id.iv_chat_send_voice_item_volume, R.drawable.voice_left3)
-                .setOnClickListener(R.id.iv_chat_send_voice_item_volume, new VoiceRecordPlayListener(mContext, (ImageView) getView(R.id.iv_chat_send_voice_item_volume), baseMessage, null));
+                .setOnClickListener(R.id.iv_chat_send_voice_item_volume, new VoiceRecordPlayListener(mContext, (ImageView) getView(R.id.iv_chat_send_voice_item_volume), baseMessage,this));
+        }
+
+        @Override
+        public void onStart() {
+                setVisible(R.id.pb_chat_send_voice_item_load, true);
+                setVisible(R.id.iv_chat_send_voice_item_resend, false);
+        }
+
+        @Override
+        public void onProgress(int value) {
+
+        }
+
+        @Override
+        public void onSuccess(String localPath) {
+                setVisible(R.id.pb_chat_send_voice_item_load, false);
+        }
+
+        @Override
+        public void onFailed(BmobException e) {
+                LogUtil.e("语音失败的原因" + e.getMessage() + e.getErrorCode());
+                setVisible(R.id.pb_chat_send_voice_item_load, false);
+                setVisible(R.id.iv_chat_send_voice_item_resend, true);
+
         }
 }

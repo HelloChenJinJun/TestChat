@@ -14,7 +14,6 @@ import chen.testchat.R;
 import chen.testchat.adapter.WallPaperAdapter;
 import chen.testchat.listener.OnBaseItemClickListener;
 import chen.testchat.manager.MsgManager;
-import chen.testchat.manager.UserCacheManager;
 import chen.testchat.manager.UserManager;
 import chen.testchat.util.LogUtil;
 import cn.bmob.v3.listener.FindListener;
@@ -32,7 +31,7 @@ public class WallPaperActivity extends SlideBaseActivity {
         private WallPaperAdapter adapter;
         private String selectedImage;
         private String from;
-        private GridLayoutManager manager;
+
         private int prePosition = -1;
 
 
@@ -96,13 +95,13 @@ public class WallPaperActivity extends SlideBaseActivity {
         }
 
         private void initAdapter(List<String> list) {
-                display.setLayoutManager(manager = new GridLayoutManager(this, 3));
+                display.setLayoutManager(new GridLayoutManager(this, 3));
                 display.setItemAnimator(new DefaultItemAnimator());
                 adapter = new WallPaperAdapter(list, R.layout.wallpaper_item);
                 int i = 0;
                 for (String url :
                         list) {
-                        if (url.equals(UserCacheManager.getInstance().getUser().getTitleWallPaper())) {
+                        if (url.equals(UserManager.getInstance().getCurrentUser().getTitleWallPaper())) {
                                 adapter.setSelectedPosition(i);
                                 prePosition = i;
                         }
@@ -115,15 +114,12 @@ public class WallPaperActivity extends SlideBaseActivity {
                                         selectedImage = adapter.getData(position);
                                         baseWrappedViewHolder.setImageBg(R.id.iv_wallpaper_item_display, selectedImage)
                                                 .setImageResource(R.id.iv_wallpaper_item_display, R.drawable.change_background_picture_btn);
-//                                        adapter.setSelectedPosition(position);
-//                                        adapter.notifyDataSetChanged();
                                         if (prePosition != -1) {
                                                 LogUtil.e("清除图片");
                                                 ((BaseWrappedViewHolder) display.findViewHolderForAdapterPosition(prePosition)).setImageResource(R.id.iv_wallpaper_item_display, 0);
                                         }
                                 }
                                 prePosition = position;
-
                         }
                 });
                 display.setAdapter(adapter);
@@ -133,19 +129,19 @@ public class WallPaperActivity extends SlideBaseActivity {
                 ToolBarOption toolBarOption = new ToolBarOption();
                 toolBarOption.setRightText("完成");
                 toolBarOption.setTitle("1选择背景图片");
-                toolBarOption.setAvatar(UserCacheManager.getInstance().getUser().getAvatar());
+                toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
                 toolBarOption.setNeedNavigation(true);
                 toolBarOption.setRightListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                                 if (from.equals("title_wallpaper")) {
-                                        if (selectedImage != null && !selectedImage.equals(UserCacheManager.getInstance().getUser()
+                                        if (selectedImage != null && !selectedImage.equals(UserManager.getInstance().getCurrentUser()
                                                 .getTitleWallPaper())) {
                                                 UserManager.getInstance().updateUserInfo("titleWallPaper", selectedImage, new UpdateListener() {
                                                         @Override
                                                         public void onSuccess() {
                                                                 LogUtil.e("更改标题背景成功");
-                                                                UserCacheManager.getInstance().getUser().setTitleWallPaper(selectedImage);
+                                                                UserManager.getInstance().getCurrentUser().setTitleWallPaper(selectedImage);
                                                                 setResult(RESULT_OK);
                                                                 finish();
                                                         }
@@ -157,11 +153,11 @@ public class WallPaperActivity extends SlideBaseActivity {
                                                 });
                                         }
                                 } else {
-                                        if (selectedImage != null && !selectedImage.equals(UserCacheManager.getInstance().getUser().getWallPaper())) {
+                                        if (selectedImage != null && !selectedImage.equals(UserManager.getInstance().getCurrentUser().getWallPaper())) {
                                                 UserManager.getInstance().updateUserInfo("wallPaper", selectedImage, new UpdateListener() {
                                                         @Override
                                                         public void onSuccess() {
-                                                                UserCacheManager.getInstance().getUser().setWallPaper(selectedImage);
+                                                                UserManager.getInstance().getCurrentUser().setWallPaper(selectedImage);
                                                                 setResult(RESULT_OK);
                                                                 finish();
                                                         }

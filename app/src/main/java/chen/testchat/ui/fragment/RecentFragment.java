@@ -22,6 +22,7 @@ import org.pointstone.cugappplat.base.cusotomview.swipeview.SwipeMenuCreator;
 import org.pointstone.cugappplat.base.cusotomview.swipeview.SwipeMenuItem;
 import org.pointstone.cugappplat.base.cusotomview.swipeview.SwipeMenuRecyclerView;
 import org.pointstone.cugappplat.baseadapter.BaseWrappedViewHolder;
+import org.pointstone.cugappplat.rxbus.RxBusManager;
 import org.pointstone.cugappplat.util.ToastUtils;
 
 import java.util.List;
@@ -33,6 +34,7 @@ import chen.testchat.bean.GroupChatMessage;
 import chen.testchat.bean.RecentMsg;
 import chen.testchat.bean.User;
 import chen.testchat.db.ChatDB;
+import chen.testchat.events.GroupInfoEvent;
 import chen.testchat.listener.OnBaseItemClickListener;
 import chen.testchat.listener.OnNetWorkChangedListener;
 import chen.testchat.manager.MessageCacheManager;
@@ -45,6 +47,8 @@ import chen.testchat.ui.MainActivity;
 import chen.testchat.util.LogUtil;
 import chen.testchat.view.ListViewDecoration;
 import cn.bmob.v3.listener.FindListener;
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * 项目名称:    HappyChat
@@ -152,7 +156,42 @@ public class RecentFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
                 }
                 getActivity().registerReceiver(netWorkChangedReceiver = new NetWorkChangedReceiver(), new IntentFilter(Constant.NETWORK_CONNECTION_CHANGE));
                 netWorkChangedReceiver.registerListener(this);
+                registerRxBus();
+
+
         }
+
+
+        private void registerRxBus() {
+                Subscription mSubscription = RxBusManager.getInstance().registerEvent(GroupInfoEvent.class, new Action1<GroupInfoEvent>() {
+                        @Override
+                        public void call(GroupInfoEvent groupInfoEvent) {
+//                                刷新过来的，更新下群结构消息
+                                if (groupInfoEvent.getType()==GroupInfoEvent.TYPE_GROUP_NUMBER){
+                                                String content=groupInfoEvent.getContent();
+                                                LogUtil.e("recent接收到被提出群的消息");
+                                                RecentMsg recentMsg=new RecentMsg();
+                                                recentMsg.setBelongId(content);
+                                        if (mAdapter.getAllData().contains(recentMsg)) {
+                                                mAdapter.getAllData().remove(recentMsg);
+                                                mAdapter.notifyDataSetChanged();
+                                        }
+                                }
+                        }
+                }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                                LogUtil.e("rxbus传递出现异常");
+                                if (throwable != null) {
+                                        LogUtil.e(throwable.getMessage());
+                                }
+                        }
+                });
+                RxBusManager.getInstance().addSubscription(this, mSubscription);
+        }
+
+
+
 
         @Override
         protected void updateView() {
@@ -196,6 +235,7 @@ public class RecentFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
                         netWorkChangedReceiver.unregisterListener(this);
                         getActivity().unregisterReceiver(netWorkChangedReceiver);
                 }
+                RxBusManager.getInstance().unSubscrible(this);
                 LogUtil.e("这里停止实时检测服务拉");
                 if (connection != null) {
                         getActivity().unbindService(connection);
@@ -210,9 +250,11 @@ public class RecentFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
         public void updateRecentData(String id) {
                 RecentMsg recentMsg;
                 recentMsg = ChatDB.create().getRecentMsg(id);
-                LogUtil.e("最近消息如下");
-                LogUtil.e(recentMsg);
-                mAdapter.addData(recentMsg);
+                LogUtil.e("最近消息如下1");
+                if (recentMsg != null) {
+                        LogUtil.e(recentMsg);
+                        mAdapter.addData(recentMsg);
+                }
         }
 
         @Override
@@ -224,6 +266,9 @@ public class RecentFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
                         LogUtil.e("当前的状态为" + isConnected + "   当前的连接类型移动网络");
                 }
                 if (isConnected) {
+
+//                        查询好友信息
+
 //                        这里拉取网络中断这段时间内的信息
 //                        queryGroupChatMessage();
                         MsgManager.getInstance().queryGroupChatMessage(MessageCacheManager.getInstance().getAllGroupId(), new FindListener<GroupChatMessage>() {
@@ -391,6 +436,13 @@ public class RecentFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
                         }
                 } else {
                         LogUtil.e("binder为空");
+                }
+        }
+
+        public void notifyUserAdd(String id) {
+                if (binder != null) {
+                        LogUtil.e("实时监听新增的用户信息");
+                        binder.addUser(id);
                 }
         }
 

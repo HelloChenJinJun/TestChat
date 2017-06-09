@@ -678,7 +678,7 @@ public abstract class BaseWrappedAdapter<T, K extends BaseWrappedViewHolder> ext
         }
 
         public void removeData(int position) {
-                if (position > 0 && position < data.size()) {
+                if (position>=0 && position < data.size()) {
                         data.remove(position);
                         notifyItemRemoved(position);
                 }

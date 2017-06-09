@@ -351,14 +351,14 @@ public abstract class BaseActivity extends RxAppCompatActivity implements BaseVi
                         return;
                 }
                 if (currentFragment == null) {
-                        getSupportFragmentManager().beginTransaction().add(resId, fragment).show(fragment).commit();
+                        getSupportFragmentManager().beginTransaction().add(resId, fragment).show(fragment).commitAllowingStateLoss();
                         currentFragment = fragment;
                         return;
                 }
                 if (fragment.isAdded()) {
                         getSupportFragmentManager().beginTransaction().hide(currentFragment).show(fragment).commit();
                 } else {
-                        getSupportFragmentManager().beginTransaction().hide(currentFragment).add(fragmentContainerResId, fragment).show(fragment).commit();
+                        getSupportFragmentManager().beginTransaction().hide(currentFragment).add(fragmentContainerResId, fragment).show(fragment).commitAllowingStateLoss();
                 }
                 currentFragment = fragment;
         }

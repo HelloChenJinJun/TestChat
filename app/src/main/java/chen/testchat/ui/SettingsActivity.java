@@ -28,7 +28,6 @@ import chen.testchat.R;
 import chen.testchat.base.CommonImageLoader;
 import chen.testchat.base.Constant;
 import chen.testchat.manager.MsgManager;
-import chen.testchat.manager.UserCacheManager;
 import chen.testchat.manager.UserManager;
 import chen.testchat.util.LogUtil;
 import cn.bmob.v3.datatype.BmobFile;
@@ -94,15 +93,15 @@ public class SettingsActivity extends SlideBaseActivity implements View.OnClickL
 
         @Override
         public void initData() {
-                nick.setText(UserCacheManager.getInstance().getUser().getNick());
-                account.setText("帐号：" + UserCacheManager.getInstance().getUser().getUsername());
-                Glide.with(this).load(UserCacheManager.getInstance().getUser().getAvatar()).into(avatar);
+                nick.setText(UserManager.getInstance().getCurrentUser().getNick());
+                account.setText("帐号：" +UserManager.getInstance().getCurrentUser().getUsername());
+                Glide.with(this).load(UserManager.getInstance().getCurrentUser().getAvatar()).into(avatar);
                 initActionBar();
         }
 
         private void initActionBar() {
                 ToolBarOption toolBarOption = new ToolBarOption();
-                toolBarOption.setAvatar(UserCacheManager.getInstance().getUser().getAvatar());
+                toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
                 toolBarOption.setTitle("设置");
                 toolBarOption.setNeedNavigation(true);
                 setToolBar(toolBarOption);
@@ -173,10 +172,10 @@ public class SettingsActivity extends SlideBaseActivity implements View.OnClickL
                                                                 public void onSuccess() {
                                                                         LogUtil.e("更新用户头像成功");
                                                                         dismissLoadDialog();
-                                                                        UserCacheManager.getInstance().getUser().setAvatar(bmobFile.getFileUrl(CustomApplication.getInstance()));
+                                                                        UserManager.getInstance().getCurrentUser().setAvatar(bmobFile.getFileUrl(CustomApplication.getInstance()));
                                                                         Glide.with(SettingsActivity.this).load(bmobFile.getFileUrl(CustomApplication.getInstance())).into(avatar);
                                                                         Intent intent = new Intent();
-                                                                        intent.putExtra("user", UserCacheManager.getInstance().getUser());
+                                                                        intent.putExtra("user", UserManager.getInstance().getCurrentUser());
                                                                         setResult(Activity.RESULT_OK, intent);
                                                                 }
 
@@ -211,10 +210,10 @@ public class SettingsActivity extends SlideBaseActivity implements View.OnClickL
                                                                 public void onSuccess() {
                                                                         dismissLoadDialog();
                                                                         LogUtil.e("上传群头像成功");
-                                                                        UserCacheManager.getInstance().getUser().setAvatar(bmobFile1.getFileUrl(CustomApplication.getInstance()));
+                                                                        UserManager.getInstance().getCurrentUser().setAvatar(bmobFile1.getFileUrl(CustomApplication.getInstance()));
                                                                         Glide.with(SettingsActivity.this).load(bmobFile1.getFileUrl(CustomApplication.getInstance())).into(avatar);
                                                                         Intent intent = new Intent();
-                                                                        intent.putExtra("user", UserCacheManager.getInstance().getUser());
+                                                                        intent.putExtra("user", UserManager.getInstance().getCurrentUser());
                                                                         setResult(Activity.RESULT_OK, intent);
                                                                 }
 

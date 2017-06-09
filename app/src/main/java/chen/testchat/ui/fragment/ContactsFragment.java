@@ -82,7 +82,15 @@ public class ContactsFragment extends org.pointstone.cugappplat.base.basemvp.Bas
                 LogUtil.e("这里设置display的adapter121");
                 mMyLetterView.setTextView(middle);
                 adapter = new ContactsAdapter(UserCacheManager.getInstance().getAllContacts(), R.layout.fragment_contacts_list_item);
+                LogUtil.e("初始化的所有好友信息");
+                if (adapter.getAllData() != null && adapter.getAllData().size() > 0) {
+                        for (User user :
+                                adapter.getAllData()) {
+                                LogUtil.e(user);
+                        }
+                }
                 mIndexer = new AlphabetIndexer(ChatDB.create().getSortedKeyCursor(), 0, alphabet);
+
                 adapter.setSectionIndexer(mIndexer);
                 mLinearLayoutManager = new LinearLayoutManager(getActivity());
                 display.setLayoutManager(mLinearLayoutManager);
@@ -131,6 +139,8 @@ public class ContactsFragment extends org.pointstone.cugappplat.base.basemvp.Bas
                 mIndexer = new AlphabetIndexer(ChatDB.create().getSortedKeyCursor(), 0, alphabet);
                 adapter.setSectionIndexer(mIndexer);
                 User user=UserCacheManager.getInstance().getUser(belongId);
+                LogUtil.e("这里添加的好友星星如下");
+                LogUtil.e(user);
                 adapter.addData(user);
         }
 

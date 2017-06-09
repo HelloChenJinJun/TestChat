@@ -118,8 +118,6 @@
         <service android:name=".service.PollService">
 
 
-
-
         </service>
         <service
             android:name="cn.bmob.push.lib.service.PushService"

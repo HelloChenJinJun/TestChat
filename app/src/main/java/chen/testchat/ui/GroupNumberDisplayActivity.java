@@ -79,7 +79,6 @@ public class GroupNumberDisplayActivity extends SlideBaseActivity implements Ada
                 GroupNumberInfo groupNumberInfo = (GroupNumberInfo) mAdapter.getItem(position);
                 Intent intent = new Intent(this, GroupNumberInfoDetailActivity.class);
                 intent.putExtra("isCreator", getIntent().getBooleanExtra("isCreator", false));
-                intent.putExtra("position", position);
                 intent.putExtra("groupId", groupId);
                 intent.putExtra("groupNumberInfo", groupNumberInfo);
                 startActivity(intent);

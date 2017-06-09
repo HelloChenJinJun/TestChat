@@ -21,8 +21,6 @@ import chen.testchat.util.LogUtil;
 
 public class UserCacheManager {
         private static UserCacheManager instance;
-        private final Map<String, String> installationMap;
-
         //        好友列表缓存
         private Map<String, User> contacts;
 
@@ -61,10 +59,22 @@ public class UserCacheManager {
         private UserCacheManager() {
                 contacts = new HashMap<>();
                 blackList = new HashMap<>();
-                installationMap = new HashMap<>();
         }
 
         public Map<String, User> getContacts() {
+                if (contacts.size() == 0) {
+                        List<User> contactsWithoutBlack = ChatDB.create().getContactsWithoutBlack();
+                        LogUtil.e("从数据库中获取得到的用户");
+                        if (contactsWithoutBlack != null) {
+                                for (User user :
+                                        contactsWithoutBlack) {
+                                        LogUtil.e(user);
+                                }
+                        }
+                        if (contactsWithoutBlack != null && contactsWithoutBlack.size() > 0) {
+                                contacts.putAll(BmobUtils.list2map(contactsWithoutBlack));
+                        }
+                }
                 return contacts;
         }
 
@@ -183,16 +193,11 @@ public class UserCacheManager {
                 if (!isLogin) {
                         return;
                 }
+                LogUtil.e("sh");
                 if (uid != null) {
-//                        if (contacts == null) {
-//                                contacts = new HashMap<>();
-//                                List<User> list = ChatDB.create().getContactsWithoutBlack();
-//                                if (list != null && list.size() > 0) {
-//                                        contacts.putAll(BmobUtils.list2map(list));
-//                                }
-//                        }
-                        if (contacts.containsKey(uid)) {
-                                contacts.remove(uid);
+                        if (getContacts() != null&&getContacts().containsKey(uid)) {
+                                LogUtil.e("开始删除用户啦啦啦");
+                                getContacts().remove(uid);
                         }
                 }
         }
@@ -203,17 +208,30 @@ public class UserCacheManager {
                         return;
                 }
                 if (user != null) {
-//                        if (blackList == null) {
-//                                blackList = new HashMap<>();
-//                                List<User> list = ChatDB.create().getAllBlackUser();
-//                                if (list != null && list.size() > 0) {
-//                                        blackList.putAll(BmobUtils.list2map(list));
-//                                }
-//                        }
-                        if (!blackList.containsKey(user.getObjectId()))
-                                blackList.put(user.getObjectId(), user);
+                        if (getAllBlackMap()!=null&&getAllBlackMap().containsKey(user.getObjectId()))
+                                getAllBlackMap().put(user.getObjectId(), user);
                 }
         }
+
+
+
+        public Map<String,User> getAllBlackMap(){
+                if (blackList.size() == 0) {
+                        List<User> blackUser = ChatDB.create().getAllBlackUser();
+                        LogUtil.e("从数据库中获取得到的黑名单用户");
+                        if (blackUser != null) {
+                                for (User user :
+                                        blackUser) {
+                                        LogUtil.e(user);
+                                }
+                        }
+                        if (blackUser != null && blackUser.size() > 0) {
+                                blackList.putAll(BmobUtils.list2map(blackUser));
+                        }
+                }
+                return blackList;
+        }
+
 
 
         public User getBlackUser(String uid) {
@@ -221,15 +239,8 @@ public class UserCacheManager {
                         return null;
                 }
                 if (uid != null) {
-//                        if (blackList == null) {
-//                                blackList = new HashMap<>();
-//                                List<User> list = ChatDB.create().getAllBlackUser();
-//                                if (list != null && list.size() > 0) {
-//                                        blackList.putAll(BmobUtils.list2map(list));
-//                                }
-//                        }
-                        if (blackList.containsKey(uid)) {
-                                return blackList.get(uid);
+                        if (getAllBlackMap()!=null&&getAllBlackMap().containsKey(uid)) {
+                                return getAllBlackMap().get(uid);
                         }
                 }
                 return null;
@@ -240,25 +251,19 @@ public class UserCacheManager {
                         return;
                 }
                 if (uid != null) {
-//                        if (blackList == null) {
-//                                blackList = new HashMap<>();
-//                                List<User> list = ChatDB.create().getAllBlackUser();
-//                                if (list != null && list.size() > 0) {
-//                                        blackList.putAll(BmobUtils.list2map(list));
-//                                }
-//                        }
-                        if (blackList.containsKey(uid)) {
-                                blackList.remove(uid);
+
+                        if (getAllBlackMap()!=null&&getAllBlackMap().containsKey(uid)) {
+                                getAllBlackMap().remove(uid);
                         }
                 }
         }
 
-        public List<String> getAllUserId() {
+        List<String> getAllUserId() {
                 if (!isLogin) {
                         return null;
                 }
                 List<String> list = null;
-                if (getContacts() != null && getContacts().keySet().size() > 0) {
+                if (getContacts().keySet().size() > 0) {
                         list = new ArrayList<>(getContacts().keySet());
                 }
                 return list;
@@ -268,29 +273,20 @@ public class UserCacheManager {
                 if (!isLogin) {
                         return null;
                 }
-                if (blackList == null || blackList.size() == 0) {
-                        if (blackList == null) {
-                                blackList = new HashMap<>();
-                        }
-                        List<User> list = ChatDB.create().getAllBlackUser();
-                        if (list != null && list.size() > 0) {
-                                blackList.putAll(BmobUtils.list2map(list));
-                        }
-                }
-                return BmobUtils.map2list(blackList);
+                return BmobUtils.map2list(getAllBlackMap());
         }
 
-        public void addInstallationId(String uid, String installationId) {
-                if (!isLogin||uid==null||installationId==null) {
-                        return;
-                }
-                installationMap.put(uid, installationId);
-        }
-
-        public String getInstallationId(String toId) {
-                if (!isLogin||toId==null) {
-                        return null;
-                }
-                return installationMap.get(toId);
-        }
+//        public void addInstallationId(String uid, String installationId) {
+//                if (!isLogin||uid==null||installationId==null) {
+//                        return;
+//                }
+//                installationMap.put(uid, installationId);
+//        }
+//
+//        public String getInstallationId(String toId) {
+//                if (!isLogin||toId==null) {
+//                        return null;
+//                }
+//                return installationMap.get(toId);
+//        }
 }

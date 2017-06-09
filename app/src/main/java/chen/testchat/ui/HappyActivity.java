@@ -17,7 +17,7 @@ import java.util.List;
 
 import chen.testchat.R;
 import chen.testchat.adapter.ViewPageAdapter;
-import chen.testchat.manager.UserCacheManager;
+import chen.testchat.manager.UserManager;
 import chen.testchat.ui.fragment.HappyContentFragment;
 import chen.testchat.ui.fragment.HappyFragment;
 import chen.testchat.ui.fragment.PictureFragment;
@@ -92,7 +92,9 @@ public class HappyActivity extends SlideBaseActivity {
 
         private void initActionBar() {
                 ToolBarOption toolBarOption = new ToolBarOption();
-                toolBarOption.setAvatar(UserCacheManager.getInstance().getUser().getAvatar());
+
+                        toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
+
                 toolBarOption.setNeedNavigation(true);
                 String title = "微信精选";
                 toolBarOption.setTitle(title);

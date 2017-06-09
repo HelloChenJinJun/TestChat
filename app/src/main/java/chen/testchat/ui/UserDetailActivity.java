@@ -203,12 +203,12 @@ public class UserDetailActivity extends SlideBaseActivity implements View.OnClic
         }
 
 
-        private void loadMoreData() {
-                LogUtil.e("不鸟你11111111");
-                if (mShareMultipleLayoutAdapter.getAllData() != null && mShareMultipleLayoutAdapter.getAllData().size() > 0) {
-                        presenter.loadShareMessages(uid, false, mShareMultipleLayoutAdapter.getAllData().get(mShareMultipleLayoutAdapter.getAllData().size() - 1).getCreatedAt());
-                }
-        }
+//        private void loadMoreData() {
+//                LogUtil.e("不鸟你11111111");
+//                if (mShareMultipleLayoutAdapter.getAllData() != null && mShareMultipleLayoutAdapter.getAllData().size() > 0) {
+//                        presenter.loadShareMessages(uid, false, mShareMultipleLayoutAdapter.getAllData().get(mShareMultipleLayoutAdapter.getAllData().size() - 1).getCreatedAt());
+//                }
+//        }
 
         @Override
         public void initData() {
@@ -271,7 +271,7 @@ public class UserDetailActivity extends SlideBaseActivity implements View.OnClic
                                 refresh.setRefreshing(true);
                                 onRefresh();
                         }
-                }, 2000);
+                }, 200);
                 updateUserData();
         }
 
@@ -519,7 +519,7 @@ public class UserDetailActivity extends SlideBaseActivity implements View.OnClic
         private void showCommentDialog(final String id, final int commentPosition) {
                 List<String> list = new ArrayList<>();
                 list.add("复制");
-                if (CommonUtils.content2List(mShareMultipleLayoutAdapter.getSharedMessageById(id).getCommentMsgList().get(commentPosition)).get(0).equals(UserCacheManager.getInstance().getUser().getObjectId())) {
+                if (CommonUtils.content2List(mShareMultipleLayoutAdapter.getSharedMessageById(id).getCommentMsgList().get(commentPosition)).get(0).equals(UserManager.getInstance().getCurrentUser().getObjectId())) {
                         list.add("删除");
                 }
                 showChooseDialog("操作", list, new AdapterView.OnItemClickListener() {
@@ -542,7 +542,7 @@ public class UserDetailActivity extends SlideBaseActivity implements View.OnClic
         }
 
         private void enterUserDetailActivity(String uid) {
-                if (uid.equals(UserCacheManager.getInstance().getUser().getObjectId())) {
+                if (uid.equals(UserManager.getInstance().getCurrentUser().getObjectId())) {
                         return;
                 }
                 Intent intent = new Intent(this, UserDetailActivity.class);

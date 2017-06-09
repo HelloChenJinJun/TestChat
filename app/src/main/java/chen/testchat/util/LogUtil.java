@@ -112,11 +112,12 @@ public class LogUtil {
                         + "createTime：" + sharedMessage.getCreateTime() + "\n"
                         + "createAt：" + sharedMessage.getCreatedAt() + "\n"
                         + "urlTitle：" + sharedMessage.getUrlTitle() + "\n"
+                        +"serverTime:"+sharedMessage.getCreatedAt()
                 );
                 if (sharedMessage.getVisibleType().equals(Constant.SHARE_MESSAGE_VISIBLE_TYPE_PUBLIC)) {
-                        LogUtil.e("该说说对以下用户可见；用户列表：");
+                        LogUtil.e("该说说对以下用户不可见；用户列表：");
                         for (String uid :
-                                sharedMessage.getVisibleUserList()) {
+                                sharedMessage.getInVisibleUserList()) {
                                 LogUtil.e(uid);
                         }
                 } else {

@@ -34,4 +34,16 @@ public class NewFriendAdapter extends BaseSwipeWrappedAdapter<InvitationMsg, Bas
                 }
                 holder.setOnClickListener(R.id.btn_new_friend_item_agree);
         }
+
+
+        @Override
+        public void addData(int position, InvitationMsg newData) {
+                if (data.contains(newData)) {
+                        int index = data.indexOf(newData);
+                        data.set(index, newData);
+                        notifyDataSetChanged();
+                } else {
+                        super.addData(position, newData);
+                }
+        }
 }

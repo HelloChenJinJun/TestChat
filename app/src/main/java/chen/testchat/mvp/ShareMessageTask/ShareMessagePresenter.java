@@ -135,13 +135,13 @@ public class ShareMessagePresenter extends ShareMessageContacts.Presenter {
                 mModel.loadAllShareMessages(isPullRefresh, time, new LoadShareMessageCallBack() {
                         @Override
                         public void onSuccess(List<SharedMessage> data) {
-//                                mView.hideLoading();
+                                mView.hideLoading();
                                 mView.updateAllShareMessages(data, isPullRefresh);
                         }
 
                         @Override
                         public void onFailed(String errorMsg, int errorId) {
-//                                mView.hideLoading();
+                                mView.hideLoading();
                                 mView.showError(errorMsg + errorId, null);
                         }
                 });
@@ -149,9 +149,9 @@ public class ShareMessagePresenter extends ShareMessageContacts.Presenter {
 
         @Override
         public void loadShareMessages(String uid, final boolean isPullRefresh, String time) {
-                if (isPullRefresh) {
-                        mView.showLoading("加载说说消息中................");
-                }
+//                if (isPullRefresh) {
+//                        mView.showLoading("加载说说消息中................");
+//                }
                 mModel.loadShareMessages(uid, isPullRefresh, time, new LoadShareMessageCallBack() {
                         @Override
                         public void onSuccess(List<SharedMessage> data) {
