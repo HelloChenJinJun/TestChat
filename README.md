@@ -5,3 +5,4 @@
         首先郑重声明下，该聊天功能的实现并不是调用官方的即时通讯API，而是本人自己结合官方提供的推送功能和实时同步的功能，按照自己的逻辑来实现的，所以内部聊天信息的逻辑处理过程源码是开放的，希望对想学习Android聊天框架的同学有所帮助。
 话不多说，效果图如下：
 二、ScreenShots
+!()https://github.com/HelloChenJinJun/TestChat/blob/master/screenshots/6)S%408DUY56UGTX94XNTQ0KW.png
