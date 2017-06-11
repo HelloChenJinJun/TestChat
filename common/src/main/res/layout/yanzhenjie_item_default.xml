@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.pointstone.cugappplat.base.cusotomview.swipeview.SwipeMenuLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    swipe:contentViewId="@+id/swipe_content"
+    swipe:leftViewId="@+id/swipe_left"
+    swipe:rightViewId="@+id/swipe_right"
+>
+
+    <org.pointstone.cugappplat.base.cusotomview.swipeview.SwipeMenuView
+        android:id="@id/swipe_left"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+    />
+
+    <FrameLayout
+        android:id="@id/swipe_content"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <org.pointstone.cugappplat.base.cusotomview.swipeview.SwipeMenuView
+        android:id="@id/swipe_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+    />
+
+</org.pointstone.cugappplat.base.cusotomview.swipeview.SwipeMenuLayout>

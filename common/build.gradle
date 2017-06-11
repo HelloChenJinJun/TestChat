@@ -1,0 +1,104 @@
+
+
+apply plugin: 'com.android.library'
+
+
+//apply plugin: 'org.greenrobot.greendao'
+
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+    useLibrary 'org.apache.http.legacy'
+
+
+    defaultConfig {
+//        if (rootProject.ext.isBuildApp) {
+//            applicationId "chen.common"
+//        }
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "armeabi-v8a"
+        }
+
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+//    configurations.all {
+//        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+//
+//    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main {
+//            manifest.srcFile 'src/main/debug/AndroidManifest.xml'
+            jniLibs.srcDirs = ['libs']
+            if (rootProject.ext.isBuildApp) {
+                manifest.srcFile 'src/main/debug/AndroidManifest.xml'
+//                res.srcDirs=['src/debug/res']
+            } else {
+                manifest.srcFile 'src/main/release/AndroidManifest.xml'
+                //移除debug资源
+
+                java {
+                    exclude 'debug/**'
+                }
+            }
+
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile rootProject.ext.dependencies.appcompatV7
+    compile rootProject.ext.dependencies.support_v4
+    compile rootProject.ext.dependencies.design
+    compile rootProject.ext.dependencies.recycleview
+    //    glide
+    compile rootProject.ext.dependencies.transformations
+    compile rootProject.ext.dependencies.glide
+    //    compile rootProject.ext.dependencies.butterknife
+    //    apt rootProject.ext.dependencies.butterknife_compiler
+    compile rootProject.ext.dependencies.retrofit
+    compile rootProject.ext.dependencies.rxjava_adapter
+    compile rootProject.ext.dependencies.gson_converter
+    compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
+    compile 'com.zhy:okhttputils:2.6.2'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    //    compile 'com.android.support:multidex:1.0.0'
+    compile rootProject.ext.dependencies.logger
+    compile rootProject.ext.dependencies.gson
+    //    rxjava
+    compile rootProject.ext.dependencies.rxjava
+    compile rootProject.ext.dependencies.rxjava_android
+    compile rootProject.ext.dependencies.rxlifecycle
+    compile rootProject.ext.dependencies.rxlifecycle_components
+    //    dagger
+    compile rootProject.ext.dependencies.dagger_compiler
+    compile rootProject.ext.dependencies.dagger
+    //    greenDao
+//    compile rootProject.ext.dependencies.greenDao
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+//    compile('com.taobao.android:atlas_core:5.0.6-rc52@aar') {
+//        transitive = true
+//    }
+    //    compile 'cn.bmob.android:bmob-sdk:3.5.0'
+    //    compile 'cn.bmob.android:bmob-push:1.0.0'
+    testCompile 'junit:junit:4.12'
+    //    compile files('libs/simple-xml-core.jar')
+//    compile files('libs/Bmob_Push_V0.9beta_20160520.jar')
+//    compile files('libs/BmobSDK_V3.4.7_0527.jar')
+}
