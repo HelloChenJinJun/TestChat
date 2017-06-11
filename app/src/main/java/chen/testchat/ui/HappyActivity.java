@@ -96,7 +96,7 @@ public class HappyActivity extends SlideBaseActivity {
                         toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
 
                 toolBarOption.setNeedNavigation(true);
-                String title = "微信精选";
+                String title = "开心时刻";
                 toolBarOption.setTitle(title);
                 setToolBar(toolBarOption);
         }

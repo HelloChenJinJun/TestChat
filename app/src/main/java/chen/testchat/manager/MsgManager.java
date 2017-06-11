@@ -2499,6 +2499,10 @@ public class MsgManager {
                                         avatarList = new ArrayList<>();
                                         for (int i = 0; i < jsonArray.length(); i++) {
                                                 try {
+
+
+
+
                                                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                                                         JSONObject avatarJson = jsonObject.getJSONObject("twallpaper");
                                                         String avatar = avatarJson.getString("url");

@@ -203,13 +203,6 @@ public class UserDetailActivity extends SlideBaseActivity implements View.OnClic
         }
 
 
-//        private void loadMoreData() {
-//                LogUtil.e("不鸟你11111111");
-//                if (mShareMultipleLayoutAdapter.getAllData() != null && mShareMultipleLayoutAdapter.getAllData().size() > 0) {
-//                        presenter.loadShareMessages(uid, false, mShareMultipleLayoutAdapter.getAllData().get(mShareMultipleLayoutAdapter.getAllData().size() - 1).getCreatedAt());
-//                }
-//        }
-
         @Override
         public void initData() {
                 uid = getIntent().getStringExtra("uid");
@@ -745,12 +738,14 @@ public class UserDetailActivity extends SlideBaseActivity implements View.OnClic
         public void updateCommentAdded(String id, String content, int position) {
                 LogUtil.e("更新添加评论操作，这里就不更新了，因为在实时检测的时候已经更新拉");
                 dealBottomView(false);
+                mShareMultipleLayoutAdapter.notifyDataSetChanged();
 
         }
 
         @Override
         public void updateCommentDeleted(String id, String content, int position) {
                 LogUtil.e("更新删除评论操作，这里就不更新了，因为在实时检测的时候已经更新啦啦啦");
+                mShareMultipleLayoutAdapter.notifyDataSetChanged();
         }
 
         @Override

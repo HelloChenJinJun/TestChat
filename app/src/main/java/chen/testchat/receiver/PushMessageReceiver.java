@@ -44,7 +44,7 @@ public class PushMessageReceiver extends BroadcastReceiver implements OnReceiveL
 
         @Override
         public void onReceive(Context context, Intent intent) {
-                LogUtil.e("接收到的json消息格式：" + intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING));
+//                LogUtil.e("接收到的json消息格式：" + intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING));
                 String json;
                 json = intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING);
                 Toast.makeText(context, json, Toast.LENGTH_SHORT).show();
