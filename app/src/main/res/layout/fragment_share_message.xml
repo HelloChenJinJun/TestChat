@@ -7,15 +7,6 @@
                 android:layout_height="match_parent"
                 android:background="@color/chat_bg">
 
-    <!--<chen.testchat.view.MultiFuncRecyclerView-->
-    <!--android:id="@+id/rcv_multi_share_fragment_display"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--app:emptyLayout="@layout/share_fragment_empty_layout"-->
-    <!--app:mainLayout="@layout/share_fragment_main_layout"-->
-    <!--app:moreLoadProgressLayout="@layout/share_fragment_more_layout">-->
-
-    <!--</chen.testchat.view.MultiFuncRecyclerView>-->
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh_share_fragment_refresh"
         android:layout_width="match_parent"

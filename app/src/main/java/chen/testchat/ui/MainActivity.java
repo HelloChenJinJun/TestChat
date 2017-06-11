@@ -946,6 +946,19 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
                         addOrReplaceFragment(mFragments[3]);
                 }
         }
+
+
+        private  long mExitTime=0;
+
+        @Override
+        public void onBackPressed() {
+                if (System.currentTimeMillis() - mExitTime > 2000) {
+                        ToastUtils.showShortToast("再按一次退出程序");
+                        mExitTime=System.currentTimeMillis();
+                }else {
+                        super.onBackPressed();
+                }
+        }
 }
 
 

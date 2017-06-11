@@ -508,10 +508,10 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
                 if (!mAdapter.getSharedMessageById(id).getLikerList().contains(UserManager.getInstance().getCurrentUserObjectId())) {
                         LogUtil.e("还未点赞，这里添加点赞");
                         mAdapter.getSharedMessageById(id).getLikerList().add(UserManager.getInstance().getCurrentUserObjectId());
-                        mAdapter.notifyDataSetChanged();
                 } else {
                         LogUtil.e("已经点赞，这里添加点赞失败,可能的原因是因为实时已经检测到拉");
                 }
+                mAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -519,22 +519,23 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
                 if (mAdapter.getSharedMessageById(id).getLikerList().contains(UserManager.getInstance().getCurrentUserObjectId())) {
                         LogUtil.e("已有点赞，这里删除点赞");
                         mAdapter.getSharedMessageById(id).getLikerList().remove(UserManager.getInstance().getCurrentUserObjectId());
-                        mAdapter.notifyDataSetChanged();
                 } else {
                         LogUtil.e("没有点赞，这里删除点赞失败，可能的原因是因为实时已经检测到啦");
                 }
+                mAdapter.notifyDataSetChanged();
         }
 
         @Override
         public void updateCommentAdded(String id, String content, int position) {
                 LogUtil.e("更新添加评论操作，这里就不更新了，因为在实时检测的时候已经更新拉");
                 dealBottomView(false);
-
+                mAdapter.notifyDataSetChanged();
         }
 
         @Override
         public void updateCommentDeleted(String id, String content, int position) {
                 LogUtil.e("更新删除评论操作，这里就不更新了，因为在实时检测的时候已经更新啦啦啦");
+                mAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -621,7 +622,6 @@ public class ShareMessageFragment extends org.pointstone.cugappplat.base.basemvp
 
         @Override
         public void hideLoading() {
-
                 if (refresh.isRefreshing()) {
                         refresh.setRefreshing(false);
                 }
