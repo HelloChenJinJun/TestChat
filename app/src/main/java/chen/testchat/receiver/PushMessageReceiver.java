@@ -21,7 +21,6 @@ import chen.testchat.listener.OnReceiveListener;
 import chen.testchat.manager.ChatNotificationManager;
 import chen.testchat.manager.MsgManager;
 import chen.testchat.manager.UserManager;
-import chen.testchat.ui.LoginActivity;
 import chen.testchat.ui.MainActivity;
 import chen.testchat.util.CommonUtils;
 import chen.testchat.util.JsonUtil;
@@ -91,10 +90,10 @@ public class PushMessageReceiver extends BroadcastReceiver implements OnReceiveL
                                         }
                                 } else {
                                         UserManager.getInstance().logout();
-                                        Intent intent=new Intent(context, LoginActivity.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        context.startActivity(intent);
+//                                        Intent intent=new Intent(context, LoginActivity.class);
+//                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                                        context.startActivity(intent);
                                 }
                                 return;
                         }

@@ -310,7 +310,9 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         toolBarOption.setRightListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                        GroupInfoActivity.start(ChatActivity.this, groupId, Constant.REQUEST_CODE_EDIT_GROUP_INFO);
+                                        if (!exit) {
+                                                GroupInfoActivity.start(ChatActivity.this, groupId, Constant.REQUEST_CODE_EDIT_GROUP_INFO);
+                                        }
                                 }
                         });
                 }
