@@ -442,8 +442,8 @@ public class UserManager {
                 );
         }
 
-        public void updateUserInfo(String name, String content, UpdateListener listener) {
-                User user=new User();
+        public void updateUserInfo(final String name, final String content, final UpdateListener listener) {
+                 User user=new User();
                 user.setObjectId(UserManager.getInstance().getCurrentUserObjectId());
                 switch (name) {
                         case "phone":
@@ -487,7 +487,61 @@ public class UserManager {
                                 user.setWallPaper(content);
                                 break;
                 }
-                user.update(CustomApplication.getInstance(), listener);
+                user.update(CustomApplication.getInstance(), new UpdateListener() {
+                        @Override
+                        public void onSuccess() {
+                                User currentUser = UserManager.getInstance().getCurrentUser();
+                                switch (name) {
+                                        case "phone":
+                                                currentUser.setMobilePhoneNumber(content);
+                                                break;
+                                        case "email":
+                                                currentUser.setEmail(content);
+                                                break;
+                                        case "nick":
+                                                currentUser.setNick(content);
+                                                currentUser.setSortedKey(CommonUtils.getSortedKey(content));
+                                                break;
+                                        case "avatar":
+                                                currentUser.setAvatar(content);
+                                                break;
+                                        case "sex":
+                                                if (content.equals("男")) {
+                                                        currentUser.setSex(true);
+                                                } else {
+                                                        currentUser.setSex(false);
+                                                }
+                                                break;
+                                        case "signature":
+                                                currentUser.setSignature(content);
+                                                break;
+                                        case "birth":
+                                                currentUser.setBirthDay(content);
+                                                break;
+                                        case "address":
+                                                currentUser.setAddress(content);
+                                                break;
+                                        case "location":
+                                                LogUtil.e("定位location" + content);
+                                                String result[] = content.split("&");
+                                                currentUser.setLocation(new BmobGeoPoint(Double.parseDouble(result[0]), Double.parseDouble(result[1])));
+                                                break;
+                                        case "titleWallPaper":
+                                                currentUser.setTitleWallPaper(content);
+                                                break;
+                                        case "wallPaper":
+                                                currentUser.setWallPaper(content);
+                                                break;
+                                }
+                                listener.onSuccess();
+                        }
+
+                        @Override
+                        public void onFailure(int i, String s) {
+                                listener.onFailure(i,s);
+
+                        }
+                });
         }
 
         public void queryNearbyPeople(double longitude, double latitude, boolean isAll,boolean isSex, FindListener<User> findListener) {

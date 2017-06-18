@@ -10,12 +10,14 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import chen.testchat.base.Constant;
+import chen.testchat.base.CrashHandler;
 import chen.testchat.bean.CustomInstallation;
 import chen.testchat.manager.LocationManager;
 import chen.testchat.util.LogUtil;
 import chen.testchat.util.SharedPreferencesUtil;
 import cn.bmob.push.BmobPush;
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.statistics.AppStat;
 import mabeijianxi.camera.VCamera;
 import mabeijianxi.camera.util.DeviceUtils;
 import okhttp3.OkHttpClient;
@@ -29,7 +31,7 @@ import okhttp3.OkHttpClient;
 public class CustomApplication extends BaseApplication {
         private static final String SHAREDPREFERENCE_NAME = "share_name";
         private SharedPreferencesUtil mSharedPreferencesUtil = null;
-//        private List<String> locationList;
+        //        private List<String> locationList;
         private static CustomApplication INSTANCE;
         //        好友列表缓存
 //        private Map<String, User> contacts = new HashMap<>();
@@ -39,6 +41,7 @@ public class CustomApplication extends BaseApplication {
          * 本用户
          */
 //        private User mUser;
+
         /**
          * 黑名单好友
          */
@@ -50,7 +53,6 @@ public class CustomApplication extends BaseApplication {
 //        private double longitude = 0;
 //        private double latitude = 0;
 //        private Map<String, List<String>> shareMap;
-
         public void setINSTANCE(CustomApplication customApplication) {
                 INSTANCE = customApplication;
         }
@@ -66,6 +68,7 @@ public class CustomApplication extends BaseApplication {
 //                LeakCanary.install(this);
                 setINSTANCE(this);
                 Bmob.initialize(this, Constant.KEY);
+                AppStat.i(Constant.KEY, null);
                 LogUtil.e("1服务器端初始化完成");
                 CustomInstallation.getCurrentInstallation(this).save();
                 LogUtil.e("设备ID在这里上传了");
@@ -74,6 +77,7 @@ public class CustomApplication extends BaseApplication {
                 initOkHttp();
                 initSmallVideo();
                 initLocationClient();
+                CrashHandler.getInstance().init(this);
         }
 
 

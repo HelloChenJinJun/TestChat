@@ -25,6 +25,7 @@ import chen.testchat.R;
 import chen.testchat.base.CommonImageLoader;
 import chen.testchat.base.Constant;
 import chen.testchat.bean.User;
+import chen.testchat.db.ChatDB;
 import chen.testchat.manager.UserManager;
 import chen.testchat.util.LogUtil;
 import chen.testchat.util.PhotoUtil;
@@ -131,9 +132,6 @@ public class EditUserInfoActivity extends SlideBaseActivity implements View.OnCl
                                         ToastUtils.showShortToast("请设置个人头像拉^_^");
                                         return;
                                 }
-                                Intent intent = new Intent();
-                                intent.putExtra("user", mUser);
-                                setResult(Activity.RESULT_OK, intent);
                                 finish();
                         }
                 });
@@ -227,7 +225,9 @@ public class EditUserInfoActivity extends SlideBaseActivity implements View.OnCl
                                                                                 dismissLoadDialog();
                                                                                 LogUtil.e("更新用户头像成功");
                                                                                 Glide.with(EditUserInfoActivity.this).load(bmobFile.getFileUrl(CustomApplication.getInstance())).diskCacheStrategy(DiskCacheStrategy.ALL).into(avatar);
-                                                                                mUser.setAvatar(bmobFile.getFileUrl(CustomApplication.getInstance()));
+                                                                                mUser.setAvatar(bmobFile.getFileUrl(EditUserInfoActivity.this));
+//                                                                                更新数据库中消息的头像
+                                                                                ChatDB.create().updateMessageAvatar(UserManager.getInstance().getCurrentUserObjectId(),bmobFile.getFileUrl(EditUserInfoActivity.this));
                                                                         }
 
                                                                         @Override
@@ -306,5 +306,15 @@ public class EditUserInfoActivity extends SlideBaseActivity implements View.OnCl
         protected void onDestroy() {
                 super.onDestroy();
                 CommonImageLoader.getInstance().clearAllData();
+        }
+
+
+        @Override
+        public void finish() {
+                LogUtil.e("editUserInfo_finish");
+                Intent intent = new Intent();
+                intent.putExtra("user", mUser);
+                setResult(Activity.RESULT_OK, intent);
+                super.finish();
         }
 }
