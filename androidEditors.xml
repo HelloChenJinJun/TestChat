@@ -4,6 +4,7 @@
       <GlobalState>
         <option name="showDeviceFrames" value="false" />
         <option name="showEffects" value="false" />
+        <option name="visible" value="false" />
       </GlobalState>
     </option>
   </component>
