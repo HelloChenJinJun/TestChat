@@ -1,7 +1,0 @@
-<application>
-  <component name="UISettings">
-    <option name="HIDE_TOOL_STRIPES" value="false" />
-    <option name="SHOW_MAIN_TOOLBAR" value="true" />
-    <option name="OVERRIDE_NONIDEA_LAF_FONTS" value="true" />
-  </component>
-</application>
