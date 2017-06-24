@@ -84,7 +84,7 @@ dependencies {
     compile rootProject.ext.dependencies.gson_converter
     compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
     compile 'com.zhy:okhttputils:2.6.2'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+//    compile 'com.squareup.picasso:picasso:2.5.2'
     //    compile 'com.android.support:multidex:1.0.0'
     compile rootProject.ext.dependencies.logger
     compile rootProject.ext.dependencies.gson
@@ -94,8 +94,8 @@ dependencies {
     compile rootProject.ext.dependencies.rxlifecycle
     compile rootProject.ext.dependencies.rxlifecycle_components
     //    dagger
-    compile rootProject.ext.dependencies.dagger_compiler
-    compile rootProject.ext.dependencies.dagger
+//    compile rootProject.ext.dependencies.dagger_compiler
+//    compile rootProject.ext.dependencies.dagger
     //    greenDao
 //    compile rootProject.ext.dependencies.greenDao
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'

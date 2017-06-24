@@ -141,15 +141,17 @@ public class ChatNotificationManager {
                 if (isAllowVoice) {
                         builder.setDefaults(Notification.DEFAULT_SOUND);
                 }
-                LogUtil.e("设置通知");
-                Intent intent = new Intent(context, targetClass);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(Constant.NOTIFICATION_TAG, tag);
-                if (groupId != null) {
-                        intent.putExtra("groupId", groupId);
+                LogUtil.e("设置通知123");
+                if (targetClass!=null) {
+                        Intent intent = new Intent(context, targetClass);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra(Constant.NOTIFICATION_TAG, tag);
+                        if (groupId != null) {
+                                intent.putExtra("groupId", groupId);
+                        }
+                        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        builder.setContentIntent(pendingIntent);
                 }
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                builder.setContentIntent(pendingIntent);
                 sNotificationManager.notify(Constant.NOTIFY_ID, builder.build());
                 sNotificationManager.notify(Constant.NOTIFY_ID, builder.build());
         }

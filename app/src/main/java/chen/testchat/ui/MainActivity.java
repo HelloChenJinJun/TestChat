@@ -843,7 +843,7 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
                 if (resultCode == Activity.RESULT_OK) {
                         switch (requestCode) {
                                 case Constant.REQUEST_CODE_EDIT_USER_INFO:
-                                        User user = (User) data.getSerializableExtra("user");
+                                        user = (User) data.getSerializableExtra("user");
                                         nick.setText(user.getNick());
                                         signature.setText(user.getSignature());
                                         Glide.with(this).load(user.getAvatar()).diskCacheStrategy(DiskCacheStrategy.ALL).into(icon_1);

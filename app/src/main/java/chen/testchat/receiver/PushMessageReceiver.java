@@ -21,7 +21,6 @@ import chen.testchat.listener.OnReceiveListener;
 import chen.testchat.manager.ChatNotificationManager;
 import chen.testchat.manager.MsgManager;
 import chen.testchat.manager.UserManager;
-import chen.testchat.ui.MainActivity;
 import chen.testchat.util.CommonUtils;
 import chen.testchat.util.JsonUtil;
 import chen.testchat.util.LogUtil;
@@ -43,10 +42,10 @@ public class PushMessageReceiver extends BroadcastReceiver implements OnReceiveL
 
         @Override
         public void onReceive(Context context, Intent intent) {
-//                LogUtil.e("接收到的json消息格式：" + intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING));
+                LogUtil.e("接收到的json消息格式：" + intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING));
                 String json;
                 json = intent.getStringExtra(PushConstants.EXTRA_PUSH_MESSAGE_STRING);
-                Toast.makeText(context, json, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, json, Toast.LENGTH_SHORT).show();
                 this.context = context;
                 mUserManager = UserManager.getInstance();
                 mMsgManager = MsgManager.getInstance();
@@ -98,20 +97,10 @@ public class PushMessageReceiver extends BroadcastReceiver implements OnReceiveL
                                 String systemInfo = JsonUtil.getString(jsonObject, Constant.PUSH_ALERT);
 //                        系统通知的消息
                                 Toast.makeText(context, systemInfo, Toast.LENGTH_SHORT).show();
-                                ChatNotificationManager.getInstance(context).showNotification("", context, "系统", R.drawable.head, systemInfo, MainActivity.class);
+                                LogUtil.e("系统信息");
+                                ChatNotificationManager.getInstance(context).showNotification("", context, "系统", R.drawable.head, systemInfo,null);
                                 return;
                         }
-//                        if (jsonObject.has(Constant.GROUP_ID)) {
-//                                LogUtil.e("这里接收到的群消息只能是建群欢迎消息，因为其他消息都是通过实时监听得到的");
-//                                GroupChatMessage message = MsgManager.getInstance().createReceiveGroupChatMsg(jsonObject);
-//                                if (MsgManager.getInstance().saveRecentAndChatGroupMessage(message)) {
-//                                        for (OnMessageReceiveListener listener :
-//                                                sOnMessageReceiveListenerList) {
-//                                                listener.onNewGroupChatMessageCome(message);
-//                                        }
-//                                }
-//                                return;
-//                        }
                         String fromId = JsonUtil.getString(jsonObject, Constant.TAG_BELONG_ID);
                         String toId = JsonUtil.getString(jsonObject, Constant.TAG_TO_ID);
                         if (toId != null && !toId.equals("") && fromId != null && !fromId.equals("")) {
