@@ -36,6 +36,7 @@ public class HappyContentFragment extends org.pointstone.cugappplat.base.basemvp
         private List<HappyContentBean> data = new ArrayList<>();
         private HappyContentPresenter mHappyPresenter;
         private int currentPage = 1;
+        private HappyContentModel mHappyContentModel;
 
 
 
@@ -75,7 +76,8 @@ public class HappyContentFragment extends org.pointstone.cugappplat.base.basemvp
 //                display.setHasFixedSize(true);
                 display.setItemAnimator(new DefaultItemAnimator());
                 mHappyPresenter = new HappyContentPresenter();
-                mHappyPresenter.setViewAndModel(this, new HappyContentModel());
+                mHappyContentModel=new HappyContentModel();
+                mHappyPresenter.setViewAndModel(this,mHappyContentModel);
                 mHappyAdapter = new HappyContentAdapter(data, R.layout.fragment_happy_content_item_layout);
                 display.addOnItemTouchListener(new OnBaseItemChildClickListener() {
                         @Override

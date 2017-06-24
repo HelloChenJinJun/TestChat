@@ -39,6 +39,7 @@ public class PictureFragment extends org.pointstone.cugappplat.base.basemvp.Base
         private StaggeredGridLayoutManager mStaggeredGridLayoutManager;
         private PicturePresenter mHappyPresenter;
         private int currentPage = 1;
+        private PictureModel mPictureModel;
 //        private int visibleCount;
 //        private int[] firstVisiblePosition;
 //        private int itemCount;
@@ -99,7 +100,8 @@ public class PictureFragment extends org.pointstone.cugappplat.base.basemvp.Base
                 display.setLayoutManager(mStaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
                 display.setItemAnimator(new DefaultItemAnimator());
                 mHappyPresenter = new PicturePresenter();
-                mHappyPresenter.setViewAndModel(this, new PictureModel());
+                mPictureModel=new PictureModel();
+                mHappyPresenter.setViewAndModel(this,mPictureModel);
                 mAdapter = new PictureAdapter(null, R.layout.fragment_picture_item_layout);
                 display.addOnItemTouchListener(new OnBaseItemChildClickListener() {
                         @Override

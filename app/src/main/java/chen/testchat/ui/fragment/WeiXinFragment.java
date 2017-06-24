@@ -43,6 +43,7 @@ public class WeiXinFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
         private WeiXinAdapter mAdapter;
         private List<WinXinBean> data = new ArrayList<>();
         private WinXinInfoPresenter mWinXinInfoPresenter;
+        private WinXinInfoModel mWinXinInfoModel;
 //        private int visibleCount;
 //        private int itemCount;
 //        private int firstVisiblePosition;
@@ -106,7 +107,8 @@ public class WeiXinFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
                 display.addItemDecoration(new ListViewDecoration(getActivity()));
                 mAdapter = new WeiXinAdapter(data, R.layout.win_xin_fragment_item_layout);
                 mWinXinInfoPresenter = new WinXinInfoPresenter();
-                mWinXinInfoPresenter.setViewAndModel(this, new WinXinInfoModel());
+                mWinXinInfoModel=new WinXinInfoModel();
+                mWinXinInfoPresenter.setViewAndModel(this, mWinXinInfoModel);
                 mAdapter.setOnLoadMoreDataListener(new OnLoadMoreDataListener() {
                         @Override
                         public void onLoadMoreData() {

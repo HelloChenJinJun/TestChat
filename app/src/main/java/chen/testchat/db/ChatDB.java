@@ -47,6 +47,7 @@ public class ChatDB {
         private static final String CHAT_TABLE_NAME = "chat_message";
         private static final String CHAT_ID = "_id";
         private static final String CHAT_CONVERSATION_ID = "conversationId";
+        private static final String CHAT_CONVERSATION_TYPE = "conversationType";
         private static final String CHAT_NAME = "userName";
         private static final String CHAT_NICK = "nick";
         private static final String CHAT_AVATAR = "avatar";
@@ -67,6 +68,8 @@ public class ChatDB {
         private static final String SQL_CREATE_CHAT_MESSAGE_TABLE = "CREATE TABLE IF NOT EXISTS " + CHAT_TABLE_NAME + " ("
                 + CHAT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "// _id
                 + CHAT_CONVERSATION_ID + " INTEGER, "// 会话id
+
+                + CHAT_CONVERSATION_TYPE + " TEXT, "//会话类型
                 + CHAT_NAME + " TEXT, "// 账号
                 + CHAT_NICK + " TEXT, "// 昵称
                 + CHAT_AVATAR + " TEXT, "// 头像
@@ -295,8 +298,6 @@ public class ChatDB {
                 + HAPPY_CONTENT_READ_STATUS + " INTEGER); ";
 
 
-
-
         private static final String PICTURE_TABLE = "picture_table";
         private static final String PICTURE_KEY = "picture_key";
         private static final String PICTURE_CACHE_DATA = "picture_cache_data";
@@ -307,6 +308,14 @@ public class ChatDB {
                 + PICTURE_KEY + " TEXT, "
                 + PICTURE_CACHE_DATA + " TEXT, "
                 + PICTURE_READ_STATUS + " INTEGER); ";
+        private static final String CRASH_TABLE = "crash_table";
+        private static final String CRASH_MESSAGE = "crash_message";
+        private static final String CRASH_FLAG = "crash_flag";
+        private static final String SQL_CREATE_CRASH_MESSAGE_TABLE = "CREATE TABLE "
+                + CRASH_TABLE + " ("
+                + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + CRASH_MESSAGE + " TEXT, "
+                + CRASH_FLAG + " INTEGER); ";
         /**
          * 储存键值为UID,值为DB的map
          */
@@ -409,6 +418,7 @@ public class ChatDB {
                         contentValues.put(CHAT_TIME, message.getCreateTime());
                         contentValues.put(CHAT_READ_STATUS, message.getReadStatus());
                         contentValues.put(CHAT_SEND_STATUS, message.getSendStatus());
+                        contentValues.put(CHAT_CONVERSATION_TYPE, message.getConversationType());
                         if (!isExistChatMessage(message.getConversationId(), message.getCreateTime())) {
                                 result = mDatabase.insert(CHAT_TABLE_NAME, null, contentValues);
                         } else {
@@ -1431,38 +1441,38 @@ public class ChatDB {
                 return result;
         }
 
-        public List<SharedMessage> getAllSharedMessage( boolean isAll,boolean isPullRefresh, String time, int count) {
+        public List<SharedMessage> getAllSharedMessage(boolean isAll, boolean isPullRefresh, String time, int count) {
                 List<SharedMessage> list = null;
                 if (mDatabase.isOpen()) {
                         int id = getIDFromTime(time);
                         String sql;
-                        String uid=UserManager.getInstance().getCurrentUserObjectId();
+                        String uid = UserManager.getInstance().getCurrentUserObjectId();
                         if (isPullRefresh) {
                                 if (isAll) {
                                         sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " >" + id + " ORDER BY " + _ID + " DESC LIMIT "
                                                 + count;
-                                }else {
+                                } else {
 
-                                        sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " > " + id + " AND "+SHARED_BELONG_ID+" =?"+" ORDER BY " + _ID + " DESC LIMIT "
+                                        sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " > " + id + " AND " + SHARED_BELONG_ID + " =?" + " ORDER BY " + _ID + " DESC LIMIT "
                                                 + count;
                                 }
                         } else {
                                 if (isAll) {
                                         sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " < " + id + " ORDER BY " + _ID + " DESC LIMIT "
                                                 + count;
-                                }else {
+                                } else {
 
 
-                                        sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " > " + id + " AND " + SHARED_BELONG_ID + " =?"+" ORDER BY " + _ID + " DESC LIMIT "
+                                        sql = "SELECT * from " + SHARED_TABLE + " WHERE " + _ID + " > " + id + " AND " + SHARED_BELONG_ID + " =?" + " ORDER BY " + _ID + " DESC LIMIT "
                                                 + count;
                                 }
                         }
-                        LogUtil.e("查询数据库中所有说说的sql语句"+sql);
-                        Cursor cursor=null;
+                        LogUtil.e("查询数据库中所有说说的sql语句" + sql);
+                        Cursor cursor = null;
                         if (isAll) {
-                                 cursor = mDatabase.rawQuery(sql, null);
-                        }else {
-                                cursor=mDatabase.rawQuery(sql, new String[]{uid});
+                                cursor = mDatabase.rawQuery(sql, null);
+                        } else {
+                                cursor = mDatabase.rawQuery(sql, new String[]{uid});
                         }
                         if (cursor != null) {
                                 SharedMessage shareMessage;
@@ -1488,7 +1498,7 @@ public class ChatDB {
                                 if (!cursor.isClosed()) {
                                         cursor.close();
                                 }
-                                LogUtil.e("查询得到的说说大小为"+list.size());
+                                LogUtil.e("查询得到的说说大小为" + list.size());
                                 LogUtil.e("具体的说说消息如下");
                                 for (SharedMessage message :
                                         list) {
@@ -1500,7 +1510,7 @@ public class ChatDB {
         }
 
         private int getIDFromTime(String time) {
-                LogUtil.e("123获取_id之前的时间"+time);
+                LogUtil.e("123获取_id之前的时间" + time);
                 int result = -1;
                 if (mDatabase.isOpen()) {
                         Cursor cursor = mDatabase.query(SHARED_TABLE, null, SHARED_SEVER_CREATE_TIME + " =?", new String[]{time}, null, null, null);
@@ -1705,8 +1715,7 @@ public class ChatDB {
         }
 
 
-
-        public void clearAllMessage(){
+        public void clearAllMessage() {
                 clearAllRecentMessages();
                 clearAllChatMessages();
                 clearAllGroupChatMessages();
@@ -1717,7 +1726,7 @@ public class ChatDB {
         }
 
 
-        public  boolean clearAllRecentMessages(){
+        public boolean clearAllRecentMessages() {
                 long result = -1;
                 if (mDatabase.isOpen()) {
                         result = mDatabase.delete(RECENT_TABLE_NAME, null, null);
@@ -2127,6 +2136,109 @@ public class ChatDB {
                 return result;
         }
 
+        public long saveOrUpdateCrashMessage(String absolutePath, boolean isUploadServer) {
+                long result = -1;
+                if (mDatabase.isOpen()) {
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(CRASH_MESSAGE, absolutePath);
+                        contentValues.put(CRASH_FLAG, isUploadServer ? 1 : 0);
+                        if (isExitCrashMessage(absolutePath)) {
+                                result = mDatabase.insert(CRASH_TABLE, null, contentValues);
+                        } else {
+                                result = mDatabase.update(CRASH_TABLE, contentValues, CRASH_MESSAGE + " =?", new String[]{absolutePath});
+                        }
+                }
+                return result;
+        }
+
+        private boolean isExitCrashMessage(String absolutePath) {
+                boolean result = false;
+                if (mDatabase.isOpen()) {
+                        Cursor cursor = mDatabase.query(CRASH_TABLE, null, CRASH_MESSAGE + " =?", new String[]{absolutePath}, null, null, null);
+                        if (cursor != null && cursor.moveToFirst()) {
+                                result = true;
+                        }
+                        if (cursor != null && !cursor.isClosed()) {
+                                cursor.close();
+                        }
+                }
+                return result;
+        }
+
+        public List<String> getAllErrorMessage(boolean isUploadServerSuccess) {
+                List<String> result=null;
+                if (mDatabase.isOpen()) {
+                        String flag=isUploadServerSuccess?"1":"0";
+                        Cursor cursor=mDatabase.query(CRASH_TABLE,null,CRASH_FLAG+" =?",new String[]{flag},null,null,null);
+                        if (cursor != null) {
+                                result=new ArrayList<>();
+                                while (cursor.moveToNext()) {
+                                        result.add(cursor.getString(cursor.getColumnIndexOrThrow(CRASH_FLAG)));
+                                }
+                                if (!cursor.isClosed()) {
+                                        cursor.close();
+                                }
+                        }
+                }
+                return result;
+        }
+
+        public boolean updateMessageAvatar(String uid, String avatar) {
+                long chatResult=-1;
+                long groupResult=-1;
+                if (mDatabase.isOpen()) {
+                        if (isExistUserChatMessage(uid)) {
+                                ContentValues contentValues=new ContentValues();
+                                contentValues.put(CHAT_AVATAR,avatar);
+                                chatResult=mDatabase.update(CHAT_TABLE_NAME,contentValues,CHAT_FROM_ID+" =?",new String[]{uid});
+                        }
+                        if (chatResult > 0) {
+                                LogUtil.e("在数据库中更新单聊用户的头像成功");
+                        }else {
+                                LogUtil.e("在数据库中更新单聊用户的头像失败");
+                        }
+                        if (isExistGroupTableMessage(uid)) {
+                                ContentValues values=new ContentValues();
+                                values.put(GROUP_FROM_AVATAR,avatar);
+                                groupResult=mDatabase.update(GROUP_MESSAGE_TABLE,values,GROUP_FROM_ID+" =?",new String[]{uid});
+                        }
+                        if (groupResult > 0) {
+                                LogUtil.e("在数据库中更新群聊用户的头像成功");
+                        }else {
+                                LogUtil.e("在数据库中更新群聊用户的头像失败");
+                        }
+                }
+                return groupResult>0&&chatResult>0;
+        }
+
+        private boolean isExistGroupTableMessage(String uid) {
+                boolean result=false;
+                if (mDatabase.isOpen()) {
+                        Cursor cursor=mDatabase.query(GROUP_MESSAGE_TABLE,null,GROUP_FROM_ID+" =?",new String[]{uid},null,null,null);
+                        if (cursor != null && cursor.moveToFirst()) {
+                                result=true;
+                        }
+                        if (cursor != null && !cursor.isClosed()) {
+                                cursor.close();
+                        }
+                }
+                return result;
+        }
+
+        private boolean isExistUserChatMessage(String uid) {
+                boolean result=false;
+                if (mDatabase.isOpen()) {
+                        Cursor cursor=mDatabase.query(CHAT_TABLE_NAME,null,CHAT_FROM_ID+" =?",new String[]{uid},null,null,null);
+                        if (cursor != null && cursor.moveToFirst()) {
+                                result=true;
+                        }
+                        if (cursor != null && !cursor.isClosed()) {
+                                cursor.close();
+                        }
+                }
+                return result;
+        }
+
 
         /**
          * 数据库辅助类
@@ -2174,6 +2286,10 @@ public class ChatDB {
                         db.execSQL(SQL_CREATE_HAPPY_MESSAGE);
                         db.execSQL(SQL_CREATE_PICTURE_MESSAGE);
                         db.execSQL(SQL_CREATE_HAPPY_CONTENT_MESSAGE);
+
+//                        创建crash表
+                        db.execSQL(SQL_CREATE_CRASH_MESSAGE_TABLE);
+
                 }
 
                 @Override
