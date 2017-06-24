@@ -549,16 +549,14 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
         }
 
         private void onProcessNewMessages(List<ChatMessage> list) {
+                String tag;
                 for (final ChatMessage chatMessage :
                         list) {
+                        tag = chatMessage.getTag();
+                        LogUtil.e("tag：" + tag);
                         chatMessage.setSendStatus(Constant.SEND_STATUS_SUCCESS);
                         chatMessage.setReadStatus(Constant.RECEIVE_UNREAD);
                         ChatNotificationManager.getInstance(this).sendChatMessageNotification(chatMessage, this);
-                        String tag="";
-                        if (chatMessage.getTag() != null) {
-                                tag=chatMessage.getTag();
-                        }
-                        LogUtil.e("tag：" + tag);
                         switch (tag) {
                                 case Constant.TAG_ADD_FRIEND:
                                         if (MsgManager.getInstance().saveAndUpdateInvitationMsg(chatMessage) > 0) {
@@ -624,7 +622,7 @@ public class MainActivity extends org.pointstone.cugappplat.base.basemvp.BaseAct
 
         @Override
         protected void onResume() {
-                LogUtil.e("1112223MainActivity：onResume");
+                LogUtil.e("111222MainActivity：onResume");
                 super.onResume();
 //                PushMessageReceiver.registerListener(this);
         }

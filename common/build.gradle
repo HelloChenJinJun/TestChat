@@ -24,6 +24,13 @@ android {
             abiFilters "armeabi", "armeabi-v7a", "armeabi-v8a"
         }
 
+//        multiDexEnabled true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ moduleName : project.getName() ]
+            }
+        }
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 

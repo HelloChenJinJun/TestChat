@@ -59,10 +59,6 @@
  width=250 height=450>
   <image src=https://github.com/HelloChenJinJun/TestChat/blob/master/screenshots/Screenshot_20170611-104528.jpg
  width=250 height=450>
- 
- 
- 三、项目详细情况，
- 请查看http://www.jianshu.com/p/2d76430617ae
 
  
  

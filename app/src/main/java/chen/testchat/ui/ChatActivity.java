@@ -310,9 +310,7 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         toolBarOption.setRightListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                        if (!exit) {
-                                                GroupInfoActivity.start(ChatActivity.this, groupId, Constant.REQUEST_CODE_EDIT_GROUP_INFO);
-                                        }
+                                        GroupInfoActivity.start(ChatActivity.this, groupId, Constant.REQUEST_CODE_EDIT_GROUP_INFO);
                                 }
                         });
                 }
@@ -410,11 +408,7 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         }
                         message.setSendStatus(Constant.SEND_STATUS_SUCCESS);
                         message.setReadStatus(Constant.RECEIVE_UNREAD);
-                        String tag="";
-                        if (message.getTag() != null) {
-                                tag=message.getTag();
-                        }
-                        switch (tag) {
+                        switch (message.getTag()) {
 //                                邀请消息应该不会出现在这里
                                 case Constant.TAG_AGREE:
                                         UserManager.getInstance().addNewFriend(message.getBelongId(), UserManager.getInstance().getCurrentUserObjectId(), new AddFriendCallBackListener() {
@@ -558,10 +552,10 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         return;
                 }
 
-//                if (isBlack) {
-//                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
-//                        return;
-//                }
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
 
                 MsgManager manager = MsgManager.getInstance();
                 String id;
@@ -637,7 +631,7 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
         }
 
 
-//        private boolean isBlack=false;
+        private boolean isBlack=false;
 
 
         @Override
@@ -648,9 +642,9 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
 //                        String title = mGroupTableMessage.getGroupName() + "(" + mGroupTableMessage.getGroupNumber().size() + ")";
 //                        getCustomTitle().setText(title);
 //                }
-//                if (uid != null) {
-//                        isBlack=ChatDB.create().isBlackUser(uid);
-//                }
+                if (uid != null) {
+                        isBlack=ChatDB.create().isBlackUser(uid);
+                }
                 PushMessageReceiver.registerListener(this);
         }
 
@@ -833,10 +827,10 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
                         return;
                 }
-//                if (isBlack) {
-//                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
-//                        return;
-//                }
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
                 if (l1_more.getVisibility() == View.VISIBLE) {
                         l1_more.setVisibility(View.GONE);
                         l1_add.setVisibility(View.GONE);
@@ -888,10 +882,10 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
                         return;
                 }
-//                if (isBlack) {
-//                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
-//                        return;
-//                }
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
 
                 if (l1_more.getVisibility() == View.VISIBLE) {
                         l1_more.setVisibility(View.GONE);
@@ -959,10 +953,10 @@ public class ChatActivity extends SlideBaseActivity implements View.OnClickListe
                         Toast.makeText(this, "已经被提出该群，不能发送消息", Toast.LENGTH_SHORT).show();
                         return;
                 }
-//                if (isBlack) {
-//                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
-//                        return;
-//                }
+                if (isBlack) {
+                        ToastUtils.showShortToast("对方为黑名单，不能发送消息");
+                        return;
+                }
                 MsgManager manager = MsgManager.getInstance();
                 BaseMessage baseMessage;
                 String id;

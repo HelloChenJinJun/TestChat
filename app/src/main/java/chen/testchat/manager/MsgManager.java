@@ -419,7 +419,7 @@ public class MsgManager {
          * @return 返回保存到数据库中是否成功的结果
          */
         public boolean saveAndUploadReceiverMessage(boolean isAskRead, BaseMessage baseMessage) {
-                RecentMsg recentMsg;
+                RecentMsg recentMsg = new RecentMsg();
                 if (baseMessage instanceof ChatMessage) {
                         ChatMessage message = (ChatMessage) baseMessage;
                         String toId = message.getToId();

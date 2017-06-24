@@ -95,7 +95,6 @@ public class UserInfoActivity extends SlideBaseActivity implements View.OnClickL
                         add.setVisibility(View.GONE);
                         black.setVisibility(View.GONE);
                         chat.setVisibility(View.GONE);
-                        user=UserManager.getInstance().getCurrentUser();
                 }else {
                         user= (User) getIntent().getSerializableExtra("user");
                         chat.setVisibility(View.GONE);

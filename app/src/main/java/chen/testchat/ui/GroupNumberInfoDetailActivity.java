@@ -13,7 +13,6 @@ import org.pointstone.cugappplat.util.ToastUtils;
 
 import chen.testchat.R;
 import chen.testchat.bean.GroupNumberInfo;
-import chen.testchat.manager.MessageCacheManager;
 import chen.testchat.manager.MsgManager;
 import chen.testchat.manager.UserManager;
 import chen.testchat.util.CommonUtils;
@@ -75,23 +74,19 @@ public class GroupNumberInfoDetailActivity extends SlideBaseActivity implements 
                 groupNick.setText(mGroupNumberInfo.getGroupNick());
                 groupId = getIntent().getStringExtra("groupId");
                 if (getIntent().getBooleanExtra("isCreator", false)) {
+                        type.setText("群主");
                         if (mGroupNumberInfo.getUser().getObjectId().equals(UserManager.getInstance().getCurrentUserObjectId())) {
                                 exit.setVisibility(View.GONE);
-                                type.setText("群主");
                         }else {
-                                type.setText("群成员");
                                 exit.setVisibility(View.VISIBLE);
                         }
                 } else {
-                        if (MessageCacheManager.getInstance().getGroupTableMessage(groupId) != null &&
-                                MessageCacheManager.getInstance().getGroupTableMessage(groupId).getCreatorId().equals(mGroupNumberInfo.getUser().getObjectId())) {
-                                type.setText("群主");
-                        }else {
-                                type.setText("群成员");
-                        }
+                        type.setText("群成员");
                         exit.setVisibility(View.GONE);
                 }
+
                 ToolBarOption mToolBarOption = new ToolBarOption();
+
                 mToolBarOption.setAvatar(null);
                 mToolBarOption.setTitle("成员信息");
                 mToolBarOption.setNeedNavigation(true);

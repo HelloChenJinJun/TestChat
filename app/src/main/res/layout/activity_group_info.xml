@@ -80,11 +80,11 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rcv_group_info_number_avatar"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="20dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="20dp"
                 android:verticalSpacing="5dp"/>
 
 

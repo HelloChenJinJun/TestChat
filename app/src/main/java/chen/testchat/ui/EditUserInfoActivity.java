@@ -273,7 +273,6 @@ public class EditUserInfoActivity extends SlideBaseActivity implements View.OnCl
                                 case Constant.REQUEST_CODE_ADDRESS:
                                         address.setText(message);
                                         mUser.setAddress(message);
-                                        break;
                                 case Constant.REQUEST_CODE_PHONE:
                                         phone.setText(message);
                                         mUser.setMobilePhoneNumber(message);

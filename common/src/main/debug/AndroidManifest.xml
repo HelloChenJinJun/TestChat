@@ -22,6 +22,63 @@
         android:theme="@style/AppTheme"
     >
         <activity android:name="org.pointstone.cugappplat.wxapi.WXEntryActivity"/>
+
+
+        <!--配置glide module-->
+        <!--<meta-data android:name="chen.common.imageloader.okhttpmodule.OkHttpGlideModule"-->
+        <!--android:value="GlideModule"/>-->
+
+        <!--后台实时监听服务-->
+        <service android:name=".im.GroupMessageService"/>
+        <!--推送服务-->
+        <service android:name=".im.PollService"/>
+        <service
+            android:name="cn.bmob.push.lib.service.PushService"
+            android:exported="true"
+            android:label="PushService"
+            android:process=":bmobpush">
+            <intent-filter>
+                <action android:name="cn.bmob.push.lib.service.PushService"/>
+            </intent-filter>
+        </service>
+
+        <!-- 用于进程保活 -->
+        <service
+            android:name="cn.bmob.push.lib.service.PushNotifyService"
+            android:process=":bmobpush">
+        </service>
+
+        <receiver android:name="cn.bmob.push.PushReceiver">
+            <!--优先级设置最高/以至于不会被KILL掉-->
+            <intent-filter android:priority="2147483647">
+                <!-- 系统启动完成后会调用 -->
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <!-- 解锁完成后会调用 -->
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <!-- 监听网络连通性 -->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
+        <!--推送消息的接收器-->
+        <receiver android:name=".im.PushMessageReceiver">
+            <intent-filter>
+                <action android:name="cn.bmob.push.action.MESSAGE"/>
+            </intent-filter>
+        </receiver>
+        <!-- 接收心跳和唤醒的广播，要和PushService运行在同个进程 -->
+        <receiver
+            android:name="cn.bmob.push.PushNotifyReceiver"
+            android:process=":bmobpush">
+            <intent-filter>
+                <!-- 接收心跳广播的action -->
+                <action android:name="cn.bmob.push.action.HEARTBEAT"/>
+                <!-- 接收唤醒广播的action -->
+                <action android:name="cn.bmob.push.action.NOTIFY"/>
+            </intent-filter>
+        </receiver>
+
+
     </application>
 
 </manifest>

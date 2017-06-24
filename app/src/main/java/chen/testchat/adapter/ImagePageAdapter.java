@@ -82,6 +82,8 @@ public class ImagePageAdapter extends PagerAdapter {
                 ImageItem imageItem = data.get(position);
                 String url=imageItem.getPath();
                 if (url.endsWith(".gif")) {
+
+
                         LogUtil.e("是gif图片12356");
                                                 Glide.with(mContext).load(url).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).override(screenWidth, screenHeight).thumbnail(0.1f).into(photoView);
 //                        Glide.with(mContext).load(url).asGif().override(screenWidth, screenHeight).into(photoView);
@@ -110,6 +112,6 @@ public class ImagePageAdapter extends PagerAdapter {
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-                container.removeView((View) object);
+                container.removeView((PhotoView) object);
         }
 }

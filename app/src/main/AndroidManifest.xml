@@ -97,6 +97,10 @@
         <activity android:name=".ui.HappyContentDisplayActivity"/>
         <activity android:name=".ui.WallPaperActivity"/>
 
+
+        <!--demo-->
+        <activity android:name=".demo.DemoActivity"/>
+
         <!--小视频界面-->
         <activity android:name="mabeijianxi.camera.MediaRecorderActivity"/>
         <activity android:name=".ui.VideoPlayActivity"/>

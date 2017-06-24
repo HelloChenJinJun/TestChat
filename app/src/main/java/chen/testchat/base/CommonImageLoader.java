@@ -14,6 +14,7 @@ import java.util.List;
 import chen.testchat.bean.ImageFolder;
 import chen.testchat.bean.ImageItem;
 import chen.testchat.util.FileUtil;
+import chen.testchat.util.LogUtil;
 
 /**
  * 项目名称:    TestChat
@@ -28,11 +29,11 @@ public class CommonImageLoader {
         public static final String PREVIEW_FROM = "preview_from";
         public static final String PREVIEW_DELETE = "preview_delete";
         public static final String PREVIEW_SELECT = "preview_select";
-//        public static final String IS_ORIGIN = "is_origin";
+        public static final String IS_ORIGIN = "is_origin";
         public static final String PREVIEW_BASE = "preview_base";
 
         private static CommonImageLoader instance;
-//        private ImageLoader mImageLoader;
+        private ImageLoader mImageLoader;
         /**
          * 最大的选择图片的个数
          */
@@ -63,17 +64,17 @@ public class CommonImageLoader {
         }
 
 
-//        public void setImageLoader(ImageLoader imageLoader) {
-//                mImageLoader = imageLoader;
-//        }
+        public void setImageLoader(ImageLoader imageLoader) {
+                mImageLoader = imageLoader;
+        }
 
-//        public ImageLoader getImageLoader() {
-//                if (mImageLoader == null) {
-//                        LogUtil.e("图片加载器为空，所以new 一个新的");
-//                        mImageLoader = new GlideImageLoader();
-//                }
-//                return mImageLoader;
-//        }
+        public ImageLoader getImageLoader() {
+                if (mImageLoader == null) {
+                        LogUtil.e("图片加载器为空，所以new 一个新的");
+                        mImageLoader = new GlideImageLoader();
+                }
+                return mImageLoader;
+        }
 
         private void setMaxSelectedCount(int maxSelectedCount) {
                 mMaxSelectedCount = maxSelectedCount;
@@ -118,13 +119,13 @@ public class CommonImageLoader {
                 if (mImageFolders.size() > 0) {
                         mImageFolders.clear();
                 }
-//                setImageLoader(null);
+                setImageLoader(null);
         }
 
         public void initStanderConfig(int maxSelectedCount) {
                 clearAllData();
                 setMaxSelectedCount(maxSelectedCount);
-//                setImageLoader(new GlideImageLoader());
+                setImageLoader(new GlideImageLoader());
         }
 
 

@@ -131,9 +131,6 @@ public class GroupMessageService extends Service {
                                         LogUtil.e("监听到数据啦啦啦\n");
                                         LogUtil.e("数据格式如下:\n");
                                         LogUtil.e("json数据" + jsonObject.toString());
-                                        if (UserManager.getInstance().getCurrentUser() == null) {
-                                                return;
-                                        }
                                         try {
                                                 JSONObject object = jsonObject.getJSONObject("data");
                                                 String action = jsonObject.getString("action");

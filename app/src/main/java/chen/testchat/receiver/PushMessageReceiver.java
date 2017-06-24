@@ -89,10 +89,6 @@ public class PushMessageReceiver extends BroadcastReceiver implements OnReceiveL
                                         }
                                 } else {
                                         UserManager.getInstance().logout();
-//                                        Intent intent=new Intent(context, LoginActivity.class);
-//                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                        context.startActivity(intent);
                                 }
                                 return;
                         }
