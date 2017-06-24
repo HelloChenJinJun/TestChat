@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:2.3.3'
         classpath 'com.taobao.android:atlasplugin:2.3.0.alpha+'
 
 //        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
