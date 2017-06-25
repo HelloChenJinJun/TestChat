@@ -43,6 +43,9 @@
           <option name="EXPAND_BY_DEFAULT" value="false" />
         </PlaceSettings>
       </entry>
+      <entry key="Merge">
+        <PlaceSettings />
+      </entry>
     </option>
   </component>
 </application>
