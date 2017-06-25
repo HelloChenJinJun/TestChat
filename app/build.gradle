@@ -1,0 +1,78 @@
+apply plugin: 'com.android.application'
+//apply plugin: 'org.greenrobot.greendao'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+    useLibrary 'org.apache.http.legacy'
+
+
+    aaptOptions {
+        cruncherEnabled = false
+//        useNewCruncher = false
+    }
+
+    defaultConfig {
+        applicationId "chen.testchat"
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        renderscriptTargetApi 18
+        renderscriptSupportModeEnabled true
+
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "armeabi-v8a"
+        }
+
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+//    configurations.all {
+//        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+//    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    //    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    //        exclude group: 'com.android.support', module: 'support-annotations'
+    //    })
+    compile project(':common')
+    testCompile 'junit:junit:4.12'
+    compile 'cn.bmob.android:bmob-sdk:3.4.7'
+    compile 'cn.bmob.android:bmob-push:1.0.0'
+    compile 'com.android.support:cardview-v7:25.3.0'
+//    compile 'com.zhy:okhttputils:2.6.2'
+    compile 'com.github.chrisbanes.photoview:library:1.2.3'
+//    compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
+    //   仿微信录制小视频依赖库
+    compile 'com.mabeijianxi:small-video-record:1.2.0'
+    compile('com.trello:rxlifecycle-components:1.0') {
+        exclude group: 'io.reactivex'
+    }
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    //    地址选择器依赖库
+    compile 'com.github.chihane:JDAddressSelector:1.1.4'
+    //     内存分析依赖库
+    //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    compile files('libs/pinyin4j-2.5.0.jar')
+    compile files('libs/nineoldandroids-2.4.0.jar')
+    compile files('libs/AMap3DMap_4.1.3_AMapSearch_3.6.1_AMapLocation_3.2.1_20161228.jar')
+    compile 'com.komi.slider:slider:0.4.0'
+    compile files('libs/BmobStat_v1.1_170114.jar')
+}
