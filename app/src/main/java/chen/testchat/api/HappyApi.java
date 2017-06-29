@@ -7,7 +7,6 @@ import chen.testchat.bean.PictureResponse;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
-
 /**
  * 项目名称:    TestChat
  * 创建人:        陈锦军

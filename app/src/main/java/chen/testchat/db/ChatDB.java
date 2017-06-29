@@ -68,7 +68,6 @@ public class ChatDB {
         private static final String SQL_CREATE_CHAT_MESSAGE_TABLE = "CREATE TABLE IF NOT EXISTS " + CHAT_TABLE_NAME + " ("
                 + CHAT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "// _id
                 + CHAT_CONVERSATION_ID + " INTEGER, "// 会话id
-
                 + CHAT_CONVERSATION_TYPE + " TEXT, "//会话类型
                 + CHAT_NAME + " TEXT, "// 账号
                 + CHAT_NICK + " TEXT, "// 昵称
@@ -810,6 +809,7 @@ public class ChatDB {
                                 message.setSendStatus(cursor.getInt(cursor.getColumnIndexOrThrow(CHAT_SEND_STATUS)));
                                 message.setContent(cursor.getString(cursor.getColumnIndexOrThrow(CHAT_CONTENT)));
                                 message.setReadStatus(cursor.getInt(cursor.getColumnIndexOrThrow(CHAT_READ_STATUS)));
+                                message.setConversationType(cursor.getString(cursor.getColumnIndexOrThrow(CHAT_CONVERSATION_TYPE)));
                                 list.add(message);
                         }
                         if (cursor != null && !cursor.isClosed()) {
