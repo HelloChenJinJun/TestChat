@@ -1,13 +1,8 @@
 <scheme name="Darcula copy" version="142" parent_scheme="Darcula">
-  <metaInfo>
-    <property name="created">2017-06-28T23:04:15</property>
-    <property name="ide">AndroidStudio</property>
-    <property name="ideVersion">2.3.3.0</property>
-    <property name="modified">2017-06-29T11:17:41</property>
-    <property name="originalScheme">Darcula</property>
-  </metaInfo>
   <option name="LINE_SPACING" value="1.0" />
-  <option name="EDITOR_FONT_SIZE" value="18" />
+  <option name="EDITOR_FONT_SIZE" value="17" />
+  <option name="CONSOLE_FONT_NAME" value="Source Code Pro" />
+  <option name="CONSOLE_FONT_SIZE" value="18" />
   <option name="EDITOR_FONT_NAME" value="Source Code Pro" />
   <attributes>
     <option name="MARKDOWN_NAVIGATOR.BOLD_TEXT_ABBREVIATED_TEXT">
