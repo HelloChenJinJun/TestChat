@@ -16,6 +16,12 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+// FIXME generate failure  field _$Result_code243
+// FIXME generate failure  field _$Req_id88
+// FIXME generate failure  field _$Result238
+// FIXME generate failure  field _$Err_msg170
+// FIXME generate failure  field _$Timestamp45
+// FIXME generate failure  field _$Is_ios268
 /**
  * 项目名称:    TestChat
  * 创建人:        陈锦军
@@ -47,7 +53,7 @@ public class HappyPresenter extends HappyContacts.Presenter {
                         });
                         return;
                 }
-                Subscription subscription = ((HappyApi) NetManager.getInstance().getApi("http://japi.juhe.cn", HappyApi.class)).getHappyInfo(page, 20).subscribeOn(Schedulers.io())
+                Subscription subscription = (NetManager.getInstance().getApi("http://japi.juhe.cn", HappyApi.class)).getHappyInfo(page, 20).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<HappyResponse>() {
                                 @Override
                                 public void onCompleted() {

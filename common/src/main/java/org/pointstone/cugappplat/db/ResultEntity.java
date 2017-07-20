@@ -11,32 +11,32 @@ import java.util.List;
  */
 
 public class ResultEntity<T> implements Serializable {
-        private boolean status;
-        private String message;
-        List<T> data;
+    private boolean status;
+    private String message;
+    List<T> data;
 
-        public boolean isStatus() {
+    public boolean isStatus() {
 
-                return status;
-        }
+        return status;
+    }
 
-        public void setStatus(boolean status) {
-                this.status = status;
-        }
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
-        public String getMessage() {
-                return message;
-        }
+    public String getMessage() {
+        return message;
+    }
 
-        public void setMessage(String message) {
-                this.message = message;
-        }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-        public List<T> getData() {
-                return data;
-        }
+    public List<T> getData() {
+        return data;
+    }
 
-        public void setData(List<T> data) {
-                this.data = data;
-        }
+    public void setData(List<T> data) {
+        this.data = data;
+    }
 }

@@ -140,7 +140,7 @@ public abstract class BaseItemClickListener implements RecyclerView.OnItemTouchL
                                                                         childView.setPressed(true);
 //                                                                        点击接口
                                                                         LogUtil.e("触发item_child点击");
-                                                                        onItemChildClick(baseWrappedViewHolder, id, childView, baseWrappedViewHolder.getLayoutPosition() - mBaseWrappedAdapter.getHeaderViewCount());
+                                                                        onItemChildClick(baseWrappedViewHolder, id, childView, baseWrappedViewHolder.getAdapterPosition() - mBaseWrappedAdapter.getHeaderViewCount());
 //                                                                        恢复效果,提交，防止堵塞
                                                                         resetView(childView);
                                                                         return true;
@@ -153,7 +153,7 @@ public abstract class BaseItemClickListener implements RecyclerView.OnItemTouchL
                                         //                                        如果执行到这里，证明没有设置点击事件,所以设置itemView的点击事件
                                         setChildHotSpot(mPressedView, e);
                                         mPressedView.setPressed(true);
-                                        onItemClick(baseWrappedViewHolder, baseWrappedViewHolder.itemView.getId(), mPressedView, baseWrappedViewHolder.getLayoutPosition() - mBaseWrappedAdapter.getHeaderViewCount());
+                                        onItemClick(baseWrappedViewHolder, baseWrappedViewHolder.itemView.getId(), mPressedView, baseWrappedViewHolder.getAdapterPosition() - mBaseWrappedAdapter.getHeaderViewCount());
                                         resetView(mPressedView);
                                 }
 
@@ -248,7 +248,7 @@ public abstract class BaseItemClickListener implements RecyclerView.OnItemTouchL
                                                                         setChildHotSpot(childView, e);
                                                                         childView.setPressed(true);
 //                                                                        点击接口
-                                                                        onItemChildLongClick(baseWrappedViewHolder, id, childView, baseWrappedViewHolder.getLayoutPosition() - mBaseWrappedAdapter.getHeaderViewCount());
+                                                                        onItemChildLongClick(baseWrappedViewHolder, id, childView, baseWrappedViewHolder.getAdapterPosition() - mBaseWrappedAdapter.getHeaderViewCount());
 //                                                                        恢复效果,提交，防止堵塞
                                                                         isLongClickConsume = true;
                                                                         isPressing = true;
@@ -260,7 +260,7 @@ public abstract class BaseItemClickListener implements RecyclerView.OnItemTouchL
                                         if (!isLongClickConsume) {
                                                 setChildHotSpot(mPressedView, e);
                                                 mPressedView.setPressed(true);
-                                                onItemLongClick(baseWrappedViewHolder, mPressedView, baseWrappedViewHolder.getLayoutPosition() - mBaseWrappedAdapter.getHeaderViewCount());
+                                                onItemLongClick(baseWrappedViewHolder, mPressedView, baseWrappedViewHolder.getAdapterPosition() - mBaseWrappedAdapter.getHeaderViewCount());
                                                 isPressing = true;
                                         }
                                 }
