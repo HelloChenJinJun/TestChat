@@ -462,7 +462,6 @@ public class EditShareMessageActivity extends SlideBaseActivity implements View.
     protected void onDestroy() {
         super.onDestroy();
         CommonImageLoader.getInstance().clearAllData();
-        mShareMessagePresenter.unSubscrible();
         mShareMessagePresenter.onDestroy();
     }
 

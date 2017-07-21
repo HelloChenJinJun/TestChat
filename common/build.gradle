@@ -98,7 +98,7 @@ dependencies {
 //    compile rootProject.ext.dependencies.dagger
     //    greenDao
 //    compile rootProject.ext.dependencies.greenDao
-    compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+//    compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
 //    compile('com.taobao.android:atlas_core:5.0.6-rc52@aar') {
 //        transitive = true
 //    }

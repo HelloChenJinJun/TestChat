@@ -2,10 +2,6 @@ package org.pointstone.cugappplat.base;
 
 import android.app.Application;
 
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-
-import org.pointstone.cugappplat.util.Constant;
 import org.pointstone.cugappplat.util.LogUtil;
 
 
@@ -18,7 +14,7 @@ import org.pointstone.cugappplat.util.LogUtil;
 
 public class BaseApplication extends Application {
         private static BaseApplication sInstance;
-        public static IWXAPI api;
+//        public static IWXAPI api;
 //        private DownLoadCallBack<DownInfo> mDownLoadCallBack;
 //
 //
@@ -124,8 +120,8 @@ public class BaseApplication extends Application {
 
 
         private void initWeiXinInfo() {
-                api = WXAPIFactory.createWXAPI(this, Constant.WX_APP_ID, true);
-                api.registerApp(Constant.WX_APP_ID);
+//                api = WXAPIFactory.createWXAPI(this, Constant.WX_APP_ID, true);
+//                api.registerApp(Constant.WX_APP_ID);
         }
 
 

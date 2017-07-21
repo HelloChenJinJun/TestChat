@@ -220,7 +220,6 @@ public class WeiXinFragment extends org.pointstone.cugappplat.base.basemvp.BaseF
         @Override
         public void onDestroyView() {
                 super.onDestroyView();
-                mWinXinInfoPresenter.unSubscrible();
                 mWinXinInfoPresenter.onDestroy();
         }
 

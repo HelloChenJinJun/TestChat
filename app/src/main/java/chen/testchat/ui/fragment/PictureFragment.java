@@ -169,7 +169,6 @@ public class PictureFragment extends org.pointstone.cugappplat.base.basemvp.Base
         @Override
         public void onDestroyView() {
                 super.onDestroyView();
-                mHappyPresenter.unSubscrible();
                 mHappyPresenter.onDestroy();
         }
 
