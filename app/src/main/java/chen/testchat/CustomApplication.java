@@ -77,7 +77,7 @@ public class CustomApplication extends BaseApplication {
                 initOkHttp();
                 initSmallVideo();
                 initLocationClient();
-                CrashHandler.getInstance().init(this);
+//                CrashHandler.getInstance().init(this);
         }
 
 

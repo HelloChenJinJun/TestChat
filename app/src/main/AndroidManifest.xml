@@ -106,7 +106,7 @@
         <activity android:name=".ui.VideoPlayActivity"/>
         <!--高德地图API_KEY-->
         <meta-data android:name="com.amap.api.v2.apikey"
-                   android:value="4b5c8ad0fb2cab2963c3dc01ee5fb558">
+                   android:value="9b9ce5f4e2fd5377d676b6a7c3ba53a6">
         </meta-data>
         <!--定位服务-->
 

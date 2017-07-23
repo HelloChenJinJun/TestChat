@@ -2,16 +2,21 @@ apply plugin: 'com.android.application'
 //apply plugin: 'org.greenrobot.greendao'
 
 android {
+    signingConfigs {
+        testchat {
+            keyAlias 'testchat'
+            keyPassword '3929249'
+            storeFile file('chat.jks')
+            storePassword '3929249'
+        }
+    }
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
     useLibrary 'org.apache.http.legacy'
-
-
     aaptOptions {
         cruncherEnabled = false
 //        useNewCruncher = false
     }
-
     defaultConfig {
         applicationId "chen.testchat"
         minSdkVersion rootProject.ext.android.minSdkVersion
@@ -38,6 +43,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            signingConfig signingConfigs.testchat
+        }
     }
 //    configurations.all {
 //        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
@@ -54,9 +62,9 @@ dependencies {
     compile 'cn.bmob.android:bmob-sdk:3.4.7'
     compile 'cn.bmob.android:bmob-push:1.0.0'
     compile 'com.android.support:cardview-v7:25.3.0'
-//    compile 'com.zhy:okhttputils:2.6.2'
+    //    compile 'com.zhy:okhttputils:2.6.2'
     compile 'com.github.chrisbanes.photoview:library:1.2.3'
-//    compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
+    //    compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
     //   仿微信录制小视频依赖库
     compile 'com.mabeijianxi:small-video-record:1.2.0'
     compile('com.trello:rxlifecycle-components:1.0') {

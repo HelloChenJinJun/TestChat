@@ -166,7 +166,7 @@ public class NetManager {
         }
 
 
-        public Object getApi(String baseUrl, Class api) {
+        public <T> T  getApi(String baseUrl, Class<T> api) {
                 if (baseUrl == null) {
                         return null;
                 }

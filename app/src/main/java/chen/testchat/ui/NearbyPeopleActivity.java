@@ -36,184 +36,155 @@ import cn.bmob.v3.datatype.BmobGeoPoint;
  */
 
 public class NearbyPeopleActivity extends SlideBaseActivity implements SwipeRefreshLayout.OnRefreshListener, NearbyPeopleContacts.View {
-        private SwipeRefreshLayout refresh;
-        private RecyclerView display;
-        private NearbyPeopleAdapter mNearbyPeopleAdapter;
-        private NearbyPeoplePresenter mNearbyPeoplePresenter;
-        private int currentPosition = 0;
-        private List<User> data = new ArrayList<>();
-        private double longitude = 0;
-        private double latitude = 0;
+    private SwipeRefreshLayout refresh;
+    private RecyclerView display;
+    private NearbyPeopleAdapter mNearbyPeopleAdapter;
+    private NearbyPeoplePresenter mNearbyPeoplePresenter;
+    private int currentPosition = 0;
+    private List<User> data = new ArrayList<>();
+    private double longitude = 0;
+    private double latitude = 0;
 
 
+    @Override
+    protected boolean isNeedHeadLayout() {
+        return true;
+    }
 
-        @Override
-        protected boolean isNeedHeadLayout() {
-                return true;
-        }
+    @Override
+    protected boolean isNeedEmptyLayout() {
+        return true;
+    }
 
-        @Override
-        protected boolean isNeedEmptyLayout() {
-                return true;
-        }
-
-        @Override
-        protected int getContentLayout() {
-                return R.layout.activity_nearby_people;
-        }
-
-
-        @Override
-        public void initView() {
-                refresh = (SwipeRefreshLayout) findViewById(R.id.refresh_nearby_people_refresh);
-                display = (RecyclerView) findViewById(R.id.rcv_nearby_people_display);
-                refresh.setOnRefreshListener(this);
-        }
+    @Override
+    protected int getContentLayout() {
+        return R.layout.activity_nearby_people;
+    }
 
 
+    @Override
+    public void initView() {
+        refresh = (SwipeRefreshLayout) findViewById(R.id.refresh_nearby_people_refresh);
+        display = (RecyclerView) findViewById(R.id.rcv_nearby_people_display);
+        refresh.setOnRefreshListener(this);
+    }
 
-        @Override
-        public void initData() {
-                mNearbyPeoplePresenter=new NearbyPeoplePresenter();
-                mNearbyPeoplePresenter.setViewAndModel(this,new NearbyPeopleModel());
-                BmobGeoPoint bmobGeoPoint = UserManager.getInstance().getCurrentUser().getLocation();
-                longitude = bmobGeoPoint.getLongitude();
-                latitude = bmobGeoPoint.getLatitude();
-                display.setLayoutManager(new LinearLayoutManager(this));
+
+    @Override
+    public void initData() {
+        mNearbyPeoplePresenter = new NearbyPeoplePresenter();
+        mNearbyPeoplePresenter.setViewAndModel(this, new NearbyPeopleModel());
+        BmobGeoPoint bmobGeoPoint = UserManager.getInstance().getCurrentUser().getLocation();
+        longitude = bmobGeoPoint.getLongitude();
+        latitude = bmobGeoPoint.getLatitude();
+        display.setLayoutManager(new LinearLayoutManager(this));
 //                display.setHasFixedSize(true);
-                display.setItemAnimator(new DefaultItemAnimator());
-                display.addItemDecoration(new ListViewDecoration(this));
-                mNearbyPeopleAdapter = new NearbyPeopleAdapter(data, R.layout.nearby_people_item_layout);
-                display.addOnItemTouchListener(new OnBaseItemClickListener() {
-                        @Override
-                        protected void onItemClick(BaseWrappedViewHolder baseWrappedViewHolder, int id, View view, int position) {
-                                User user = mNearbyPeopleAdapter.getData(position);
-                                Intent intent = new Intent(NearbyPeopleActivity.this, UserInfoActivity.class);
-                                intent.putExtra("user", user);
-                                intent.putExtra("uid", user.getObjectId());
-                                startActivity(intent);
+        display.setItemAnimator(new DefaultItemAnimator());
+        display.addItemDecoration(new ListViewDecoration(this));
+        mNearbyPeopleAdapter = new NearbyPeopleAdapter(data, R.layout.nearby_people_item_layout);
+        display.addOnItemTouchListener(new OnBaseItemClickListener() {
+            @Override
+            protected void onItemClick(BaseWrappedViewHolder baseWrappedViewHolder, int id, View view, int position) {
+                User user = mNearbyPeopleAdapter.getData(position);
+                Intent intent = new Intent(NearbyPeopleActivity.this, UserInfoActivity.class);
+                intent.putExtra("user", user);
+                intent.putExtra("uid", user.getObjectId());
+                startActivity(intent);
+            }
+        });
+        display.setAdapter(mNearbyPeopleAdapter);
+        display.post(new Runnable() {
+            @Override
+            public void run() {
+                loadData(false);
+            }
+        });
+        initActionBar();
+    }
+
+    private void initActionBar() {
+        ToolBarOption toolBarOption = new ToolBarOption();
+        toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
+        toolBarOption.setTitle("附近的人");
+        toolBarOption.setNeedNavigation(true);
+        toolBarOption.setRightResId(R.drawable.ic_list_blue_grey_900_24dp);
+        toolBarOption.setRightListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                List<String> list = new ArrayList<>();
+                list.add("查看全部");
+                list.add("只查看女生");
+                list.add("只查看男生");
+                showChooseDialog("搜索条件", list, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        dismissBaseDialog();
+                        if (currentPosition != position) {
+                            currentPosition = position;
+                            loadData(true);
                         }
+                    }
                 });
-                display.setAdapter(mNearbyPeopleAdapter);
-                display.post(new Runnable() {
-                        @Override
-                        public void run() {
-                                loadData(false);
-                        }
-                });
-                initActionBar();
+            }
+        });
+        setToolBar(toolBarOption);
+    }
+
+    private void loadData(boolean isRefresh) {
+        if (isRefresh) {
+            if (data.size() > 0) {
+                data.clear();
+            }
         }
-
-        private void initActionBar() {
-                ToolBarOption toolBarOption = new ToolBarOption();
-                toolBarOption.setAvatar(UserManager.getInstance().getCurrentUser().getAvatar());
-                toolBarOption.setTitle("附近的人");
-                toolBarOption.setNeedNavigation(true);
-                toolBarOption.setRightResId(R.drawable.ic_list_blue_grey_900_24dp);
-                toolBarOption.setRightListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                                List<String> list = new ArrayList<>();
-                                list.add("查看全部");
-                                list.add("只查看女生");
-                                list.add("只查看男生");
-                                showChooseDialog("搜索条件", list, new AdapterView.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                dismissBaseDialog();
-                                                if (currentPosition != position) {
-                                                        currentPosition = position;
-                                                        loadData(true);
-                                                }
-                                        }
-                                });
-                        }
-                });
-                setToolBar(toolBarOption);
+        if (longitude != 0 || latitude != 0) {
+            LogUtil.e("已经定位过了，无需再定位");
+            boolean result = false;
+            boolean isAll = false;
+            if (currentPosition == 1) {
+                result = false;
+            } else if (currentPosition == 2) {
+                result = true;
+            } else {
+                isAll = true;
+            }
+            mNearbyPeoplePresenter.queryNearbyPeople(longitude, latitude, isAll, result);
         }
+    }
 
-        private void loadData(boolean isRefresh) {
-                if (isRefresh) {
-                        if (data.size() > 0) {
-                                data.clear();
-                        }
-                }
-                if (longitude != 0 || latitude != 0) {
-                        LogUtil.e("已经定位过了，无需再定位");
-                        boolean result=false;
-                        boolean isAll=false;
-                        if (currentPosition == 1) {
-                                result=false;
-                        } else if (currentPosition == 2) {
-                                result=true;
-                        }else {
-                                isAll=true;
-                        }
-                        mNearbyPeoplePresenter.queryNearbyPeople(longitude,latitude,isAll,result);
-//                        UserManager.getInstance().queryNearbyPeople(longitude, latitude, result, new FindListener<User>() {
-//                                @Override
-//                                public void onSuccess(List<User> list) {
-//                                        if (refresh.isRefreshing()) {
-//                                                refresh.setRefreshing(false);
-//                                        }
-//                                        dismissLoadDialog();
-//                                        if (list != null && list.size() > 0) {
-//                                                data.addAll(list);
-//                                                mNearbyPeopleAdapter.notifyDataSetChanged();
-//                                        } else {
-//                                                LogUtil.e("查询得到的附近人为空");
-//                                                ToastUtils.showShortToast("查询得到的附近人为空");
-//                                        }
-//                                }
-//
-//                                @Override
-//                                public void onError(int i, String s) {
-//                                        if (refresh.isRefreshing()) {
-//                                                refresh.setRefreshing(false);
-//                                        }
-//                                        dismissLoadDialog();
-//                                        LogUtil.e("查询附近人失败" + s + i);
-//                                }
-//                        });
-//                } else {
-//                        LogUtil.e("没定位过???");
-                }
+    @Override
+    public void onRefresh() {
+        loadData(true);
+    }
+
+    public static void start(Activity activity) {
+        Intent intent = new Intent(activity, NearbyPeopleActivity.class);
+        activity.startActivity(intent);
+    }
+
+
+    @Override
+    public void updateNearbyPeople(List<User> list) {
+        if (refresh.isRefreshing()) {
+            refresh.setRefreshing(false);
         }
-
-        @Override
-        public void onRefresh() {
-                loadData(true);
+        dismissLoadDialog();
+        if (list != null && list.size() > 0) {
+            data.addAll(list);
+            mNearbyPeopleAdapter.notifyDataSetChanged();
+        } else {
+            data.clear();
+            mNearbyPeopleAdapter.notifyDataSetChanged();
+            LogUtil.e("查询得到的附近人为空");
+            ToastUtils.showShortToast("查询得到的附近人为空");
         }
+    }
 
-        public static void start(Activity activity) {
-                Intent intent = new Intent(activity, NearbyPeopleActivity.class);
-                activity.startActivity(intent);
+    @Override
+    public void hideLoading() {
+        if (refresh.isRefreshing()) {
+            refresh.setRefreshing(false);
         }
-
-
-        @Override
-        public void updateNearbyPeople(List<User> list) {
-                if (refresh.isRefreshing()) {
-                        refresh.setRefreshing(false);
-                }
-                dismissLoadDialog();
-                if (list != null && list.size() > 0) {
-                        data.addAll(list);
-                        mNearbyPeopleAdapter.notifyDataSetChanged();
-                } else {
-                        data.clear();
-                        mNearbyPeopleAdapter.notifyDataSetChanged();
-                        LogUtil.e("查询得到的附近人为空");
-                        ToastUtils.showShortToast("查询得到的附近人为空");
-                }
-        }
-
-        @Override
-        public void hideLoading() {
-                if (refresh.isRefreshing()) {
-                        refresh.setRefreshing(false);
-                }
-                super.hideLoading();
-        }
+        super.hideLoading();
+    }
 }

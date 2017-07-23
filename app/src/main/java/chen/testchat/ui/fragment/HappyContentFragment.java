@@ -124,7 +124,6 @@ public class HappyContentFragment extends org.pointstone.cugappplat.base.basemvp
         @Override
         public void onDestroyView() {
                 super.onDestroyView();
-                mHappyPresenter.unSubscrible();
                 mHappyPresenter.onDestroy();
         }
 

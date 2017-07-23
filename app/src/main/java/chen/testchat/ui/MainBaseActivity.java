@@ -17,25 +17,25 @@ import chen.testchat.manager.UserManager;
 public abstract class MainBaseActivity extends org.pointstone.cugappplat.base.basemvp.BaseActivity {
 
 
-        @Override
-        protected void onCreate(@Nullable Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-        }
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
 
-        @Override
-        protected void onResume() {
-                super.onResume();
-                checkLogin();
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkLogin();
+    }
 
-        private void checkLogin() {
-                if (UserManager.getInstance().getCurrentUser() == null) {
-                        ToastUtils.showShortToast("你的帐号已在其他设备登陆,请重新登录!");
-                        Intent intent = new Intent(this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                }
+    private void checkLogin() {
+        if (UserManager.getInstance().getCurrentUser() == null) {
+            ToastUtils.showShortToast("你的帐号已在其他设备登陆,请重新登录!");
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
+    }
 
 }

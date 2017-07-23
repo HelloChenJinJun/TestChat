@@ -1,5 +1,7 @@
 package org.pointstone.cugappplat.base.basemvp;
 
+import org.pointstone.cugappplat.util.LogUtil;
+
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
@@ -38,6 +40,8 @@ public abstract class BasePresenter<V, M> {
 
 
         public void onDestroy() {
+                LogUtil.e("presenterOnDestroy");
+                unSubscrible();
 //                解绑定
                 mView = null;
                 mModel = null;

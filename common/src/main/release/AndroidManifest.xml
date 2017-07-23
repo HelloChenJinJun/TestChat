@@ -29,8 +29,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true" />
 
-
-
     </application>
 
 </manifest>
