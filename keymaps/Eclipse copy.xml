@@ -1,0 +1,10 @@
+<keymap version="1" name="Eclipse copy" parent="Eclipse">
+  <action id="Back">
+    <keyboard-shortcut first-keystroke="ctrl q" />
+  </action>
+  <action id="CloseActiveTab" />
+  <action id="Forward">
+    <keyboard-shortcut first-keystroke="ctrl w" />
+  </action>
+  <action id="JumpToLastChange" />
+</keymap>
