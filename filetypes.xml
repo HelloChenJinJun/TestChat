@@ -2,6 +2,7 @@
   <component name="FileTypeManager" version="17">
     <extensionMap>
       <mapping pattern="demo" type="HTML" />
+      <mapping pattern="NewsChannel" type="PLAIN_TEXT" />
       <mapping pattern="my_location" type="PLAIN_TEXT" />
       <mapping pattern=".setting.gradle.swp" type="PLAIN_TEXT" />
       <mapping ext="so" type="PLAIN_TEXT" />
