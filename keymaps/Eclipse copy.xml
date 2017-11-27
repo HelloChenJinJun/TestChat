@@ -2,6 +2,7 @@
   <action id="Back">
     <keyboard-shortcut first-keystroke="ctrl q" />
   </action>
+  <action id="ChangesView.AddUnversioned" />
   <action id="CloseActiveTab" />
   <action id="Forward">
     <keyboard-shortcut first-keystroke="ctrl w" />
